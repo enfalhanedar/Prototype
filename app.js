@@ -6,4 +6,13 @@ import "./render.js";
 import "./rooms.js";
 import "./snap.js";
 import "./interaction.js";
+import "./camera.js";
 
+
+import {
+  gridiCiz,
+  gridButonlariniGuncelle,
+} from "./grid.js";
+
+gridiCiz();
+gridButonlariniGuncelle();

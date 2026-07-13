@@ -22,7 +22,10 @@ export function gecmiseKaydet(durum = cizgiler) {
   setRedoStack([]);
 }
 
-export function cizgiEkle(yeniCizgiler, groupId = yeniId()) {
+export function cizgiEkle(
+  yeniCizgiler,
+  groupId = crypto.randomUUID(),
+) {
   gecmiseKaydet();
 
   const liste = Array.isArray(yeniCizgiler)
@@ -31,7 +34,7 @@ export function cizgiEkle(yeniCizgiler, groupId = yeniId()) {
 
   const kimlikliCizgiler = liste.map((cizgi) => ({
     ...cizgi,
-    id: cizgi.id ?? yeniId(),
+    id: cizgi.id ?? crypto.randomUUID(),
     groupId: cizgi.groupId ?? groupId,
   }));
 

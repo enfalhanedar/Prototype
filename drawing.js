@@ -19,13 +19,15 @@ import {
   hesaplaHizalama,
 } from "./snap.js";
 
+import { sahnedenDunyaya } from "./camera.js";
+
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";
 
 // SAĞ TIK: mevcut çizimi iptal et
-canvas.addEventListener("mousedown", (e) => {
-  if (e.button !== 2) return;
+window.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
 
   setMevcutCizim(null);
   setAktifCizimGrupId(null);
@@ -39,9 +41,16 @@ stage.on("stagemousedown", (e) => {
   if (aktifMod === "SELECT") return;
   if (e.nativeEvent.button === 2) return;
 
-  const x = e.stageX;
-  const y = e.stageY;
-  const snap = hesaplaSnap(x, y);
+  const dunyaNoktasi =
+  sahnedenDunyaya(
+    e.stageX,
+    e.stageY,
+  );
+
+const x = dunyaNoktasi.x;
+const y = dunyaNoktasi.y;
+
+const snap = hesaplaSnap(x, y);
 
   const miknatislandiMi =
     snap.x !== Math.round(x) ||
@@ -61,7 +70,16 @@ stage.on("stagemousemove", (e) => {
   if (aktifMod === "SELECT") return;
   if (!mevcutCizim) return;
 
-  const snap = hesaplaSnap(e.stageX, e.stageY);
+  const dunyaNoktasi =
+  sahnedenDunyaya(
+    e.stageX,
+    e.stageY,
+  );
+
+const snap = hesaplaSnap(
+  dunyaNoktasi.x,
+  dunyaNoktasi.y,
+);
 
   onizlemeKatmani.graphics.clear();
 

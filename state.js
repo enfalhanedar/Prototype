@@ -39,3 +39,17 @@ export function setAktifCizimGrupId(grupId) {
 export function setSeciliGrupId(grupId) {
   seciliGrupId = grupId;
 }
+
+export let gridGorunur = true;
+export let gridSnapAktif = true;
+
+export const GRID_BOYUTU = 25;
+export const GRID_SNAP_EKRAN_MESAFESI = 7;
+
+export function setGridGorunur(deger) {
+  gridGorunur = deger;
+}
+
+export function setGridSnapAktif(deger) {
+  gridSnapAktif = deger;
+}

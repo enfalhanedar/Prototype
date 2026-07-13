@@ -1,124 +1,563 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
 
-    <title>EaselJS ile WebCAD Alıştırması</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <title>EaselJS WebCAD Prototipi</title>
 
-    <script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <link rel="stylesheet" href="./style.css">
+  <!-- EaselJS -->
+  <script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
+
+  <!-- Kendi CSS dosyan -->
+  <link rel="stylesheet" href="./style.css">
 </head>
 
-<body class="bg-gradient-to-br from-purple-100 via-fuchsia-50 to-pink-100 text-slate-800 min-h-screen flex flex-col items-center justify-center p-4">
+<body
+  class="
+    min-h-screen
+    bg-gradient-to-br
+    from-purple-100
+    via-fuchsia-50
+    to-pink-100
+    text-slate-800
+    flex
+    items-center
+    justify-center
+    p-4
+  "
+>
+  <main
+    class="
+      w-full
+      max-w-6xl
+      bg-white
+      rounded-2xl
+      shadow-xl
+      border
+      border-purple-200/50
+      p-5
+      flex
+      flex-col
+      gap-4
+    "
+  >
+    <!-- Başlık -->
+    <header
+      class="
+        flex
+        items-center
+        justify-between
+        gap-4
+        border-b
+        border-purple-100
+        pb-3
+      "
+    >
+      <h1
+        class="
+          text-xl
+          font-bold
+          text-purple-600
+          flex
+          items-center
+          gap-2
+        "
+      >
+        📐 WebCAD Prototipi
+      </h1>
 
-    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl p-5 border border-purple-200/50 flex flex-col gap-4">
+      <span
+        class="
+          text-xs
+          font-semibold
+          text-purple-500
+          bg-purple-50
+          border
+          border-purple-100
+          rounded-full
+          px-3
+          py-1
+        "
+      >
+        EaselJS
+      </span>
+    </header>
 
-        <h2 class="text-xl font-bold text-purple-600 flex items-center gap-2 border-b border-purple-100 pb-3">
-            📐 Prototip
-        </h2>
-
-        <div class="flex gap-4">
-
-            <div class="w-48 bg-white p-3 rounded-xl border border-purple-100 flex flex-col gap-3 shadow-sm">
-
-                <div class="text-xs font-bold text-purple-400 uppercase tracking-wider">
-                    İşlemler
-                </div>
-
-                <div class="flex gap-2">
-                    <button
-                        id="btnUndo"
-                        type="button"
-                        class="flex-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold py-1.5 px-2 rounded-lg text-xs transition border border-purple-200/60"
-                    >
-                        ↩ Geri
-                    </button>
-
-                    <button
-                        id="btnRedo"
-                        type="button"
-                        class="flex-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold py-1.5 px-2 rounded-lg text-xs transition border border-purple-200/60"
-                    >
-                        ↪ İleri
-                    </button>
-                </div>
-
-                <button
-                    id="btnClear"
-                     type="button"
-                    class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-1.5 px-2 rounded-lg text-xs transition border border-rose-200"
-                 >
-                        🗑 Tümünü Sil
-                </button>
-
-                <div class="text-xs font-bold text-purple-400 uppercase tracking-wider mt-2">
-                    Çizim Araçları
-                </div>
-
-                <button
-                     id="toolSelect"
-                    type="button"
-                     class="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 text-left font-semibold py-2.5 px-3 rounded-xl text-sm transition border border-purple-100"
-                >
-                        🖱️ Seç ve Taşı
-                </button>
-
-                <button
-                    id="toolLine"
-                    type="button"
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white text-left font-semibold py-2.5 px-3 rounded-xl text-sm transition shadow-sm"
-                >
-                    ✏️ Çizgi Çiz
-                </button>
-
-                <button
-                    id="toolRect"
-                    type="button"
-                    class="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 text-left font-semibold py-2.5 px-3 rounded-xl text-sm transition border border-purple-100"
-                >
-                    🟦 Dikdörtgen Çiz
-                </button>
-
-                <button
-                    id="toolSquare"
-                    type="button"
-                    class="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 text-left font-semibold py-2.5 px-3 rounded-xl text-sm transition border border-purple-100"
-                >
-                    🔲 Kare Çiz
-                </button>
-            </div>
-
-            <div class="flex-1 relative flex flex-col gap-2">
-
-                <div class="bg-purple-50/50 p-2.5 rounded-xl border border-purple-100 text-xs text-purple-700 font-medium">
-                    🚀 <strong>EaselJS Devrede</strong>
-                </div>
-
-                <div id="canvasWrapper" class="relative inline-block">
-                 <canvas
-                             id="cizimAlani"
-                             width="750"
-                            height="480"
-                            class="bg-slate-50/50 rounded-xl shadow-inner border border-purple-200/60"
-                     ></canvas>
-
-                     <button
-                         id="btnDeleteSelected"
-                         type="button"
-                        class="hidden absolute z-10 bg-red-500 hover:bg-red-600 text-white rounded-full w-9 h-9 shadow-lg"
-                        title="Seçili şekli sil"
-                    >
-                            🗑
-                    </button>
-                </div>
-            </div>
+    <div
+      class="
+        flex
+        flex-col
+        lg:flex-row
+        gap-4
+      "
+    >
+      <!-- Sol araç paneli -->
+      <aside
+        class="
+          w-full
+          lg:w-52
+          shrink-0
+          bg-white
+          p-3
+          rounded-xl
+          border
+          border-purple-100
+          shadow-sm
+          flex
+          flex-col
+          gap-3
+        "
+      >
+        <!-- İşlemler -->
+        <div
+          class="
+            text-xs
+            font-bold
+            text-purple-400
+            uppercase
+            tracking-wider
+          "
+        >
+          İşlemler
         </div>
-    </div>
 
-    <script type="module" src="./app.js"></script>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            id="btnUndo"
+            type="button"
+            class="
+              bg-purple-50
+              hover:bg-purple-100
+              text-purple-700
+              font-bold
+              py-2
+              px-2
+              rounded-lg
+              text-xs
+              transition
+              border
+              border-purple-200/60
+            "
+          >
+            ↩ Geri
+          </button>
+
+          <button
+            id="btnRedo"
+            type="button"
+            class="
+              bg-purple-50
+              hover:bg-purple-100
+              text-purple-700
+              font-bold
+              py-2
+              px-2
+              rounded-lg
+              text-xs
+              transition
+              border
+              border-purple-200/60
+            "
+          >
+            ↪ İleri
+          </button>
+        </div>
+
+        <button
+          id="btnClear"
+          type="button"
+          class="
+            w-full
+            bg-rose-50
+            hover:bg-rose-100
+            text-rose-700
+            font-bold
+            py-2
+            px-3
+            rounded-lg
+            text-xs
+            transition
+            border
+            border-rose-200
+          "
+        >
+          🗑 Tümünü Sil
+        </button>
+
+        <!-- Araçlar -->
+        <div
+          class="
+            text-xs
+            font-bold
+            text-purple-400
+            uppercase
+            tracking-wider
+            mt-2
+          "
+        >
+          Çizim Araçları
+        </div>
+
+        <button
+          id="toolSelect"
+          type="button"
+          class="
+            w-full
+            bg-purple-50
+            hover:bg-purple-100
+            text-purple-700
+            text-left
+            font-semibold
+            py-2.5
+            px-3
+            rounded-xl
+            text-sm
+            transition
+            border
+            border-purple-100
+          "
+        >
+          🖱️ Seç ve Taşı
+        </button>
+
+        <button
+          id="toolLine"
+          type="button"
+          class="
+            w-full
+            bg-purple-600
+            hover:bg-purple-700
+            text-white
+            text-left
+            font-semibold
+            py-2.5
+            px-3
+            rounded-xl
+            text-sm
+            transition
+            shadow-sm
+          "
+        >
+          ✏️ Çizgi Çiz
+        </button>
+
+        <button
+          id="toolRect"
+          type="button"
+          class="
+            w-full
+            bg-purple-50
+            hover:bg-purple-100
+            text-purple-700
+            text-left
+            font-semibold
+            py-2.5
+            px-3
+            rounded-xl
+            text-sm
+            transition
+            border
+            border-purple-100
+          "
+        >
+          🟦 Dikdörtgen Çiz
+        </button>
+
+        <button
+          id="toolSquare"
+          type="button"
+          class="
+            w-full
+            bg-purple-50
+            hover:bg-purple-100
+            text-purple-700
+            text-left
+            font-semibold
+            py-2.5
+            px-3
+            rounded-xl
+            text-sm
+            transition
+            border
+            border-purple-100
+          "
+        >
+          🔲 Kare Çiz
+        </button>
+
+        <!-- Kısa kullanım bilgisi -->
+        <div
+          class="
+            mt-2
+            text-[11px]
+            leading-5
+            text-slate-500
+            bg-slate-50
+            border
+            border-slate-100
+            rounded-xl
+            p-3
+          "
+        >
+          <p>
+            <strong>Sağ tık + sürükle:</strong>
+            alanda gezin
+          </p>
+
+          <p>
+            <strong>Mouse tekerleği:</strong>
+            yakınlaştır / uzaklaştır
+          </p>
+
+          <p>
+            <strong>Esc:</strong>
+            aktif çizimi iptal et
+          </p>
+        </div>
+      </aside>
+
+      <!-- Sağ çizim alanı -->
+      <section
+        class="
+          flex-1
+          min-w-0
+          flex
+          flex-col
+          gap-3
+        "
+      >
+        <!-- Üst kontrol paneli -->
+        <div
+          class="
+            flex
+            flex-wrap
+            items-center
+            gap-2
+            bg-purple-50/60
+            p-2.5
+            rounded-xl
+            border
+            border-purple-100
+            text-xs
+            text-purple-700
+            font-medium
+          "
+        >
+          <button
+            id="btnGrid"
+            type="button"
+            class="
+              bg-white
+              hover:bg-purple-100
+              border
+              border-purple-200
+              rounded-lg
+              px-3
+              py-1.5
+              transition
+            "
+          >
+            ▦ Grid: Açık
+          </button>
+
+          <button
+            id="btnGridSnap"
+            type="button"
+            class="
+              bg-white
+              hover:bg-purple-100
+              border
+              border-purple-200
+              rounded-lg
+              px-3
+              py-1.5
+              transition
+            "
+          >
+            🧲 Grid Snap: Açık
+          </button>
+
+          <div
+            class="
+              flex
+              items-center
+              gap-1
+              ml-auto
+            "
+          >
+            <button
+              id="btnZoomOut"
+              type="button"
+              class="
+                bg-white
+                hover:bg-purple-100
+                border
+                border-purple-200
+                rounded-lg
+                px-3
+                py-1.5
+                text-base
+                leading-none
+                transition
+              "
+              aria-label="Uzaklaştır"
+            >
+              −
+            </button>
+
+            <span
+              id="zoomValue"
+              class="
+                min-w-14
+                text-center
+                font-bold
+                text-purple-700
+              "
+            >
+              100%
+            </span>
+
+            <button
+              id="btnZoomIn"
+              type="button"
+              class="
+                bg-white
+                hover:bg-purple-100
+                border
+                border-purple-200
+                rounded-lg
+                px-3
+                py-1.5
+                text-base
+                leading-none
+                transition
+              "
+              aria-label="Yakınlaştır"
+            >
+              +
+            </button>
+
+            <button
+              id="btnZoomReset"
+              type="button"
+              class="
+                bg-white
+                hover:bg-purple-100
+                border
+                border-purple-200
+                rounded-lg
+                px-3
+                py-1.5
+                transition
+              "
+            >
+              Sıfırla
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas dış çerçevesi -->
+        <div
+          class="
+            w-full
+            flex
+            justify-center
+            overflow-hidden
+          "
+        >
+          <!-- Silme butonu bu kapsayıcıya göre konumlandırılır -->
+          <div
+            id="canvasWrapper"
+            class="
+              relative
+              w-full
+              max-w-[900px]
+              overflow-hidden
+              rounded-xl
+              border
+              border-purple-200/60
+              bg-slate-50
+              shadow-inner
+            "
+          >
+            <canvas
+              id="cizimAlani"
+              width="900"
+              height="560"
+              class="
+                block
+                w-full
+                h-auto
+                bg-slate-50/50
+                touch-none
+                select-none
+              "
+            ></canvas>
+
+            <!-- Seçili şeklin yanında gösterilecek silme butonu -->
+            <button
+              id="btnDeleteSelected"
+              type="button"
+              class="
+                hidden
+                absolute
+                z-20
+                w-9
+                h-9
+                items-center
+                justify-center
+                bg-red-500
+                hover:bg-red-600
+                text-white
+                rounded-full
+                shadow-lg
+                transition
+              "
+              title="Seçili şekli sil"
+              aria-label="Seçili şekli sil"
+            >
+              🗑
+            </button>
+          </div>
+        </div>
+
+        <!-- Alt durum bilgisi -->
+        <div
+          class="
+            flex
+            flex-wrap
+            items-center
+            justify-between
+            gap-2
+            text-[11px]
+            text-slate-500
+            px-1
+          "
+        >
+          <span>
+            Nesne ve grid mıknatıslama desteklenir.
+          </span>
+
+          <span>
+            Zoom sınırları JavaScript içinde ayarlanır.
+          </span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Kendi uygulama giriş dosyan -->
+  <script
+    type="module"
+    src="./app.js"
+  ></script>
 </body>
 </html>

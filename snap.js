@@ -3,6 +3,9 @@ import {
   SNAP_MESAFESI,
 } from "./state.js";
 
+import { viewport } from "./stage.js";
+import { gridNoktasinaSnap } from "./grid.js";
+
 
 // Matematiksel Snap ve Hizalama fonksiyonlarımız kararlı halleriyle kalıyor
 export function mesafeBul(x1, y1, x2, y2) {
@@ -32,38 +35,98 @@ export function cizgiUzerindeEnYakinNokta(x, y, x1, y1, x2, y2) {
 }
 
 export function hesaplaSnap(mouseX, mouseY) {
-  let enYakinNokta = { x: Math.round(mouseX), y: Math.round(mouseY) };
-  let enKisaMesafe = SNAP_MESAFESI;
+  let enYakinNokta = {
+    x: Math.round(mouseX),
+    y: Math.round(mouseY),
+  };
 
-  for (const c of cizgiler) {
-    const d1 = mesafeBul(mouseX, mouseY, c.x1, c.y1);
+  // Zoom değişse bile snap mesafesi ekranda
+  // yaklaşık 10 piksel olarak kalsın.
+  let enKisaMesafe =
+    SNAP_MESAFESI / viewport.scaleX;
+
+  let nesneyeMiknatislandiMi = false;
+
+  // Önce çizgilerin uç noktalarını kontrol et
+  for (const cizgi of cizgiler) {
+    const d1 = mesafeBul(
+      mouseX,
+      mouseY,
+      cizgi.x1,
+      cizgi.y1,
+    );
+
     if (d1 < enKisaMesafe) {
       enKisaMesafe = d1;
-      enYakinNokta = { x: c.x1, y: c.y1 };
+
+      enYakinNokta = {
+        x: cizgi.x1,
+        y: cizgi.y1,
+      };
+
+      nesneyeMiknatislandiMi = true;
     }
-    const d2 = mesafeBul(mouseX, mouseY, c.x2, c.y2);
+
+    const d2 = mesafeBul(
+      mouseX,
+      mouseY,
+      cizgi.x2,
+      cizgi.y2,
+    );
+
     if (d2 < enKisaMesafe) {
       enKisaMesafe = d2;
-      enYakinNokta = { x: c.x2, y: c.y2 };
+
+      enYakinNokta = {
+        x: cizgi.x2,
+        y: cizgi.y2,
+      };
+
+      nesneyeMiknatislandiMi = true;
     }
   }
 
-  if (enKisaMesafe === SNAP_MESAFESI) {
-    for (const c of cizgiler) {
-      const sonuc = cizgiUzerindeEnYakinNokta(
-        mouseX,
-        mouseY,
-        c.x1,
-        c.y1,
-        c.x2,
-        c.y2,
-      );
+  // Uç nokta bulunamadıysa kenarları kontrol et
+  if (!nesneyeMiknatislandiMi) {
+    for (const cizgi of cizgiler) {
+      const sonuc =
+        cizgiUzerindeEnYakinNokta(
+          mouseX,
+          mouseY,
+          cizgi.x1,
+          cizgi.y1,
+          cizgi.x2,
+          cizgi.y2,
+        );
+
       if (sonuc.mesafe < enKisaMesafe) {
         enKisaMesafe = sonuc.mesafe;
-        enYakinNokta = { x: Math.round(sonuc.x), y: Math.round(sonuc.y) };
+
+        enYakinNokta = {
+          x: Math.round(sonuc.x),
+          y: Math.round(sonuc.y),
+        };
+
+        nesneyeMiknatislandiMi = true;
       }
     }
   }
+
+  // Nesne snap her zaman grid snap'ten öncelikli.
+  if (nesneyeMiknatislandiMi) {
+    return enYakinNokta;
+  }
+
+  const gridSonucu =
+    gridNoktasinaSnap(mouseX, mouseY);
+
+  if (gridSonucu.miknatislandiMi) {
+    return {
+      x: gridSonucu.x,
+      y: gridSonucu.y,
+    };
+  }
+
   return enYakinNokta;
 }
 

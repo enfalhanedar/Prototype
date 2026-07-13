@@ -2,12 +2,23 @@ export const canvas = document.getElementById("cizimAlani");
 
 export const stage = new createjs.Stage(canvas);
 
-canvas.oncontextmenu = e => e.preventDefault();
+canvas.oncontextmenu = (event) => {
+  event.preventDefault();
+};
 
+// Bütün dünya bu container içinde olacak.
+// Zoom ve pan bu container üzerinden yapılacak.
+export const viewport = new createjs.Container();
+
+export const gridKatmani = new createjs.Shape();
 export const odaKatmani = new createjs.Shape();
 export const cizgiKatmani = new createjs.Shape();
 export const onizlemeKatmani = new createjs.Shape();
 
-stage.addChild(odaKatmani);
-stage.addChild(cizgiKatmani);
-stage.addChild(onizlemeKatmani);
+// Çizim sırası önemlidir.
+viewport.addChild(gridKatmani);
+viewport.addChild(odaKatmani);
+viewport.addChild(cizgiKatmani);
+viewport.addChild(onizlemeKatmani);
+
+stage.addChild(viewport);
