@@ -224,10 +224,33 @@ function cizgiOnizlemesiniGuncelle(snap) {
   }
 
   onizlemeKatmani.graphics
-    .beginStroke("#710ee9")
-    .setStrokeStyle(3)
-    .moveTo(mevcutCizim.x1, mevcutCizim.y1)
-    .lineTo(mevcutCizim.x2, mevcutCizim.y2);
+  .beginStroke("#710ee946")
+  .setStrokeStyle(
+    8,
+    "round",
+    "round",
+  )
+  .moveTo(mevcutCizim.x1, mevcutCizim.y1)
+  .lineTo(mevcutCizim.x2, mevcutCizim.y2)
+  .endStroke();
+
+onizlemeKatmani.graphics
+  .beginFill("#9a44ef47")
+  .drawCircle(
+    mevcutCizim.x1,
+    mevcutCizim.y1,
+    4,
+  )
+  .endFill();
+
+onizlemeKatmani.graphics
+  .beginFill("#9144ef3a")
+  .drawCircle(
+    mevcutCizim.x2,
+    mevcutCizim.y2,
+    4,
+  )
+  .endFill();
 }
 
 function kutuOnizlemesiniGuncelle(snap) {
@@ -291,13 +314,20 @@ function kutuOnizlemesiniGuncelle(snap) {
   mevcutCizim.h = Math.abs(rawH);
 
   onizlemeKatmani.graphics
-    .beginFill("rgba(156, 14, 233, 0.2)")
-    .beginStroke("#690ee9")
-    .setStrokeStyle(3)
-    .drawRect(
-      mevcutCizim.x,
-      mevcutCizim.y,
-      mevcutCizim.w,
-      mevcutCizim.h,
-    );
+  .beginFill("rgba(156, 14, 233, 0.2)")
+  .beginStroke("#690ee957")
+  .setStrokeStyle(
+    8,
+    "round",
+    "round",
+  )
+  .drawRoundRect(
+    mevcutCizim.x,
+    mevcutCizim.y,
+    mevcutCizim.w,
+    mevcutCizim.h,
+    4, // köşe yarıçapı
+  )
+  .endStroke()
+  .endFill();
 }

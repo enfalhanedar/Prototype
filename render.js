@@ -12,8 +12,6 @@ import {
 } from "./stage.js";
 
 
-
-
 // 2. EKRANI GÜNCELLEME (EASELJS TARZI)
 export function ekraniGuncelle() {
   // Eski çizimleri temizle
@@ -47,28 +45,64 @@ export function ekraniGuncelle() {
 });
 
   // Çizgileri ve köşelerdeki kırmızı daireleri EaselJS ile çiziyoruz
-  cizgiler.forEach((cizgi) => {
+  // Önce bütün çizgileri çiz
+cizgiler.forEach((cizgi) => {
   const grupId = cizgi.groupId ?? cizgi.id;
 
-const secili =
-  grupId === seciliGrupId ||
-  seciliGrupIdleri.includes(grupId);
+  const secili =
+    grupId === seciliGrupId ||
+    seciliGrupIdleri.includes(grupId);
+
+  const cizgiKalinligi = secili ? 10 : 8;
 
   cizgiKatmani.graphics
-    .beginStroke(secili ? "#ef4444" : "#7945ac")
-    .setStrokeStyle(secili ? 6 : 4)
+    .beginStroke(secili ? "#ef4444" : "#9a44ef")
+    .setStrokeStyle(
+      cizgiKalinligi,
+      "round",
+      "round",
+    )
     .moveTo(cizgi.x1, cizgi.y1)
-    .lineTo(cizgi.x2, cizgi.y2);
-
-  cizgiKatmani.graphics
-    .beginFill(secili ? "#ef4444" : "#9a44ef")
-    .drawCircle(cizgi.x1, cizgi.y1, secili ? 5 : 4);
-
-  cizgiKatmani.graphics
-    .beginFill(secili ? "#ef4444" : "#9144ef")
-    .drawCircle(cizgi.x2, cizgi.y2, secili ? 5 : 4);
+    .lineTo(cizgi.x2, cizgi.y2)
+    .endStroke();
 });
 
-  // Sahneyi (Stage) tarayıcıya yansıt
-  stage.update();
+  const cizilenKoseler = new Set();
+
+cizgiler.forEach((cizgi) => {
+  const grupId = cizgi.groupId ?? cizgi.id;
+
+  const secili =
+    grupId === seciliGrupId ||
+    seciliGrupIdleri.includes(grupId);
+
+  const koseYaricapi = secili ? 5 : 4;
+  const koseRengi = secili ? "#ef4444" : "#9a44ef";
+
+  const noktalar = [
+    { x: cizgi.x1, y: cizgi.y1 },
+    { x: cizgi.x2, y: cizgi.y2 },
+  ];
+
+  noktalar.forEach((nokta) => {
+    const anahtar = `${nokta.x.toFixed(3)}-${nokta.y.toFixed(3)}`;
+
+    if (cizilenKoseler.has(anahtar)) {
+      return;
+    }
+
+    cizilenKoseler.add(anahtar);
+
+    cizgiKatmani.graphics
+      .beginFill(koseRengi)
+      .drawCircle(
+        nokta.x,
+        nokta.y,
+        koseYaricapi,
+      )
+      .endFill();
+  });
+});
+
+stage.update();
 }
