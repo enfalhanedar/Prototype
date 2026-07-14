@@ -14,11 +14,16 @@ export const gridKatmani = new createjs.Shape();
 export const odaKatmani = new createjs.Shape();
 export const cizgiKatmani = new createjs.Shape();
 export const onizlemeKatmani = new createjs.Shape();
+export const secimKatmani =
+  new createjs.Shape();
 
 // Çizim sırası önemlidir.
 viewport.addChild(gridKatmani);
 viewport.addChild(odaKatmani);
 viewport.addChild(cizgiKatmani);
 viewport.addChild(onizlemeKatmani);
+viewport.addChild(secimKatmani);
 
 stage.addChild(viewport);
+
+  

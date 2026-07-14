@@ -38,16 +38,13 @@ export function hesaplaSnap(mouseX, mouseY) {
   let enYakinNokta = {
     x: Math.round(mouseX),
     y: Math.round(mouseY),
+    snapTuru: "NONE",
   };
 
-  // Zoom değişse bile snap mesafesi ekranda
-  // yaklaşık 10 piksel olarak kalsın.
   let enKisaMesafe =
     SNAP_MESAFESI / viewport.scaleX;
 
-  let nesneyeMiknatislandiMi = false;
-
-  // Önce çizgilerin uç noktalarını kontrol et
+  // Önce mevcut çizgilerin köşeleri
   for (const cizgi of cizgiler) {
     const d1 = mesafeBul(
       mouseX,
@@ -62,9 +59,8 @@ export function hesaplaSnap(mouseX, mouseY) {
       enYakinNokta = {
         x: cizgi.x1,
         y: cizgi.y1,
+        snapTuru: "OBJECT",
       };
-
-      nesneyeMiknatislandiMi = true;
     }
 
     const d2 = mesafeBul(
@@ -80,14 +76,13 @@ export function hesaplaSnap(mouseX, mouseY) {
       enYakinNokta = {
         x: cizgi.x2,
         y: cizgi.y2,
+        snapTuru: "OBJECT",
       };
-
-      nesneyeMiknatislandiMi = true;
     }
   }
 
-  // Uç nokta bulunamadıysa kenarları kontrol et
-  if (!nesneyeMiknatislandiMi) {
+  // Köşe bulunamadıysa çizgi kenarları
+  if (enYakinNokta.snapTuru === "NONE") {
     for (const cizgi of cizgiler) {
       const sonuc =
         cizgiUzerindeEnYakinNokta(
@@ -105,15 +100,14 @@ export function hesaplaSnap(mouseX, mouseY) {
         enYakinNokta = {
           x: Math.round(sonuc.x),
           y: Math.round(sonuc.y),
+          snapTuru: "OBJECT",
         };
-
-        nesneyeMiknatislandiMi = true;
       }
     }
   }
 
-  // Nesne snap her zaman grid snap'ten öncelikli.
-  if (nesneyeMiknatislandiMi) {
+  // Nesneye snap olduysa grid kontrol etme
+  if (enYakinNokta.snapTuru === "OBJECT") {
     return enYakinNokta;
   }
 
@@ -124,6 +118,7 @@ export function hesaplaSnap(mouseX, mouseY) {
     return {
       x: gridSonucu.x,
       y: gridSonucu.y,
+      snapTuru: "GRID",
     };
   }
 
@@ -132,26 +127,27 @@ export function hesaplaSnap(mouseX, mouseY) {
 
 export function hesaplaHizalama(x, y) {
   const donus = { x, y };
+  const esikMesafe = SNAP_MESAFESI / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
-    if (Math.abs(y - cizgi.y1) < SNAP_MESAFESI) {
+    if (Math.abs(y - cizgi.y1) < esikMesafe) {
       donus.y = cizgi.y1;
       break;
     }
 
-    if (Math.abs(y - cizgi.y2) < SNAP_MESAFESI) {
+    if (Math.abs(y - cizgi.y2) < esikMesafe) {
       donus.y = cizgi.y2;
       break;
     }
   }
 
   for (const cizgi of cizgiler) {
-    if (Math.abs(x - cizgi.x1) < SNAP_MESAFESI) {
+    if (Math.abs(x - cizgi.x1) < esikMesafe) {
       donus.x = cizgi.x1;
       break;
     }
 
-    if (Math.abs(x - cizgi.x2) < SNAP_MESAFESI) {
+    if (Math.abs(x - cizgi.x2) < esikMesafe) {
       donus.x = cizgi.x2;
       break;
     }
@@ -186,14 +182,24 @@ export function hesaplaGrupTasimaSnap(
   tasinanCizgiler,
   hamDx,
   hamDy,
-  tasinanGrupId,
+  tasinanGrupIdleri,
 ) {
-  let sonucDx = hamDx;
+   let sonucDx = hamDx;
   let sonucDy = hamDy;
-  let enKisaMesafe = SNAP_MESAFESI;
+  let enKisaMesafe = SNAP_MESAFESI / viewport.scaleX;
+
+  const tasinanGrupSet = new Set(
+    (Array.isArray(tasinanGrupIdleri)
+      ? tasinanGrupIdleri
+      : [tasinanGrupIdleri]
+    ).filter(Boolean),
+  );
 
   const digerCizgiler = cizgiler.filter(
-    (cizgi) => cizgi.groupId !== tasinanGrupId,
+    (cizgi) =>
+      !tasinanGrupSet.has(
+        cizgi.groupId ?? cizgi.id,
+      ),
   );
 
   for (const tasinanCizgi of tasinanCizgiler) {

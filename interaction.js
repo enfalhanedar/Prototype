@@ -1,15 +1,31 @@
 import {
   cizgiler,
+  odalar,
   aktifMod,
   seciliGrupId,
+  seciliGrupIdleri,
   setCizgiler,
   setSeciliGrupId,
+  setSeciliGrupIdleri,
 } from "./state.js";
+
+
+
+let kutuSecimiAktif = false;
+let kutuSecimBaslangici = null;
+
+
+import {
+  noktaPoligonIcinde,
+  poligonSinirlari,
+  kutularKesisiyorMu,
+} from "./geometry.js";
 
 import {
   canvas,
   stage,
   viewport,
+  secimKatmani,
 } from "./stage.js";
 
 import {
@@ -46,6 +62,56 @@ let suruklemeBaslangicY = 0;
 
 let orijinalTumCizgiler = [];
 let orijinalGrupCizgileri = [];
+let orijinalSuruklenenGrupIdleri = [];
+
+function aktifSeciliGrupIdleri() {
+  if (seciliGrupIdleri.length > 0) {
+    return seciliGrupIdleri;
+  }
+
+  if (seciliGrupId) {
+    return [seciliGrupId];
+  }
+
+  return [];
+}
+
+function suruklemeyiBaslat(dunyaNoktasi, grupIdleri) {
+  suruklemeAktif = true;
+  hareketGerceklesti = false;
+  gecmiseKaydedildi = false;
+
+  suruklemeBaslangicX = dunyaNoktasi.x;
+  suruklemeBaslangicY = dunyaNoktasi.y;
+
+  orijinalTumCizgiler = structuredClone(cizgiler);
+  orijinalSuruklenenGrupIdleri = [...grupIdleri];
+  orijinalGrupCizgileri = structuredClone(
+    grupIdleri.flatMap((grupId) =>
+      grupCizgileriniBul(grupId),
+    ),
+  );
+
+  canvas.style.cursor = "grabbing";
+
+  ekraniGuncelle();
+  silButonunuKonumlandir();
+}
+
+function grupSecVeSuruklemeyeHazirla(grupId, dunyaNoktasi) {
+  const mevcutSecim = aktifSeciliGrupIdleri();
+
+  if (
+    mevcutSecim.includes(grupId) &&
+    mevcutSecim.length > 1
+  ) {
+    suruklemeyiBaslat(dunyaNoktasi, mevcutSecim);
+    return;
+  }
+
+  setSeciliGrupId(grupId);
+  suruklemeyiBaslat(dunyaNoktasi, [grupId]);
+}
 
 /**
  * Bir çizginin hangi gruba ait olduğunu döndürür.
@@ -97,8 +163,9 @@ function tiklananCizgiyiBul(x, y) {
 /**
  * Seçimi kaldırır ve silme butonunu gizler.
  */
-function secimiTemizle() {
+export function secimiTemizle() {
   setSeciliGrupId(null);
+  setSeciliGrupIdleri([]);
 
   if (silButonu) {
     silButonu.classList.add("hidden");
@@ -164,17 +231,21 @@ function grupSinirlariniHesapla(grup) {
  * Silme butonunu seçili şeklin sağ üst tarafına taşır.
  */
 export function silButonunuKonumlandir() {
+
+ const grupIdleri = aktifSeciliGrupIdleri();
+
   if (
     !silButonu ||
     !canvasWrapper ||
-    !seciliGrupId
+    grupIdleri.length === 0
   ) {
     silButonu?.classList.add("hidden");
     return;
   }
 
-  const grup =
-    grupCizgileriniBul(seciliGrupId);
+  const grup = grupIdleri.flatMap(
+    (grupId) => grupCizgileriniBul(grupId),
+  );
 
   if (grup.length === 0) {
     silButonu.classList.add("hidden");
@@ -239,13 +310,43 @@ export function silButonunuKonumlandir() {
   silButonu.classList.add("flex");
 }
 
+function tiklananOdayiBul(x, y) {
+  const bulunanOdalar = odalar
+    .filter((oda) =>
+      noktaPoligonIcinde(
+        x,
+        y,
+        oda.noktalar,
+      ),
+    )
+    .sort((a, b) => a.alan - b.alan);
+
+  return bulunanOdalar[0] ?? null;
+}
+
+function secimKutusunuCiz(baslangic, bitis) {
+  const x = Math.min(baslangic.x, bitis.x);
+  const y = Math.min(baslangic.y, bitis.y);
+
+  const w = Math.abs(bitis.x - baslangic.x);
+  const h = Math.abs(bitis.y - baslangic.y);
+
+  secimKatmani.graphics
+    .clear()
+    .beginFill("rgba(59, 130, 246, 0.12)")
+    .beginStroke("rgba(59, 130, 246, 0.9)")
+    .setStrokeStyle(1 / viewport.scaleX)
+    .drawRect(x, y, w, h);
+
+  stage.update();
+}
+
+
 /**
  * Sol tuşa basıldığında seçim veya taşıma işlemini başlatır.
  */
 stage.on("stagemousedown", (event) => {
   if (aktifMod !== "SELECT") return;
-
-  // Sadece sol tuş
   if (event.nativeEvent.button !== 0) return;
 
   const dunyaNoktasi = sahnedenDunyaya(
@@ -258,49 +359,50 @@ stage.on("stagemousedown", (event) => {
     dunyaNoktasi.y,
   );
 
-  // Boş alana tıklanırsa seçimi kaldır.
-  if (!tiklananCizgi) {
-    secimiTemizle();
+  const tiklananOda = tiklananOdayiBul(
+    dunyaNoktasi.x,
+    dunyaNoktasi.y,
+  );
+
+  // 1) Çizgiye tıklandı → seç + sürüklemeye hazırla
+  if (tiklananCizgi) {
+    const grupId = grupAnahtariAl(tiklananCizgi);
+
+    if (!grupId) {
+      console.warn(
+        "Seçilen çizginin id veya groupId değeri bulunamadı.",
+        tiklananCizgi,
+      );
+      return;
+    }
+
+    grupSecVeSuruklemeyeHazirla(
+      grupId,
+      dunyaNoktasi,
+    );
     return;
   }
 
-  const grupId =
-    grupAnahtariAl(tiklananCizgi);
-
-  if (!grupId) {
-    console.warn(
-      "Seçilen çizginin id veya groupId değeri bulunamadı.",
-      tiklananCizgi,
+  // 2) Odaya tıklandı → o grubu seç ve taşımaya hazırla
+  if (tiklananOda) {
+    grupSecVeSuruklemeyeHazirla(
+      tiklananOda.groupId,
+      dunyaNoktasi,
     );
-
     return;
   }
 
-  setSeciliGrupId(grupId);
+  // 3) Boş alana tıklandı → kutu seçimi başlat
+  kutuSecimiAktif = true;
+  kutuSecimBaslangici = {
+    x: dunyaNoktasi.x,
+    y: dunyaNoktasi.y,
+  };
 
-  suruklemeAktif = true;
-  hareketGerceklesti = false;
-  gecmiseKaydedildi = false;
+  setSeciliGrupIdleri([]);
+  setSeciliGrupId(null);
 
-  suruklemeBaslangicX =
-    dunyaNoktasi.x;
-
-  suruklemeBaslangicY =
-    dunyaNoktasi.y;
-
-  // Taşıma sırasında başlangıç durumunu koruyoruz.
-  orijinalTumCizgiler =
-    structuredClone(cizgiler);
-
-  orijinalGrupCizgileri =
-    structuredClone(
-      grupCizgileriniBul(grupId),
-    );
-
-  canvas.style.cursor = "grabbing";
-
-  ekraniGuncelle();
-  silButonunuKonumlandir();
+  silButonu?.classList.add("hidden");
 });
 
 /**
@@ -308,8 +410,20 @@ stage.on("stagemousedown", (event) => {
  */
 stage.on("stagemousemove", (event) => {
   if (aktifMod !== "SELECT") return;
+  // Kutu seçimi sürükleniyorsa kutuyu çiz
+  if (kutuSecimiAktif && kutuSecimBaslangici) {
+    const dunyaNoktasi = sahnedenDunyaya(
+      event.stageX,
+      event.stageY,
+    );
+    secimKutusunuCiz(
+      kutuSecimBaslangici,
+      dunyaNoktasi,
+    );
+    return;
+  }
   if (!suruklemeAktif) return;
-  if (!seciliGrupId) return;
+  if (orijinalGrupCizgileri.length === 0) return;
 
   const dunyaNoktasi = sahnedenDunyaya(
     event.stageX,
@@ -347,7 +461,7 @@ stage.on("stagemousemove", (event) => {
       orijinalGrupCizgileri,
       hamDx,
       hamDy,
-      seciliGrupId,
+      orijinalSuruklenenGrupIdleri,
     );
 
   for (const orijinalCizgi of orijinalGrupCizgileri) {
@@ -379,7 +493,39 @@ stage.on("stagemousemove", (event) => {
 /**
  * Mouse bırakıldığında taşıma işlemini bitirir.
  */
-stage.on("stagemouseup", () => {
+stage.on("stagemouseup", (event) => {
+
+  if (kutuSecimiAktif && kutuSecimBaslangici) {
+    const dunyaNoktasi = sahnedenDunyaya(
+      event.stageX,
+      event.stageY,
+    );
+
+    const bulunanGruplar = secimKutusundakiGruplariBul(
+      kutuSecimBaslangici,
+      dunyaNoktasi,
+    );
+
+    setSeciliGrupIdleri(bulunanGruplar);
+
+    if (bulunanGruplar.length === 1) {
+      setSeciliGrupId(bulunanGruplar[0]);
+    } else {
+      setSeciliGrupId(null);  // ← buna dikkat, aşağıdaki 6. maddeye bak
+    }
+
+    kutuSecimiAktif = false;
+    kutuSecimBaslangici = null;
+
+    secimKatmani.graphics.clear();
+
+    ekraniGuncelle();
+    stage.update();
+    silButonunuKonumlandir();
+
+    return;
+  }
+
   if (aktifMod !== "SELECT") return;
   if (!suruklemeAktif) return;
 
@@ -412,26 +558,21 @@ silButonu?.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
 
-  if (!seciliGrupId) return;
+  const silinecekGrupIdleri = aktifSeciliGrupIdleri();
 
-  const silinecekGrup =
-    grupCizgileriniBul(seciliGrupId);
-
-  if (silinecekGrup.length === 0) {
-    secimiTemizle();
-    return;
-  }
+  if (silinecekGrupIdleri.length === 0) return;
 
   // Silme işleminden önce geçmişe kaydet.
   gecmiseKaydet();
 
   const kalanCizgiler = cizgiler.filter(
     (cizgi) =>
-      grupAnahtariAl(cizgi) !== seciliGrupId,
+      !silinecekGrupIdleri.includes(grupAnahtariAl(cizgi)),
   );
 
   setCizgiler(kalanCizgiler);
   setSeciliGrupId(null);
+  setSeciliGrupIdleri([]);
 
   silButonu.classList.add("hidden");
   silButonu.classList.remove("flex");
@@ -445,7 +586,10 @@ silButonu?.addEventListener("click", (event) => {
  */
 window.addEventListener("keydown", (event) => {
   if (aktifMod !== "SELECT") return;
-  if (!seciliGrupId) return;
+
+  const silinecekGrupIdleri = aktifSeciliGrupIdleri();
+
+  if (silinecekGrupIdleri.length === 0) return;
 
   const silmeTusu =
     event.key === "Delete" ||
@@ -468,11 +612,12 @@ window.addEventListener("keydown", (event) => {
 
   const kalanCizgiler = cizgiler.filter(
     (cizgi) =>
-      grupAnahtariAl(cizgi) !== seciliGrupId,
+      !silinecekGrupIdleri.includes(grupAnahtariAl(cizgi)),
   );
 
   setCizgiler(kalanCizgiler);
   setSeciliGrupId(null);
+  setSeciliGrupIdleri([]);
 
   silButonu?.classList.add("hidden");
   silButonu?.classList.remove("flex");
@@ -517,3 +662,52 @@ window.addEventListener("resize", () => {
     silButonunuKonumlandir();
   });
 });
+
+function grupSinirlariniBul(groupId) {
+  const grup = cizgiler.filter(
+    (cizgi) =>
+      (cizgi.groupId ?? cizgi.id) === groupId,
+  );
+
+  if (grup.length === 0) return null;
+
+  const noktalar = grup.flatMap((cizgi) => [
+    { x: cizgi.x1, y: cizgi.y1 },
+    { x: cizgi.x2, y: cizgi.y2 },
+  ]);
+
+  return poligonSinirlari(noktalar);
+}
+
+function secimKutusundakiGruplariBul(
+  baslangic,
+  bitis,
+) {
+  const secimKutusu = {
+    sol: Math.min(baslangic.x, bitis.x),
+    sag: Math.max(baslangic.x, bitis.x),
+    ust: Math.min(baslangic.y, bitis.y),
+    alt: Math.max(baslangic.y, bitis.y),
+  };
+
+  const tumGrupIdleri = [
+    ...new Set(
+      cizgiler.map(
+        (cizgi) => cizgi.groupId ?? cizgi.id,
+      ),
+    ),
+  ];
+
+  return tumGrupIdleri.filter((groupId) => {
+    const grupKutusu =
+      grupSinirlariniBul(groupId);
+
+    return (
+      grupKutusu &&
+      kutularKesisiyorMu(
+        secimKutusu,
+        grupKutusu,
+      )
+    );
+  });
+}

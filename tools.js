@@ -2,6 +2,7 @@ import {
   setAktifMod,
   setMevcutCizim,
   setSeciliGrupId,
+  setSeciliGrupIdleri,
 } from "./state.js";
 
 import {
@@ -30,6 +31,7 @@ export function modDegistir(yeniMod) {
 
   if (yeniMod !== "SELECT") {
     setSeciliGrupId(null);
+    setSeciliGrupIdleri([]); 
 
     const silButonu = document.getElementById("btnDeleteSelected");
 

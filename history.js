@@ -6,6 +6,7 @@ import {
   setRedoStack,
   setMevcutCizim,
   setSeciliGrupId,
+  setSeciliGrupIdleri,
   setAktifCizimGrupId,
 } from "./state.js";
 
@@ -13,9 +14,9 @@ import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { onizlemeKatmani } from "./stage.js";
 
-function yeniId() {
-  return crypto.randomUUID();
-}
+//export function yeniId() {
+//  return crypto.randomUUID();
+//}
 
 export function gecmiseKaydet(durum = cizgiler) {
   undoStack.push(JSON.stringify(durum));
@@ -83,8 +84,10 @@ export function tumunuSil() {
   setCizgiler([]);
 
   // Devam eden çizim ve seçimleri temizle
+  // Devam eden çizim ve seçimleri temizle
   setMevcutCizim(null);
   setSeciliGrupId(null);
+  setSeciliGrupIdleri([]);
   setAktifCizimGrupId(null);
 
   // Önizlemeyi temizle

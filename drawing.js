@@ -9,8 +9,8 @@ import {
 } from "./state.js";
 
 import {
-  canvas,
   stage,
+  viewport,
   onizlemeKatmani,
 } from "./stage.js";
 
@@ -20,12 +20,11 @@ import {
 } from "./snap.js";
 
 import { sahnedenDunyaya } from "./camera.js";
-
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";
 
-// SAĞ TIK: mevcut çizimi iptal et
+// ESC : mevcut çizimi iptal et
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
 
@@ -47,20 +46,22 @@ stage.on("stagemousedown", (e) => {
     e.stageY,
   );
 
-const x = dunyaNoktasi.x;
-const y = dunyaNoktasi.y;
+  const x = dunyaNoktasi.x;
+  const y = dunyaNoktasi.y;
+  const snap = hesaplaSnap(x, y);
 
-const snap = hesaplaSnap(x, y);
-
-  const miknatislandiMi =
-    snap.x !== Math.round(x) ||
-    snap.y !== Math.round(y);
+  const nesneyeMiknatislandiMi =
+  snap.snapTuru === "OBJECT";
 
   if (aktifMod === "LINE") {
-    cizgiModundaTiklama(snap, miknatislandiMi);
-  } else {
-    kutuModundaTiklama(snap);
-  }
+    cizgiModundaTiklama(
+     snap,
+    nesneyeMiknatislandiMi,
+    );
+
+} else {
+   kutuModundaTiklama(snap);
+}
 
   ekraniGuncelle();
 });
@@ -92,7 +93,8 @@ const snap = hesaplaSnap(
   stage.update();
 });
 
-function cizgiModundaTiklama(snap, miknatislandiMi) {
+function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
+
   if (!mevcutCizim) {
     const grupId =
       aktifCizimGrupId ??
@@ -137,19 +139,19 @@ function cizgiModundaTiklama(snap, miknatislandiMi) {
     );
   }
 
-  if (miknatislandiMi) {
-    setMevcutCizim(null);
-    setAktifCizimGrupId(null);
+  if (nesneyeMiknatislandiMi) {
+  setMevcutCizim(null);
+  setAktifCizimGrupId(null);
 
-    onizlemeKatmani.graphics.clear();
-  } else {
-    setMevcutCizim({
-      x1: finalNokta.x,
-      y1: finalNokta.y,
-      x2: finalNokta.x,
-      y2: finalNokta.y,
-    });
-  }
+  onizlemeKatmani.graphics.clear();
+} else {
+  setMevcutCizim({
+    x1: finalNokta.x,
+    y1: finalNokta.y,
+    x2: finalNokta.x,
+    y2: finalNokta.y,
+  });
+}
 
   odalariYenidenHesapla();
 }
@@ -245,20 +247,22 @@ function kutuOnizlemesiniGuncelle(snap) {
   const hedefX = mevcutCizim.startX + rawW;
   const hedefY = mevcutCizim.startY + rawH;
 
+  const esikMesafe = SNAP_MESAFESI / viewport.scaleX;
+
   for (const cizgi of cizgiler) {
-    if (Math.abs(hedefX - cizgi.x1) < SNAP_MESAFESI) {
+    if (Math.abs(hedefX - cizgi.x1) < esikMesafe) {
       rawW = cizgi.x1 - mevcutCizim.startX;
     }
 
-    if (Math.abs(hedefX - cizgi.x2) < SNAP_MESAFESI) {
+    if (Math.abs(hedefX - cizgi.x2) < esikMesafe) {
       rawW = cizgi.x2 - mevcutCizim.startX;
     }
 
-    if (Math.abs(hedefY - cizgi.y1) < SNAP_MESAFESI) {
+    if (Math.abs(hedefY - cizgi.y1) < esikMesafe) {
       rawH = cizgi.y1 - mevcutCizim.startY;
     }
 
-    if (Math.abs(hedefY - cizgi.y2) < SNAP_MESAFESI) {
+    if (Math.abs(hedefY - cizgi.y2) < esikMesafe) {
       rawH = cizgi.y2 - mevcutCizim.startY;
     }
   }

@@ -10,7 +10,7 @@ export let mevcutCizim = null;
 export let aktifCizimGrupId = null;
 export let seciliGrupId = null;
 
-export const SNAP_MESAFESI = 10;
+export const SNAP_MESAFESI = 15;
 
 export function setAktifMod(mod) {
   aktifMod = mod;
@@ -38,13 +38,17 @@ export function setAktifCizimGrupId(grupId) {
 
 export function setSeciliGrupId(grupId) {
   seciliGrupId = grupId;
+
+  if (grupId) {
+    seciliGrupIdleri = [grupId];
+  }
 }
 
 export let gridGorunur = true;
 export let gridSnapAktif = true;
 
 export const GRID_BOYUTU = 25;
-export const GRID_SNAP_EKRAN_MESAFESI = 7;
+export const GRID_SNAP_EKRAN_MESAFESI = 10;
 
 export function setGridGorunur(deger) {
   gridGorunur = deger;
@@ -52,4 +56,12 @@ export function setGridGorunur(deger) {
 
 export function setGridSnapAktif(deger) {
   gridSnapAktif = deger;
+}
+
+export let seciliGrupIdleri = [];
+
+export function setSeciliGrupIdleri(grupIdleri) {
+  seciliGrupIdleri = [
+    ...new Set(grupIdleri.filter(Boolean)),
+  ];
 }
