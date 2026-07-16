@@ -2,6 +2,7 @@ import {
   cizgiler,
   aktifMod,
   setCizgiler,
+  seciliGrupIdleri, // state.js'deki orijinal seçim listemiz
   setSeciliGrupId,
   setSeciliGrupIdleri,
 } from "./state.js";
@@ -11,22 +12,10 @@ import { dunyadanSahneye } from "./camera.js";
 import { gecmiseKaydet } from "./history.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
-import {
-  grupAnahtariAl,
-  grupCizgileriniBul,
-  aktifSeciliGrupIdleri,
-} from "./interaction-selection-helpers.js";
 
 const silButonu = document.getElementById("btnDeleteSelected");
 const canvasWrapper = document.getElementById("canvasWrapper");
 
-/**
- * Canvas'ın gerçek koordinatını, HTML/CSS üzerindeki
- * konuma dönüştürür.
- *
- * Canvas responsive olarak küçülürse silme butonunun
- * doğru yerde görünmesini sağlar.
- */
 function sahneNoktasiniCssNoktasina(stageX, stageY) {
   const canvasRect = canvas.getBoundingClientRect();
   const wrapperRect = canvasWrapper?.getBoundingClientRect();
@@ -35,128 +24,68 @@ function sahneNoktasiniCssNoktasina(stageX, stageY) {
   const cssOranY = canvasRect.height / canvas.height;
 
   return {
-    x:
-      (canvasRect.left -
-        (wrapperRect?.left ?? canvasRect.left)) +
-      stageX * cssOranX,
-
-    y:
-      (canvasRect.top -
-        (wrapperRect?.top ?? canvasRect.top)) +
-      stageY * cssOranY,
+    x: (canvasRect.left - (wrapperRect?.left ?? canvasRect.left)) + stageX * cssOranX,
+    y: (canvasRect.top - (wrapperRect?.top ?? canvasRect.top)) + stageY * cssOranY,
   };
 }
 
 /**
- * Seçili grup(lar)ın toplam sınırlarını hesaplar.
- */
-function grupSinirlariniHesapla(grup) {
-  const xDegerleri = [];
-  const yDegerleri = [];
-
-  for (const cizgi of grup) {
-    xDegerleri.push(cizgi.x1, cizgi.x2);
-    yDegerleri.push(cizgi.y1, cizgi.y2);
-  }
-
-  return {
-    sol: Math.min(...xDegerleri),
-    sag: Math.max(...xDegerleri),
-    ust: Math.min(...yDegerleri),
-    alt: Math.max(...yDegerleri),
-  };
-}
-
-/**
- * Silme butonunu seçili şekil(ler)in sağ üst tarafına taşır.
- * Tekli veya çoklu seçim fark etmeksizin çalışır.
+ * Silme butonunu sadece seçili olan tekil çizginin tam orta noktasına yerleştirir.
  */
 export function silButonunuKonumlandir() {
-  const grupIdleri = aktifSeciliGrupIdleri();
-
-  if (
-    !silButonu ||
-    !canvasWrapper ||
-    grupIdleri.length === 0
-  ) {
+  if (!silButonu || !canvasWrapper || !seciliGrupIdleri || seciliGrupIdleri.length === 0) {
     silButonu?.classList.add("hidden");
     return;
   }
 
-  const grup = grupIdleri.flatMap((grupId) =>
-    grupCizgileriniBul(grupId),
-  );
+  // Seçili olan çizgi ID'sini doğrudan alıyoruz
+  const seciliCizgiId = seciliGrupIdleri[0];
+  const seciliCizgi = cizgiler.find(c => c.id === seciliCizgiId);
 
-  if (grup.length === 0) {
+  if (!seciliCizgi) {
     silButonu.classList.add("hidden");
     return;
   }
 
-  const sinirlar = grupSinirlariniHesapla(grup);
+  // Çizginin tam orta noktasını hesapla
+  const ortaX = (seciliCizgi.x1 + seciliCizgi.x2) / 2;
+  const ortaY = (seciliCizgi.y1 + seciliCizgi.y2) / 2;
 
-  // Dünya koordinatını EaselJS stage koordinatına çevir
-  const sahneNoktasi = dunyadanSahneye(
-    sinirlar.sag,
-    sinirlar.ust,
-  );
-
-  // EaselJS koordinatını CSS koordinatına çevir
-  const cssNoktasi = sahneNoktasiniCssNoktasina(
-    sahneNoktasi.x,
-    sahneNoktasi.y,
-  );
+  // Koordinatları ekrana izdüşür
+  const sahneNoktasi = dunyadanSahneye(ortaX, ortaY);
+  const cssNoktasi = sahneNoktasiniCssNoktasina(sahneNoktasi.x, sahneNoktasi.y);
 
   const butonGenisligi = silButonu.offsetWidth || 36;
   const butonYuksekligi = silButonu.offsetHeight || 36;
   const wrapperGenisligi = canvasWrapper.clientWidth;
   const wrapperYuksekligi = canvasWrapper.clientHeight;
 
-  let left = cssNoktasi.x + 10;
-  let top = cssNoktasi.y - butonYuksekligi - 8;
+  let left = cssNoktasi.x - (butonGenisligi / 2);
+  let top = cssNoktasi.y - butonYuksekligi - 12; // Çizginin hemen üstü
 
-  // Buton wrapper dışına çıkmasın.
-  left = Math.max(
-    4,
-    Math.min(
-      left,
-      wrapperGenisligi - butonGenisligi - 4,
-    ),
-  );
-
-  top = Math.max(
-    4,
-    Math.min(
-      top,
-      wrapperYuksekligi - butonYuksekligi - 4,
-    ),
-  );
+  left = Math.max(4, Math.min(left, wrapperGenisligi - butonGenisligi - 4));
+  top = Math.max(4, Math.min(top, wrapperYuksekligi - butonYuksekligi - 4));
 
   silButonu.style.left = `${left}px`;
   silButonu.style.top = `${top}px`;
 
   silButonu.classList.remove("hidden");
-
-  // Tailwind içinde başlangıçta hidden kullanıldığı için,
-  // görünürken flex yapıyoruz.
   silButonu.classList.add("flex");
 }
 
 /**
- * Şu an seçili olan grup(lar)ı (tekli veya kutu seçimle
- * çoklu) siler.
+ * DÜZELTİLDİ: Seçilen tekil çizgiyi grup süzgecine takılmadan doğrudan ID bazlı siler.
  */
 function silSeciliGruplari() {
-  const silinecekler = aktifSeciliGrupIdleri();
+  if (!seciliGrupIdleri || seciliGrupIdleri.length === 0) return;
 
-  if (silinecekler.length === 0) return;
+  // Grup kimlik yardımcılarını tamamen devre dışı bırakıp doğrudan ham ID setini alıyoruz
+  const silinecekIdler = new Set(seciliGrupIdleri);
 
-  // Silme işleminden önce geçmişe kaydet.
   gecmiseKaydet();
 
-  const kalanCizgiler = cizgiler.filter(
-    (cizgi) =>
-      !silinecekler.includes(grupAnahtariAl(cizgi)),
-  );
+  // Sahnedeki çizgileri tara, sadece seçilen ID'ye/ID'lere sahip olanları listeden ayıkla
+  const kalanCizgiler = cizgiler.filter(cizgi => !silinecekIdler.has(cizgi.id));
 
   setCizgiler(kalanCizgiler);
   setSeciliGrupId(null);
@@ -169,75 +98,28 @@ function silSeciliGruplari() {
   ekraniGuncelle();
 }
 
-/**
- * Seçili şeklin yanındaki çöp kutusu butonu.
- */
 silButonu?.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
-
   silSeciliGruplari();
 });
 
-/**
- * Delete veya Backspace tuşuyla seçili şekli/şekilleri sil.
- */
 window.addEventListener("keydown", (event) => {
   if (aktifMod !== "SELECT") return;
-  if (aktifSeciliGrupIdleri().length === 0) return;
+  if (!seciliGrupIdleri || seciliGrupIdleri.length === 0) return;
 
-  const silmeTusu =
-    event.key === "Delete" ||
-    event.key === "Backspace";
-
+  const silmeTusu = event.key === "Delete" || event.key === "Backspace";
   if (!silmeTusu) return;
 
-  // Input veya textarea içindeyken Backspace normal çalışsın.
   const aktifElement = document.activeElement;
-
-  const metinAlaniAktif =
-    aktifElement instanceof HTMLInputElement ||
-    aktifElement instanceof HTMLTextAreaElement;
-
-  if (metinAlaniAktif) return;
+  if (aktifElement instanceof HTMLInputElement || aktifElement instanceof HTMLTextAreaElement) return;
 
   event.preventDefault();
-
   silSeciliGruplari();
 });
 
-/**
- * Zoom yapıldığında silme butonunun konumunu yenile.
- *
- * camera.js içindeki wheel listener önce viewport'u
- * değiştirir; ardından bu listener butonu günceller.
- */
-canvas.addEventListener("wheel", () => {
-  requestAnimationFrame(() => {
-    silButonunuKonumlandir();
-  });
-});
-
-/**
- * Sağ tuşla pan yapılırken silme butonu da
- * seçili şekille birlikte ekranda hareket etsin.
- */
+canvas.addEventListener("wheel", () => { requestAnimationFrame(() => { silButonunuKonumlandir(); }); });
 canvas.addEventListener("pointermove", (event) => {
-  const sagTusBasili = (event.buttons & 2) === 2;
-
-  if (!sagTusBasili) return;
-
-  requestAnimationFrame(() => {
-    silButonunuKonumlandir();
-  });
+  if ((event.buttons & 2) === 2) { requestAnimationFrame(() => { silButonunuKonumlandir(); }); }
 });
-
-/**
- * Pencere yeniden boyutlandırıldığında responsive
- * canvas oranı değişebilir. Butonu yeniden konumlandır.
- */
-window.addEventListener("resize", () => {
-  requestAnimationFrame(() => {
-    silButonunuKonumlandir();
-  });
-});
+window.addEventListener("resize", () => { requestAnimationFrame(() => { silButonunuKonumlandir(); }); });
