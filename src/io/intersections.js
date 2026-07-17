@@ -1,7 +1,7 @@
 import {
   cizgiler,
   setCizgiler,
-} from "./state.js";
+} from "../core/state.js";
 
 const KESISIM_TOLERANSI = 0.001;
 const MINIMUM_CIZGI_UZUNLUGU = 0.01;

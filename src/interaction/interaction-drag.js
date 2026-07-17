@@ -14,7 +14,7 @@ import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 
 import {
   kesisimleriKoseyeDonustur,
-} from "../drawing/intersections.js";
+} from "../io/intersections.js";
 
 
 const BAGLANTI_TOLERANSI = 0.01;

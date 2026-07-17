@@ -21,9 +21,9 @@ import {
 
 import {
   kesisimleriKoseyeDonustur,
-} from "./intersections.js";
+} from "../io/intersections.js";
 
-import { sahnedenDunyaya } from "./camera.js";
+import { sahnedenDunyaya } from "../camera/camera.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";
