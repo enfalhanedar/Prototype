@@ -7,7 +7,7 @@ import {
   hoverCizgiId,      // Üzerine gelinen tekil çizginin ID'si
   hoverKoseNoktasi,  // Üzerine gelinen köşenin koordinatı
   PIXEL_PER_METRE,
-} from "./state.js";
+} from "../core/state.js";
 
 import {
   stage,
@@ -15,7 +15,7 @@ import {
   odaKatmani,
   cizgiKatmani,
   etiketKatmani,
-} from "./stage.js";
+} from "../core/stage.js";
 
 
 // Uzunluk etiketi ekranda çizgiden bu kadar piksel uzağa yazılır.

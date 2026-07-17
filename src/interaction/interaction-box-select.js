@@ -2,20 +2,20 @@ import {
   cizgiler,
   setSeciliGrupId,
   setSeciliGrupIdleri,
-} from "./state.js";
+} from "../core/state.js";
 
 import {
   stage,
   viewport,
   secimKatmani,
-} from "./stage.js";
+} from "../core/stage.js";
 
 import {
   poligonSinirlari,
   kutularKesisiyorMu,
-} from "./geometry.js";
+} from "../geometry/geometry.js";
 
-import { ekraniGuncelle } from "./render.js";
+import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 
 export let kutuSecimiAktif = false;

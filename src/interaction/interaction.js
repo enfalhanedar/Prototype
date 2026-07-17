@@ -1,6 +1,6 @@
-import { aktifMod, cizgiler } from "./state.js";
-import { stage, viewport } from "./stage.js";
-import { sahnedenDunyaya } from "./camera.js";
+import { aktifMod, cizgiler } from "../core/state.js";
+import { stage, viewport } from "../core/stage.js";
+import { sahnedenDunyaya } from "../camera/camera.js";
 
 import { grupAnahtariAl } from "./interaction-selection-helpers.js";
 import { tiklananCizgiyiBul, tiklananOdayiBul } from "./interaction-select.js";

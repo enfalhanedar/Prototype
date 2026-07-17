@@ -6,20 +6,20 @@ import {
   SNAP_MESAFESI,
   setMevcutCizim,
   setAktifCizimGrupId,
-} from "./state.js";
+} from "../core/state.js";
 
 import {
   stage,
   viewport,
   onizlemeKatmani,
-} from "./stage.js";
+} from "../core/stage.js";
 
 import {
   hesaplaSnap,
   aciyaKilitle,
-} from "./snap.js";
+} from "../geometry/snap.js";
 
-import { sahnedenDunyaya } from "./camera.js";
+import { sahnedenDunyaya } from "../camera/camera.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";

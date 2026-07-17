@@ -1,9 +1,9 @@
 import {
   cizgiler,
   SNAP_MESAFESI,
-} from "./state.js";
+} from "../core/state.js";
 
-import { viewport } from "./stage.js";
+import { viewport } from "../core/stage.js";
 import { gridNoktasinaSnap } from "./grid.js";
 
 

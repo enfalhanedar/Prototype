@@ -8,11 +8,11 @@ import {
   setSeciliGrupId,
   setSeciliGrupIdleri,
   setAktifCizimGrupId,
-} from "./state.js";
+} from "../core/state.js";
 
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
-import { onizlemeKatmani } from "./stage.js";
+import { onizlemeKatmani } from "../core/stage.js";
 
 export function gecmiseKaydet(durum = cizgiler) {
   undoStack.push(JSON.stringify(durum));

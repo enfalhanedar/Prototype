@@ -11,7 +11,7 @@ yazılmış küçük bir prototiptir.
 - **Çizim araçları:** Çizgi, dikdörtgen, kare — sol paneldeki araç
   butonlarından seçilir.
 - **Mıknatıslama (snap):** Fare, mevcut çizgi köşelerine/kenarlarına veya
-  grid'e otomatik yapışır (`snap.js`, `grid.js`).
+  grid'e otomatik yapışır (`src/geometry/snap.js`, `src/geometry/grid.js`).
 - **Açı kilidi:** Çizgi çizerken açı varsayılan olarak en yakın 45°'nin
   katına kilitlenir; **Shift** basılıyken serbest açıda çizilebilir.
 - **Seç ve taşı:** Çizgileri, grupları (kapalı şekilleri) veya tek bir köşeyi
@@ -22,7 +22,7 @@ yazılmış küçük bir prototiptir.
   gelirse, o çizgi otomatik olarak ikiye bölünür (duvarların birleşim
   noktalarının doğru davranması için).
 - **Oda algılama:** Kapalı çizgi döngüleri otomatik olarak "oda" olarak
-  tanınır ve içi renkli dolgu ile gösterilir (`rooms.js`).
+  tanınır ve içi renkli dolgu ile gösterilir (`src/drawing/rooms.js`).
 - **Uzunluk etiketleri:** Her çizginin üstünde, metre cinsinden uzunluğu
   gösterilir; zoom seviyesinden bağımsız olarak hep aynı boyutta kalır.
 - **Zoom / Pan:** Fare tekerleği ile yakınlaştır/uzaklaştır (imlecin altındaki
@@ -32,7 +32,7 @@ yazılmış küçük bir prototiptir.
 - **Geri al / ileri al / tümünü sil.**
 - **JSON olarak dışa aktar:** Sol paneldeki "⬇ JSON Olarak Dışa Aktar"
   butonu, mevcut çizgi listesini `webcad-plan-<tarih>.json` adıyla indirir
-  (`export.js`).
+  (`src/io/export.js`).
 - **Silme:** Seçili şekil(ler) `Delete`/`Backspace` tuşuyla veya seçili
   şeklin yanında beliren çöp kutusu butonuyla silinir.
 - **Esc:** Yarım kalan çizimi iptal eder.
@@ -56,28 +56,40 @@ dosyaları olduğu gibi servis eden bir statik sunucudur.)
 
 ## Proje Yapısı
 
-| Dosya | Sorumluluk |
-|-------|------------|
-| `app.js` | Giriş noktası — tüm modülleri yükler, ilk grid çizimini tetikler |
-| `stage.js` | EaselJS stage/canvas/katman (layer) kurulumu |
-| `state.js` | Uygulamanın tüm paylaşılan durumu (çizgiler, odalar, seçim, hover, mod) |
-| `tools.js` | Araç çubuğu (Seç/Çizgi/Dikdörtgen/Kare) mod geçişleri |
-| `drawing.js` | Çizgi/dikdörtgen/kare çizim akışı (tıklama → önizleme → tamamlama) |
-| `camera.js` | Zoom ve pan (viewport dönüşümleri) |
-| `grid.js` | Grid çizimi, grid'e snap, grid görünürlük/snap butonları |
-| `snap.js` | Nesneye/kenara snap hesaplamaları, açı kilidi, grup taşıma snap'i |
-| `geometry.js` | Saf geometri yardımcıları (poligon alanı, nokta-poligon testi, kutu kesişimi) |
-| `rooms.js` | Çizgi gruplarından kapalı poligon ("oda") çıkarımı |
-| `render.js` | Sahnenin (odalar, çizgiler, köşeler, uzunluk etiketleri) yeniden çizimi |
-| `history.js` | Undo/redo yığınları, çizgi ekleme, otomatik çizgi bölme |
-| `export.js` | Mevcut çizimi JSON dosyası olarak indirme |
-| `interaction.js` | SELECT dışı modlarda fare olayları (çizim başlat/bitir) |
-| `interaction-select.js` | Tıklanan çizgi/oda bulma |
-| `interaction-drag.js` | Grup veya köşe sürükleme mantığı |
-| `interaction-box-select.js` | Kutu ile çoklu seçim |
-| `interaction-hover.js` | Hover (üzerine gelme) durumu ve görsel geri bildirim |
-| `interaction-delete-button.js` | Seçili şeklin yanındaki silme butonunun konumlandırılması ve silme |
-| `interaction-selection-helpers.js` | Seçim durumuyla ilgili küçük ortak yardımcılar |
+Uygulama kodu `src/` altında sorumluluğa göre klasörlere ayrılmıştır; `index.html`
+ve `style.css` statik giriş dosyaları olarak proje kökünde kalır.
+
+```
+src/
+  app.js                  — Giriş noktası: tüm modülleri yükler, ilk grid çizimini tetikler
+  core/
+    state.js              — Uygulamanın tüm paylaşılan durumu (çizgiler, odalar, seçim, hover, mod)
+    stage.js              — EaselJS stage/canvas/katman (layer) kurulumu
+    tools.js              — Araç çubuğu (Seç/Çizgi/Dikdörtgen/Kare) mod geçişleri
+  geometry/
+    geometry.js           — Saf geometri yardımcıları (poligon alanı, nokta-poligon testi, kutu kesişimi)
+    grid.js               — Grid çizimi, grid'e snap, grid görünürlük/snap butonları
+    snap.js               — Nesneye/kenara snap hesaplamaları, açı kilidi, grup taşıma snap'i
+  drawing/
+    drawing.js            — Çizgi/dikdörtgen/kare çizim akışı (tıklama → önizleme → tamamlama)
+    rooms.js              — Çizgi gruplarından kapalı poligon ("oda") çıkarımı
+    history.js            — Undo/redo yığınları, çizgi ekleme, otomatik çizgi bölme
+    render.js             — Sahnenin (odalar, çizgiler, köşeler, uzunluk etiketleri) yeniden çizimi
+  camera/
+    camera.js             — Zoom ve pan (viewport dönüşümleri)
+  interaction/
+    interaction.js               — SELECT dışı modlarda fare olayları (çizim başlat/bitir)
+    interaction-select.js        — Tıklanan çizgi/oda bulma
+    interaction-drag.js          — Grup veya köşe sürükleme mantığı
+    interaction-box-select.js    — Kutu ile çoklu seçim
+    interaction-hover.js         — Hover (üzerine gelme) durumu ve görsel geri bildirim
+    interaction-delete-button.js — Seçili şeklin yanındaki silme butonunun konumlandırılması ve silme
+    interaction-selection-helpers.js — Seçim durumuyla ilgili küçük ortak yardımcılar
+  io/
+    export.js             — Mevcut çizimi JSON dosyası olarak indirme
+index.html
+style.css
+```
 
 ## Teknolojiler
 

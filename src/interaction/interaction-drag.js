@@ -1,13 +1,13 @@
-import { 
-  cizgiler, 
+import {
+  cizgiler,
   setSeciliGrupId,
   setHoverKoseNoktasi
-} from "./state.js";
-import { canvas, viewport } from "./stage.js";
-import { hesaplaGrupTasimaSnap, hesaplaSnap } from "./snap.js";
-import { gecmiseKaydet, dinamikBolmeUygula } from "./history.js";
-import { odalariYenidenHesapla } from "./rooms.js";
-import { ekraniGuncelle } from "./render.js";
+} from "../core/state.js";
+import { canvas, viewport } from "../core/stage.js";
+import { hesaplaGrupTasimaSnap, hesaplaSnap } from "../geometry/snap.js";
+import { gecmiseKaydet, dinamikBolmeUygula } from "../drawing/history.js";
+import { odalariYenidenHesapla } from "../drawing/rooms.js";
+import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 import {
   grupCizgileriniBul,

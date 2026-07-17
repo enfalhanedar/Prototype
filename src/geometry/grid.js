@@ -5,14 +5,14 @@ import {
   GRID_SNAP_EKRAN_MESAFESI,
   setGridGorunur,
   setGridSnapAktif,
-} from "./state.js";
+} from "../core/state.js";
 
 import {
   canvas,
   stage,
   viewport,
   gridKatmani,
-} from "./stage.js";
+} from "../core/stage.js";
 
 // Büyük grid çizgisi, küçük grid çizgisinin kaç katında bir çizilsin.
 const BUYUK_GRID_ARALIGI = 10;

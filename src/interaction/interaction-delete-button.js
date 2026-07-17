@@ -4,13 +4,13 @@ import {
   setCizgiler,
   setSeciliGrupId,
   setSeciliGrupIdleri,
-} from "./state.js";
+} from "../core/state.js";
 
-import { canvas } from "./stage.js";
-import { dunyadanSahneye } from "./camera.js";
-import { gecmiseKaydet } from "./history.js";
-import { odalariYenidenHesapla } from "./rooms.js";
-import { ekraniGuncelle } from "./render.js";
+import { canvas } from "../core/stage.js";
+import { dunyadanSahneye } from "../camera/camera.js";
+import { gecmiseKaydet } from "../drawing/history.js";
+import { odalariYenidenHesapla } from "../drawing/rooms.js";
+import { ekraniGuncelle } from "../drawing/render.js";
 import {
   grupAnahtariAl,
   grupCizgileriniBul,

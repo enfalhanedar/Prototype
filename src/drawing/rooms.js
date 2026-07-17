@@ -1,13 +1,13 @@
 import {
   cizgiler,
   setOdalar,
-} from "./state.js";
+} from "../core/state.js";
 
 import {
   noktalarEsitMi,
   poligonAlani,
   poligonSinirlari,
-} from "./geometry.js";
+} from "../geometry/geometry.js";
 
 function gruplariOlustur() {
   const gruplar = new Map();

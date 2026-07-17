@@ -1,12 +1,12 @@
-import { 
-  cizgiler, 
-  setHoverGrupId, 
-  setHoverCizgiId, 
-  setHoverKoseNoktasi 
-} from "./state.js";
-import { viewport } from "./stage.js";
+import {
+  cizgiler,
+  setHoverGrupId,
+  setHoverCizgiId,
+  setHoverKoseNoktasi
+} from "../core/state.js";
+import { viewport } from "../core/stage.js";
 import { tiklananCizgiyiBul } from "./interaction-select.js";
-import { ekraniGuncelle } from "./render.js";
+import { ekraniGuncelle } from "../drawing/render.js";
 
 /**
  * Mouse hareket ederken hover durumundaki köşe ve çizgiyi günceller.

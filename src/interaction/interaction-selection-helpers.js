@@ -2,7 +2,7 @@ import {
   cizgiler,
   seciliGrupId,
   seciliGrupIdleri,
-} from "./state.js";
+} from "../core/state.js";
 
 /**
  * Bir çizginin hangi gruba ait olduğunu döndürür.

@@ -1,4 +1,4 @@
-import { cizgiler } from "./state.js";
+import { cizgiler } from "../core/state.js";
 
 const JSON_SURUM = 1;
 

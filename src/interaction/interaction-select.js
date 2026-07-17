@@ -1,7 +1,7 @@
-import { cizgiler, odalar } from "./state.js";
-import { viewport } from "./stage.js";
-import { noktaPoligonIcinde } from "./geometry.js";
-import { cizgiUzerindeEnYakinNokta } from "./snap.js";
+import { cizgiler, odalar } from "../core/state.js";
+import { viewport } from "../core/stage.js";
+import { noktaPoligonIcinde } from "../geometry/geometry.js";
+import { cizgiUzerindeEnYakinNokta } from "../geometry/snap.js";
 
 // Seçim mesafesi ekran pikseli cinsindendir.
 // Zoom yapılsa bile çizgiye tıklama kolaylığı yaklaşık aynı kalır.

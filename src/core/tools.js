@@ -10,7 +10,7 @@ import {
   onizlemeKatmani,
 } from "./stage.js";
 
-import { hoverTemizle } from "./interaction-hover.js";
+import { hoverTemizle } from "../interaction/interaction-hover.js";
 
 const tools = {
   SELECT: document.getElementById("toolSelect"),

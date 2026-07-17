@@ -2,10 +2,10 @@ import {
   canvas,
   stage,
   viewport,
-} from "./stage.js";
+} from "../core/stage.js";
 
-import { gridiCiz } from "./grid.js";
-import { ekraniGuncelle } from "./render.js";
+import { gridiCiz } from "../geometry/grid.js";
+import { ekraniGuncelle } from "../drawing/render.js";
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 6;
