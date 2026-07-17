@@ -1,4 +1,10 @@
-import { aktifMod, cizgiler } from "../core/state.js";
+import {
+  aktifMod,
+  cizgiler,
+  setSeciliGrupId,
+  setSeciliGrupIdleri,
+} from "../core/state.js";
+
 import { stage, viewport } from "../core/stage.js";
 import { sahnedenDunyaya } from "../camera/camera.js";
 
