@@ -1,5 +1,5 @@
-import { aktifMod, cizgiler } from "./state.js"; // cizgiler eklendi
-import { stage, viewport } from "./stage.js"; // viewport eklendi
+import { aktifMod, cizgiler } from "./state.js";
+import { stage, viewport } from "./stage.js";
 import { sahnedenDunyaya } from "./camera.js";
 
 import { grupAnahtariAl } from "./interaction-selection-helpers.js";
@@ -7,7 +7,7 @@ import { tiklananCizgiyiBul, tiklananOdayiBul } from "./interaction-select.js";
 
 import {
   grupSecVeSuruklemeyeHazirla,
-  koseSuruklemeyeHazirla, // interaction-drag'e eklediğimiz yeni fonksiyon
+  koseSuruklemeyeHazirla,
   suruklemeyiTasi,
   suruklemeyiBitir,
   suruklemeAktifMi,

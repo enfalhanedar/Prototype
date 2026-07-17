@@ -4,8 +4,8 @@ import {
   seciliGrupId,
   seciliGrupIdleri,
   hoverGrupId,
-  hoverCizgiId,      // YENİ: Tekil çizgi hover state'i
-  hoverKoseNoktasi,  // YENİ: Köşe hover state'i
+  hoverCizgiId,      // Üzerine gelinen tekil çizginin ID'si
+  hoverKoseNoktasi,  // Üzerine gelinen köşenin koordinatı
   PIXEL_PER_METRE,
 } from "./state.js";
 
@@ -79,13 +79,12 @@ function uzunlukEtiketiOlustur(cizgi, renk) {
   return metin;
 }
 
-// 2. EKRANI GÜNCELLEME (EASELJS TARZI)
 export function ekraniGuncelle() {
   odaKatmani.graphics.clear();
   cizgiKatmani.graphics.clear();
   etiketKatmani.removeAllChildren();
 
-  // 1. ODALARI ÇİZ (Aynı kalıyor)
+  // Odalar
   odalar.forEach((oda) => {
     if (!oda.noktalar || oda.noktalar.length < 3) return;
     const ilkNokta = oda.noktalar[0];
@@ -100,24 +99,22 @@ export function ekraniGuncelle() {
     odaKatmani.graphics.lineTo(ilkNokta.x, ilkNokta.y).endFill();
   });
 
-  // Çizgileri ve köşelerdeki kırmızı daireleri EaselJS ile çiziyoruz
-  // Önce bütün çizgileri çiz (ve uzunluk etiketlerini ekle)
-// 2. ÇİZGİLERİ ÇİZ
+  // Çizgiler (ve uzunluk etiketleri). Hover rengi tüm gruba değil,
+  // sadece mouse altındaki tekil çizgiye uygulanır.
   cizgiler.forEach((cizgi) => {
     const grupId = cizgi.groupId ?? cizgi.id;
 
     const secili = grupId === seciliGrupId || seciliGrupIdleri.includes(grupId);
 
-    // DEĞİŞİKLİK: Bütün grup değil, sadece mouse altındaki tekil çizgi hover rengini alsın
-    const hoverMi = !secili && cizgi.id === hoverCizgiId; 
+    const hoverMi = !secili && cizgi.id === hoverCizgiId;
 
     const cizgiKalinligi = secili ? 10 : hoverMi ? 9 : 8;
 
     const cizgiRengi = secili
-      ? "#ef4444"      // Seçili çizgiler kırmızı[cite: 2]
+      ? "#ef4444"      // Seçili çizgiler kırmızı
       : hoverMi
-        ? "#a78bfa"    // Hover durumundaki tek çizgi açık mor[cite: 2]
-        : "#9a44ef";   // Normal çizgiler koyu mor[cite: 2]
+        ? "#a78bfa"    // Hover durumundaki tek çizgi açık mor
+        : "#9a44ef";   // Normal çizgiler koyu mor
 
     cizgiKatmani.graphics
       .beginStroke(cizgiRengi)
@@ -133,7 +130,7 @@ export function ekraniGuncelle() {
     }
   });
 
-  // 3. KÖŞELERİ ÇİZ
+  // Köşeler
   const cizilenKoseler = new Set();
   const TOLERANS = 1e-3;
 
@@ -158,16 +155,15 @@ export function ekraniGuncelle() {
       const koseYaricapi = secili ? 5 : koseHoverMi ? 6 : 4;
       const koseRengi = secili ? "#ef4444" : koseHoverMi ? "#a78bfa" : "#9a44ef";
 
-      // Ana dış daireyi çiz[cite: 2]
       cizgiKatmani.graphics
         .beginFill(koseRengi)
         .drawCircle(nokta.x, nokta.y, koseYaricapi)
         .endFill();
 
-      // DEĞİŞİKLİK: Eğer köşenin üzerindeysek içine farklı renkte (örn: Beyaz veya Koyu Mor) ekstra bir yuvarlak çiz
+      // Hover'daki köşenin içine, ayırt edilsin diye beyaz bir iç benek çiz.
       if (koseHoverMi) {
-        const icYaricap = 2.5; 
-        const icRenk = "#ffffff"; // Köşe hover iken içindeki benek beyaz olsun (veya dilediğin renk)
+        const icYaricap = 2.5;
+        const icRenk = "#ffffff";
 
         cizgiKatmani.graphics
           .beginFill(icRenk)

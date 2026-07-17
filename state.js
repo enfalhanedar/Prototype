@@ -13,8 +13,8 @@ export let seciliGrupId = null;
 export const SNAP_MESAFESI = 15;
 
 export let hoverGrupId = null;
-export let hoverCizgiId = null;   // YENİ: Üzerine gelinen tekil çizginin ID'si
-export let hoverKoseNoktasi = null; // YENİ: Üzerine gelinen köşenin koordinatı { x, y }
+export let hoverCizgiId = null;   // Üzerine gelinen tekil çizginin ID'si
+export let hoverKoseNoktasi = null; // Üzerine gelinen köşenin koordinatı { x, y }
 
 export function setAktifMod(mod) {
   aktifMod = mod;
@@ -80,12 +80,10 @@ export function setHoverGrupId(grupId) {
 }
 
 
-// YENİ: Tekil çizgi hover setter'ı
 export function setHoverCizgiId(cizgiId) {
   hoverCizgiId = cizgiId;
 }
 
-// YENİ: Köşe hover setter'ı
 export function setHoverKoseNoktasi(nokta) {
   hoverKoseNoktasi = nokta;
 }

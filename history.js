@@ -130,7 +130,6 @@ export function cizgiEkle(
   dinamikBolmeUygula();
 }
 
-// btnUndo, btnRedo, tumunuSil fonksiyonları tamamen aynı kalıyor...
 document.getElementById("btnUndo").addEventListener("click", () => {
   if (undoStack.length === 0) return;
 

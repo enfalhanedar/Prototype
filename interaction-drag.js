@@ -5,7 +5,7 @@ import {
 } from "./state.js";
 import { canvas, viewport } from "./stage.js";
 import { hesaplaGrupTasimaSnap, hesaplaSnap } from "./snap.js";
-import { gecmiseKaydet, dinamikBolmeUygula } from "./history.js"; // dinamikBolmeUygula eklendi
+import { gecmiseKaydet, dinamikBolmeUygula } from "./history.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
