@@ -194,7 +194,7 @@ function exportJSON(data) {
 }
 
 // Butona tıklama olayı (Event Listener) ekle
-document.getElementById("exportBtn").addEventListener("click", () => {
+document.getElementById("btnExportJson").addEventListener("click", () => {
     // cizgiler değişkeninin adından emin olmalısın. 
     // Konsoldaki 'cizgiler' dizisini buraya parametre olarak gönderiyoruz.
     if (typeof cizgiler !== 'undefined' && cizgiler.length > 0) {
