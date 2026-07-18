@@ -1,17 +1,24 @@
 import {
   aktifMod,
   cizgiler,
-  setSeciliGrupId,
-  setSeciliGrupIdleri,
+  seciliCizgiIdleri,
+  setSeciliCizgiIdleri,
 } from "../core/state.js";
 
-import { stage, viewport } from "../core/stage.js";
+import {
+  stage,
+  viewport,
+} from "../core/stage.js";
+
 import { sahnedenDunyaya } from "../camera/camera.js";
 
-import { tiklananCizgiyiBul, tiklananOdayiBul } from "./interaction-select.js";
+import {
+  tiklananCizgiyiBul,
+  tiklananOdayiBul,
+} from "./interaction-select.js";
 
 import {
-  grupSecVeSuruklemeyeHazirla,
+  cizgileriSuruklemeyeHazirla,
   koseSuruklemeyeHazirla,
   suruklemeyiTasi,
   suruklemeyiBitir,
@@ -25,39 +32,50 @@ import {
   kutuSecimBitir,
 } from "./interaction-box-select.js";
 
+import {
+  odaCizgiIdleriniBul,
+} from "./interaction-selection-helpers.js";
 
-import { hoverGuncelle, hoverTemizle } from "./interaction-hover.js";
+import {
+  hoverGuncelle,
+  hoverTemizle,
+} from "./interaction-hover.js";
 
-// Sil butonu, keydown/resize/wheel dinleyicilerini kendi
-// içinde kaydeder; burada sadece side-effect olarak
-// yüklenmesi yeterli.
 import "./interaction-delete-button.js";
 
-/**
- * Tıklanan dünya koordinatında bir köşe (çizgi ucu) olup olmadığını kontrol eder.
- * Tıklama önceliğinde 1. sıradadır.
- */
 function tiklananKoseyiBul(dunyaNoktasi) {
-  const TIKLAMA_TOLERANSI = 10 / viewport.scaleX; 
+  const tiklamaToleransi =
+    10 / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
-    const d1 = Math.hypot(cizgi.x1 - dunyaNoktasi.x, cizgi.y1 - dunyaNoktasi.y);
-    if (d1 < TIKLAMA_TOLERANSI) {
-      return { x: cizgi.x1, y: cizgi.y1 };
+    const birinciUcMesafesi = Math.hypot(
+      cizgi.x1 - dunyaNoktasi.x,
+      cizgi.y1 - dunyaNoktasi.y,
+    );
+
+    if (birinciUcMesafesi < tiklamaToleransi) {
+      return {
+        x: cizgi.x1,
+        y: cizgi.y1,
+      };
     }
 
-    const d2 = Math.hypot(cizgi.x2 - dunyaNoktasi.x, cizgi.y2 - dunyaNoktasi.y);
-    if (d2 < TIKLAMA_TOLERANSI) {
-      return { x: cizgi.x2, y: cizgi.y2 };
+    const ikinciUcMesafesi = Math.hypot(
+      cizgi.x2 - dunyaNoktasi.x,
+      cizgi.y2 - dunyaNoktasi.y,
+    );
+
+    if (ikinciUcMesafesi < tiklamaToleransi) {
+      return {
+        x: cizgi.x2,
+        y: cizgi.y2,
+      };
     }
   }
+
   return null;
 }
 
-/**
- * Sol tuşa basıldığında: önce köşeye tıklanıp tıklanmadığına bakar,
- * bir çizgiye tıklanmışsa SADECE O TEKİL kenarı seçer ve silme butonunu tetikler.
- */
 stage.on("stagemousedown", (event) => {
   if (aktifMod !== "SELECT") return;
   if (event.nativeEvent.button !== 0) return;
@@ -69,45 +87,62 @@ stage.on("stagemousedown", (event) => {
     event.stageY,
   );
 
-  // --- ÖNCELİK 1: KÖŞE KONTROLÜ ---
-  const tiklananKose = tiklananKoseyiBul(dunyaNoktasi);
+  const tiklananKose =
+    tiklananKoseyiBul(dunyaNoktasi);
+
   if (tiklananKose) {
     koseSuruklemeyeHazirla(tiklananKose);
     return;
   }
 
-  // --- ÖNCELİK 2: ÇİZGİ GÖVDESİ KONTROLÜ ---
   const tiklananCizgi = tiklananCizgiyiBul(
     dunyaNoktasi.x,
     dunyaNoktasi.y,
   );
 
   if (tiklananCizgi) {
-    // KRİTİK DEĞİŞİKLİK: Grup mantığını ezip geçiyoruz. 
-    // Seçim listelerine grup ID'si yerine çizginin kendi özgün ID'sini kaydediyoruz.
-    setSeciliGrupId(null);
-    setSeciliGrupIdleri([tiklananCizgi.id]); 
+    const zatenSecili =
+      seciliCizgiIdleri.includes(
+        tiklananCizgi.id,
+      );
 
-    // Sürükleme ve silme butonunun konumlanması için çizgi ID'sini gönderiyoruz
-    grupSecVeSuruklemeyeHazirla(tiklananCizgi.id, dunyaNoktasi);
+    const tasinacakIdler = zatenSecili
+      ? seciliCizgiIdleri
+      : [tiklananCizgi.id];
+
+    if (!zatenSecili) {
+      setSeciliCizgiIdleri(tasinacakIdler);
+    }
+
+    cizgileriSuruklemeyeHazirla(
+      tasinacakIdler,
+      dunyaNoktasi,
+    );
+
     return;
   }
 
-  // --- ÖNCELİK 3: ODA İÇİ KONTROLÜ ---
   const tiklananOda = tiklananOdayiBul(
     dunyaNoktasi.x,
     dunyaNoktasi.y,
   );
 
   if (tiklananOda) {
-    grupSecVeSuruklemeyeHazirla(
-      tiklananOda.groupId,
-      dunyaNoktasi,
-    );
-    return;
+    const odaCizgiIdleri =
+      odaCizgiIdleriniBul(tiklananOda);
+
+    if (odaCizgiIdleri.length > 0) {
+      setSeciliCizgiIdleri(odaCizgiIdleri);
+
+      cizgileriSuruklemeyeHazirla(
+        odaCizgiIdleri,
+        dunyaNoktasi,
+      );
+
+      return;
+    }
   }
 
-  // 4) Boş alana tıklandı → kutu seçimi başlat
   kutuSecimBaslat(dunyaNoktasi);
 });
 
@@ -134,11 +169,12 @@ stage.on("stagemousemove", (event) => {
 
 stage.on("stagemouseup", (event) => {
   if (kutuSecimiAktif) {
-    const dunyaNoktasi = sahnedenDunyaya(
-      event.stageX,
-      event.stageY,
+    kutuSecimBitir(
+      sahnedenDunyaya(
+        event.stageX,
+        event.stageY,
+      ),
     );
-    kutuSecimBitir(dunyaNoktasi);
     return;
   }
 

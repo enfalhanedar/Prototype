@@ -5,9 +5,7 @@ import {
   setCizgiler,
   setRedoStack,
   setMevcutCizim,
-  setSeciliGrupId,
-  setSeciliGrupIdleri,
-  setAktifCizimGrupId,
+  secimiTemizle,
 } from "../core/state.js";
 
 import { odalariYenidenHesapla } from "./rooms.js";
@@ -72,7 +70,6 @@ export function dinamikBolmeUygula() {
 
           const parca1 = {
             id: crypto.randomUUID(),
-            groupId: mevcut.groupId, // Orijinal grubunu koru ki oda bozulmasın
             x1: mevcut.x1,
             y1: mevcut.y1,
             x2: uc.x,
@@ -81,7 +78,6 @@ export function dinamikBolmeUygula() {
 
           const parca2 = {
             id: crypto.randomUUID(),
-            groupId: mevcut.groupId,
             x1: uc.x,
             y1: uc.y,
             x2: mevcut.x2,
@@ -107,10 +103,7 @@ export function dinamikBolmeUygula() {
   return degisiklikVarMi;
 }
 
-export function cizgiEkle(
-  yeniCizgiler,
-  groupId = crypto.randomUUID(),
-) {
+export function cizgiEkle(yeniCizgiler) {
   gecmiseKaydet();
 
   const liste = Array.isArray(yeniCizgiler)
@@ -120,7 +113,6 @@ export function cizgiEkle(
   const kimlikliCizgiler = liste.map((cizgi) => ({
     ...cizgi,
     id: cizgi.id ?? crypto.randomUUID(),
-    groupId: cizgi.groupId ?? groupId,
   }));
 
   // Önce çizgileri ekle
@@ -132,7 +124,6 @@ export function cizgiEkle(
 
 document.getElementById("btnUndo").addEventListener("click", () => {
   if (undoStack.length === 0) return;
-console.log("cizgiler:", cizgiler);
 
   redoStack.push(JSON.stringify(cizgiler));
   setCizgiler(JSON.parse(undoStack.pop()));
@@ -166,9 +157,7 @@ export function tumunuSil() {
   setCizgiler([]);
 
   setMevcutCizim(null);
-  setSeciliGrupId(null);
-  setSeciliGrupIdleri([]);
-  setAktifCizimGrupId(null);
+  secimiTemizle();
 
   onizlemeKatmani.graphics.clear();
 

@@ -1,21 +1,27 @@
 import {
   cizgiler,
-  setSeciliGrupId,
-  setSeciliGrupIdleri,
-  setHoverKoseNoktasi
+  setSeciliCizgiIdleri,
+  setHoverKoseNoktasi,
 } from "../core/state.js";
-import { canvas,odaKatmani, } from "../core/stage.js";
-import { hesaplaSnap } from "../geometry/snap.js";
-import { gecmiseKaydet,  } from "../drawing/history.js";
+
+import {
+  canvas,
+  odaKatmani,
+} from "../core/stage.js";
+
+import {
+  hesaplaSnap,
+  hesaplaCizgiTasimaSnap,
+} from "../geometry/snap.js";
+
+import { gecmiseKaydet } from "../drawing/history.js";
 import { odalariYenidenHesapla } from "../drawing/rooms.js";
 import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 
-
 import {
   kesisimleriKoseyeDonustur,
 } from "../io/intersections.js";
-
 
 const BAGLANTI_TOLERANSI = 0.01;
 const KOSE_TOLERANSI = 0.001;
@@ -24,134 +30,115 @@ let suruklemeAktif = false;
 let hareketGerceklesti = false;
 let gecmiseKaydedildi = false;
 
-let suruklemeTuru = "GROUP";
+let suruklemeTuru = "LINES";
 
 let suruklemeBaslangicX = 0;
 let suruklemeBaslangicY = 0;
 
 let orijinalTumCizgiler = [];
-let orijinalTasinanCizgi = null;
+let orijinalTasinanCizgiler = [];
+let tasinanCizgiIdleri = [];
 
-/*
- * Taşınan çizginin uçlarına bağlı olan
- * komşu çizgi uçlarını tutar.
- */
 let bagliKomsuUclar = [];
-
-/*
- * Köşe sürüklenirken aynı koordinattaki
- * bütün çizgi uçlarını tutar.
- */
 let bagliCizgiReferanslari = [];
 
-
-/**
- * Dışarıdan sürüklemenin aktif olup olmadığını öğrenmek için.
- */
 export function suruklemeAktifMi() {
   return suruklemeAktif;
 }
 
+function noktalarBagliMi(x1, y1, x2, y2, tolerans) {
+  return Math.hypot(x1 - x2, y1 - y2) < tolerans;
+}
 
-/**
- * Bir çizginin uçlarına bağlı komşu çizgi uçlarını bulur.
- */
-function bagliKomsuUclariBul(hedefCizgi) {
+function bagliKomsuUclariBul(seciliIdSeti) {
   const bulunanBaglantilar = [];
 
-  for (const mevcutCizgi of cizgiler) {
-    if (mevcutCizgi.id === hedefCizgi.id) {
-      continue;
-    }
+  for (const tasinanCizgi of cizgiler) {
+    if (!seciliIdSeti.has(tasinanCizgi.id)) continue;
 
-    const mevcutV1HedefV1 =
-      Math.hypot(
-        mevcutCizgi.x1 - hedefCizgi.x1,
-        mevcutCizgi.y1 - hedefCizgi.y1,
-      ) < BAGLANTI_TOLERANSI;
-
-    const mevcutV1HedefV2 =
-      Math.hypot(
-        mevcutCizgi.x1 - hedefCizgi.x2,
-        mevcutCizgi.y1 - hedefCizgi.y2,
-      ) < BAGLANTI_TOLERANSI;
-
-    const mevcutV2HedefV1 =
-      Math.hypot(
-        mevcutCizgi.x2 - hedefCizgi.x1,
-        mevcutCizgi.y2 - hedefCizgi.y1,
-      ) < BAGLANTI_TOLERANSI;
-
-    const mevcutV2HedefV2 =
-      Math.hypot(
-        mevcutCizgi.x2 - hedefCizgi.x2,
-        mevcutCizgi.y2 - hedefCizgi.y2,
-      ) < BAGLANTI_TOLERANSI;
-
-    if (mevcutV1HedefV1) {
-      bulunanBaglantilar.push({
-        cizgiId: mevcutCizgi.id,
+    const tasinanUclar = [
+      {
         uc: "v1",
-        hedefUc: "v1",
-      });
-    }
-
-    if (mevcutV1HedefV2) {
-      bulunanBaglantilar.push({
-        cizgiId: mevcutCizgi.id,
-        uc: "v1",
-        hedefUc: "v2",
-      });
-    }
-
-    if (mevcutV2HedefV1) {
-      bulunanBaglantilar.push({
-        cizgiId: mevcutCizgi.id,
+        x: tasinanCizgi.x1,
+        y: tasinanCizgi.y1,
+      },
+      {
         uc: "v2",
-        hedefUc: "v1",
-      });
-    }
+        x: tasinanCizgi.x2,
+        y: tasinanCizgi.y2,
+      },
+    ];
 
-    if (mevcutV2HedefV2) {
-      bulunanBaglantilar.push({
-        cizgiId: mevcutCizgi.id,
-        uc: "v2",
-        hedefUc: "v2",
-      });
+    for (const komsuCizgi of cizgiler) {
+      if (seciliIdSeti.has(komsuCizgi.id)) continue;
+
+      const komsuUclar = [
+        {
+          uc: "v1",
+          x: komsuCizgi.x1,
+          y: komsuCizgi.y1,
+        },
+        {
+          uc: "v2",
+          x: komsuCizgi.x2,
+          y: komsuCizgi.y2,
+        },
+      ];
+
+      for (const tasinanUc of tasinanUclar) {
+        for (const komsuUc of komsuUclar) {
+          if (
+            noktalarBagliMi(
+              tasinanUc.x,
+              tasinanUc.y,
+              komsuUc.x,
+              komsuUc.y,
+              BAGLANTI_TOLERANSI,
+            )
+          ) {
+            bulunanBaglantilar.push({
+              komsuCizgiId: komsuCizgi.id,
+              komsuUc: komsuUc.uc,
+              kaynakCizgiId: tasinanCizgi.id,
+              kaynakUc: tasinanUc.uc,
+            });
+          }
+        }
+      }
     }
   }
 
   return bulunanBaglantilar;
 }
 
-
-/**
- * Belirli bir köşeye bağlı bütün çizgi uçlarını bulur.
- */
 function koseyeBagliUclariBul(koseNoktasi) {
   const bulunanReferanslar = [];
 
   for (const cizgi of cizgiler) {
-    const birinciUcBagliMi =
-      Math.hypot(
-        cizgi.x1 - koseNoktasi.x,
-        cizgi.y1 - koseNoktasi.y,
-      ) < KOSE_TOLERANSI;
-
-    const ikinciUcBagliMi =
-      Math.hypot(
-        cizgi.x2 - koseNoktasi.x,
-        cizgi.y2 - koseNoktasi.y,
-      ) < KOSE_TOLERANSI;
-
-    if (birinciUcBagliMi) {
+    if (
+      noktalarBagliMi(
+        cizgi.x1,
+        cizgi.y1,
+        koseNoktasi.x,
+        koseNoktasi.y,
+        KOSE_TOLERANSI,
+      )
+    ) {
       bulunanReferanslar.push({
         id: cizgi.id,
         uc: "v1",
       });
     }
 
-    if (ikinciUcBagliMi) {
+    if (
+      noktalarBagliMi(
+        cizgi.x2,
+        cizgi.y2,
+        koseNoktasi.x,
+        koseNoktasi.y,
+        KOSE_TOLERANSI,
+      )
+    ) {
       bulunanReferanslar.push({
         id: cizgi.id,
         uc: "v2",
@@ -162,21 +149,23 @@ function koseyeBagliUclariBul(koseNoktasi) {
   return bulunanReferanslar;
 }
 
+function tasimayiHazirla(dunyaNoktasi, cizgiIdleri) {
+  const benzersizIdler = [
+    ...new Set(cizgiIdleri.filter(Boolean)),
+  ];
 
-/**
- * Çizgi gövdesini sürüklemeye hazırlar.
- */
-function tasimayiHazirla(dunyaNoktasi, cizgiId) {
-  const hedefCizgi = cizgiler.find(
-    (cizgi) => cizgi.id === cizgiId,
+  const idSeti = new Set(benzersizIdler);
+
+  const bulunanCizgiler = cizgiler.filter(
+    (cizgi) => idSeti.has(cizgi.id),
   );
 
-  if (!hedefCizgi) {
+  if (bulunanCizgiler.length === 0) {
     suruklemeAktif = false;
     return;
   }
 
-  suruklemeTuru = "GROUP";
+  suruklemeTuru = "LINES";
   suruklemeAktif = true;
   hareketGerceklesti = false;
   gecmiseKaydedildi = false;
@@ -184,84 +173,62 @@ function tasimayiHazirla(dunyaNoktasi, cizgiId) {
   suruklemeBaslangicX = dunyaNoktasi.x;
   suruklemeBaslangicY = dunyaNoktasi.y;
 
-  orijinalTumCizgiler =
-    structuredClone(cizgiler);
+  tasinanCizgiIdleri = bulunanCizgiler.map(
+    (cizgi) => cizgi.id,
+  );
 
-  orijinalTasinanCizgi =
-    structuredClone(hedefCizgi);
+  orijinalTumCizgiler = structuredClone(cizgiler);
+  orijinalTasinanCizgiler =
+    structuredClone(bulunanCizgiler);
 
-  bagliKomsuUclar =
-    bagliKomsuUclariBul(hedefCizgi);
+  bagliKomsuUclar = bagliKomsuUclariBul(
+    new Set(tasinanCizgiIdleri),
+  );
 
-  /*
-   * Sürükleme boyunca eski oda dolgularının
-   * yanlış yerde görünmesini engeller.
-   */
   odaKatmani.visible = false;
-
   canvas.style.cursor = "grabbing";
 
   ekraniGuncelle();
   silButonunuKonumlandir();
 }
 
-
-/**
- * Seçilen çizgiyi sürüklemeye hazırlar.
- *
- * Buradaki ilk parametrenin gerçek çizgi ID'si olması gerekir.
- */
-export function grupSecVeSuruklemeyeHazirla(
-  cizgiId,
+export function cizgileriSuruklemeyeHazirla(
+  cizgiIdleri,
   dunyaNoktasi,
 ) {
   tasimayiHazirla(
     dunyaNoktasi,
-    cizgiId,
+    Array.isArray(cizgiIdleri)
+      ? cizgiIdleri
+      : [cizgiIdleri],
   );
 }
 
-
-/**
- * Tek bir çizgiyi seçip sürüklemeye hazırlar.
- */
 export function tekilCizgiSecVeSuruklemeyeHazirla(
   cizgi,
   dunyaNoktasi,
 ) {
-  setSeciliGrupId(null);
-  setSeciliGrupIdleri([cizgi.id]);
+  setSeciliCizgiIdleri([cizgi.id]);
 
   tasimayiHazirla(
     dunyaNoktasi,
-    cizgi.id,
+    [cizgi.id],
   );
 }
 
-
-/**
- * Bir köşeyi sürüklemeye hazırlar.
- */
-export function koseSuruklemeyeHazirla(
-  koseNoktasi,
-) {
+export function koseSuruklemeyeHazirla(koseNoktasi) {
   const bulunanUclar =
     koseyeBagliUclariBul(koseNoktasi);
 
-  if (bulunanUclar.length === 0) {
-    return;
-  }
+  if (bulunanUclar.length === 0) return;
 
   suruklemeTuru = "CORNER";
   suruklemeAktif = true;
   hareketGerceklesti = false;
   gecmiseKaydedildi = false;
 
-  orijinalTumCizgiler =
-    structuredClone(cizgiler);
-
-  bagliCizgiReferanslari =
-    bulunanUclar;
+  orijinalTumCizgiler = structuredClone(cizgiler);
+  bagliCizgiReferanslari = bulunanUclar;
 
   odaKatmani.visible = false;
   canvas.style.cursor = "grabbing";
@@ -269,34 +236,31 @@ export function koseSuruklemeyeHazirla(
   ekraniGuncelle();
 }
 
-
-/**
- * Taşınan çizgiye bağlı komşu uçları yeni konuma taşır.
- */
-function bagliKomsuUclariGuncelle(
-  guncelCizgi,
-) {
+function bagliKomsuUclariGuncelle() {
   for (const baglanti of bagliKomsuUclar) {
     const komsuCizgi = cizgiler.find(
       (cizgi) =>
-        cizgi.id === baglanti.cizgiId,
+        cizgi.id === baglanti.komsuCizgiId,
     );
 
-    if (!komsuCizgi) {
-      continue;
-    }
+    const kaynakCizgi = cizgiler.find(
+      (cizgi) =>
+        cizgi.id === baglanti.kaynakCizgiId,
+    );
+
+    if (!komsuCizgi || !kaynakCizgi) continue;
 
     const yeniX =
-      baglanti.hedefUc === "v1"
-        ? guncelCizgi.x1
-        : guncelCizgi.x2;
+      baglanti.kaynakUc === "v1"
+        ? kaynakCizgi.x1
+        : kaynakCizgi.x2;
 
     const yeniY =
-      baglanti.hedefUc === "v1"
-        ? guncelCizgi.y1
-        : guncelCizgi.y2;
+      baglanti.kaynakUc === "v1"
+        ? kaynakCizgi.y1
+        : kaynakCizgi.y2;
 
-    if (baglanti.uc === "v1") {
+    if (baglanti.komsuUc === "v1") {
       komsuCizgi.x1 = yeniX;
       komsuCizgi.y1 = yeniY;
     } else {
@@ -306,100 +270,61 @@ function bagliKomsuUclariGuncelle(
   }
 }
 
-
-/**
- * Seçilen çizgiyi paralel taşır.
- */
-function cizgiyiTasi(dunyaNoktasi) {
-  if (!orijinalTasinanCizgi) {
-    return;
-  }
-
-  const guncelCizgi = cizgiler.find(
-    (cizgi) =>
-      cizgi.id === orijinalTasinanCizgi.id,
-  );
-
-  if (!guncelCizgi) {
-    return;
-  }
+function cizgileriTasi(dunyaNoktasi) {
+  if (orijinalTasinanCizgiler.length === 0) return;
 
   const hamDx =
-    dunyaNoktasi.x -
-    suruklemeBaslangicX;
+    dunyaNoktasi.x - suruklemeBaslangicX;
 
   const hamDy =
-    dunyaNoktasi.y -
-    suruklemeBaslangicY;
+    dunyaNoktasi.y - suruklemeBaslangicY;
 
-  const hamX =
-    orijinalTasinanCizgi.x1 +
-    hamDx;
-
-  const hamY =
-    orijinalTasinanCizgi.y1 +
-    hamDy;
-
-  const snapSonucu =
-    hesaplaSnap(hamX, hamY);
-
-  const dx =
-    snapSonucu.x -
-    orijinalTasinanCizgi.x1;
-
-  const dy =
-    snapSonucu.y -
-    orijinalTasinanCizgi.y1;
-
-  guncelCizgi.x1 =
-    orijinalTasinanCizgi.x1 + dx;
-
-  guncelCizgi.y1 =
-    orijinalTasinanCizgi.y1 + dy;
-
-  guncelCizgi.x2 =
-    orijinalTasinanCizgi.x2 + dx;
-
-  guncelCizgi.y2 =
-    orijinalTasinanCizgi.y2 + dy;
-
-  bagliKomsuUclariGuncelle(
-    guncelCizgi,
+  const snapSonucu = hesaplaCizgiTasimaSnap(
+    orijinalTasinanCizgiler,
+    hamDx,
+    hamDy,
+    tasinanCizgiIdleri,
   );
-}
 
+  const orijinalHarita = new Map(
+    orijinalTasinanCizgiler.map(
+      (cizgi) => [cizgi.id, cizgi],
+    ),
+  );
 
-/**
- * Seçilen köşeye bağlı bütün çizgi uçlarını taşır.
- */
-function koseyiTasi(dunyaNoktasi) {
-  if (bagliCizgiReferanslari.length === 0) {
-    return;
+  for (const cizgi of cizgiler) {
+    const orijinal = orijinalHarita.get(cizgi.id);
+
+    if (!orijinal) continue;
+
+    cizgi.x1 = orijinal.x1 + snapSonucu.dx;
+    cizgi.y1 = orijinal.y1 + snapSonucu.dy;
+    cizgi.x2 = orijinal.x2 + snapSonucu.dx;
+    cizgi.y2 = orijinal.y2 + snapSonucu.dy;
   }
 
-  const snapSonucu =
-    hesaplaSnap(
-      dunyaNoktasi.x,
-      dunyaNoktasi.y,
-    );
+  bagliKomsuUclariGuncelle();
+}
+
+function koseyiTasi(dunyaNoktasi) {
+  if (bagliCizgiReferanslari.length === 0) return;
+
+  const snapSonucu = hesaplaSnap(
+    dunyaNoktasi.x,
+    dunyaNoktasi.y,
+  );
 
   setHoverKoseNoktasi({
     x: snapSonucu.x,
     y: snapSonucu.y,
   });
 
-  for (
-    const referans
-    of bagliCizgiReferanslari
-  ) {
+  for (const referans of bagliCizgiReferanslari) {
     const mevcutCizgi = cizgiler.find(
-      (cizgi) =>
-        cizgi.id === referans.id,
+      (cizgi) => cizgi.id === referans.id,
     );
 
-    if (!mevcutCizgi) {
-      continue;
-    }
+    if (!mevcutCizgi) continue;
 
     if (referans.uc === "v1") {
       mevcutCizgi.x1 = snapSonucu.x;
@@ -411,56 +336,28 @@ function koseyiTasi(dunyaNoktasi) {
   }
 }
 
+export function suruklemeyiTasi(dunyaNoktasi) {
+  if (!suruklemeAktif) return;
 
-/**
- * Mouse hareket ettikçe sürüklemeyi günceller.
- */
-export function suruklemeyiTasi(
-  dunyaNoktasi,
-) {
-  if (!suruklemeAktif) {
-    return;
-  }
-
-  /*
-   * History yalnızca ilk gerçek harekette kaydedilir.
-   */
   if (!gecmiseKaydedildi) {
-    gecmiseKaydet(
-      orijinalTumCizgiler,
-    );
-
+    gecmiseKaydet(orijinalTumCizgiler);
     gecmiseKaydedildi = true;
   }
 
   hareketGerceklesti = true;
 
-  if (suruklemeTuru === "GROUP") {
-    cizgiyiTasi(dunyaNoktasi);
-  } else if (
-    suruklemeTuru === "CORNER"
-  ) {
+  if (suruklemeTuru === "LINES") {
+    cizgileriTasi(dunyaNoktasi);
+  } else {
     koseyiTasi(dunyaNoktasi);
   }
 
-  /*
-   * Sürükleme sırasında oda hesaplama.
-   *
-   * Oda katmanı zaten gizli. Bu sayede hem performans
-   * artar hem odalar yanıp sönmez.
-   */
   ekraniGuncelle();
   silButonunuKonumlandir();
 }
 
-
-/**
- * Sürükleme işlemini tamamlar.
- */
 export function suruklemeyiBitir() {
-  if (!suruklemeAktif) {
-    return;
-  }
+  if (!suruklemeAktif) return;
 
   suruklemeAktif = false;
 
@@ -470,30 +367,15 @@ export function suruklemeyiBitir() {
       : "pointer";
 
   if (hareketGerceklesti) {
-    /*
-     * Önce taşıma sonucunda oluşan bütün kesişimleri bulur.
-     *
-     * Kesişen çizgiler kesişim noktasından bölünür ve
-     * kesişim gerçek bir çizgi ucu/köşe hâline gelir.
-     */
     kesisimleriKoseyeDonustur();
   }
 
-  /*
-   * Çizgiler bölündükten sonra odaları hesaplamak gerekir.
-   */
   odalariYenidenHesapla();
-
-  /*
-   * Oda hesabı bittikten sonra oda katmanını tekrar göster.
-   */
   odaKatmani.visible = true;
 
-  /*
-   * Geçici sürükleme verilerini temizle.
-   */
-  orijinalTasinanCizgi = null;
   orijinalTumCizgiler = [];
+  orijinalTasinanCizgiler = [];
+  tasinanCizgiIdleri = [];
 
   bagliCizgiReferanslari = [];
   bagliKomsuUclar = [];

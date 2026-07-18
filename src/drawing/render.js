@@ -1,7 +1,7 @@
 import {
   cizgiler,
   odalar,
-  seciliGrupIdleri,
+  seciliCizgiIdleri,
   hoverCizgiId,      
   hoverKoseNoktasi,  
   PIXEL_PER_METRE,
@@ -100,10 +100,9 @@ export function ekraniGuncelle() {
   odaEtiketiniEkle(oda);
 });
 
-  // 2. ÇİZGİLERİ ÇİZ (DÜZELTİLDİ: Sadece tıklanan tek çizgi kırmızı olur)
+  // Çizgiler
   cizgiler.forEach((cizgi) => {
-    // Çizginin kırmızı boyanması için seciliGrupIdleri listesinde kendi ID'sinin olması yeterlidir (Grup boyama iptal edildi)
-    const secili = seciliGrupIdleri.includes(cizgi.id);
+    const secili = seciliCizgiIdleri.includes(cizgi.id);
     const hoverMi = !secili && cizgi.id === hoverCizgiId; 
 
     const cizgiKalinligi = secili ? 10 : hoverMi ? 9 : 8;
@@ -127,7 +126,7 @@ export function ekraniGuncelle() {
   const TOLERANS = 1e-3;
 
   cizgiler.forEach((cizgi) => {
-    const secili = seciliGrupIdleri.includes(cizgi.id);
+    const secili = seciliCizgiIdleri.includes(cizgi.id);
     const noktalar = [{ x: cizgi.x1, y: cizgi.y1 }, { x: cizgi.x2, y: cizgi.y2 }];
 
     noktalar.forEach((nokta) => {

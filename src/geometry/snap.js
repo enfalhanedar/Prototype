@@ -186,26 +186,26 @@ export function kenarVarMi(x1, y1, x2, y2) {
   );
 }
 
-export function hesaplaGrupTasimaSnap(
+export function hesaplaCizgiTasimaSnap(
   tasinanCizgiler,
   hamDx,
   hamDy,
-  tasinanGrupIdleri,
+  tasinanCizgiIdleri,
 ) {
    let sonucDx = hamDx;
   let sonucDy = hamDy;
   let enKisaMesafe = SNAP_MESAFESI / viewport.scaleX;
 
-  const tasinanGrupSet = new Set(
-    (Array.isArray(tasinanGrupIdleri)
-      ? tasinanGrupIdleri
-      : [tasinanGrupIdleri]
+  const tasinanCizgiSet = new Set(
+    (Array.isArray(tasinanCizgiIdleri)
+      ? tasinanCizgiIdleri
+      : [tasinanCizgiIdleri]
     ).filter(Boolean),
   );
 
   const digerCizgiler = cizgiler.filter(
     (cizgi) =>
-      !tasinanGrupSet.has(
+      !tasinanCizgiSet.has(
         cizgi.groupId ?? cizgi.id,
       ),
   );

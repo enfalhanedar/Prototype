@@ -1,13 +1,13 @@
 import {
   setAktifMod,
   setMevcutCizim,
-  setSeciliGrupId,
-  setSeciliGrupIdleri,
+  secimiTemizle,
 } from "./state.js";
 
 import {
   stage,
   onizlemeKatmani,
+  secimKatmani,
 } from "./stage.js";
 
 import { hoverTemizle } from "../interaction/interaction-hover.js";
@@ -34,8 +34,8 @@ export function modDegistir(yeniMod) {
   onizlemeKatmani.graphics.clear();
 
   if (yeniMod !== "SELECT") {
-    setSeciliGrupId(null);
-    setSeciliGrupIdleri([]); 
+    secimiTemizle();
+    secimKatmani.graphics.clear();
 
     const silButonu = document.getElementById("btnDeleteSelected");
 
@@ -72,5 +72,5 @@ tools.SQUARE?.addEventListener("click", () => {
   modDegistir("SQUARE");
 });
 
-// Sayfa ilk açıldığında çizgi aracı seçili görünsün
+// Sayfa ilk açıldığında çizgi aracı seçili görünsün.
 modDegistir("LINE");

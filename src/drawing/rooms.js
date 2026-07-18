@@ -412,8 +412,6 @@ function odaNesnesiOlustur(
 
   return {
     id: crypto.randomUUID(),
-    groupId: crypto.randomUUID(),
-
     noktalar: noktalar.map((nokta) => ({
       x: Number(nokta.x),
       y: Number(nokta.y),

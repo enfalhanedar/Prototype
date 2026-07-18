@@ -2,10 +2,8 @@ import {
   cizgiler,
   aktifMod,
   mevcutCizim,
-  aktifCizimGrupId,
   SNAP_MESAFESI,
   setMevcutCizim,
-  setAktifCizimGrupId,
 } from "../core/state.js";
 
 import {
@@ -19,18 +17,14 @@ import {
   aciyaKilitle,
 } from "../geometry/snap.js";
 
-import {
-  kesisimleriKoseyeDonustur,
-} from "../io/intersections.js";
-
+import { kesisimleriKoseyeDonustur } from "../io/intersections.js";
 import { sahnedenDunyaya } from "../camera/camera.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";
 
-// Shift basılıyken çizgi açısı serbest kalır (0/45/90/135
-// derecelere kilitlenmez). Basılı değilken varsayılan olarak
-// en yakın 45 derecelik açıya otomatik yapışır.
+// Shift basılıyken çizgi açısı serbest kalır.
+// Basılı değilken açı en yakın 0/45/90 derecelik yöne kilitlenir.
 let shiftBasili = false;
 
 window.addEventListener("keydown", (event) => {
@@ -45,69 +39,63 @@ window.addEventListener("keyup", (event) => {
   }
 });
 
-// Pencere odağını kaybedersek (örneğin Shift'e basılıyken
-// başka sekmeye geçilirse) tuş takılı kalmasın.
 window.addEventListener("blur", () => {
   shiftBasili = false;
 });
 
-// ESC : mevcut çizimi iptal et
+// ESC: mevcut çizimi iptal et.
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
 
   setMevcutCizim(null);
-  setAktifCizimGrupId(null);
-
   onizlemeKatmani.graphics.clear();
   stage.update();
 });
 
-// SOL TIK: çizimi başlat veya tamamla
-stage.on("stagemousedown", (e) => {
+// Sol tık: çizimi başlat veya tamamla.
+stage.on("stagemousedown", (event) => {
   if (aktifMod === "SELECT") return;
-  if (e.nativeEvent.button === 2) return;
+  if (event.nativeEvent.button === 2) return;
 
-  const dunyaNoktasi =
-  sahnedenDunyaya(
-    e.stageX,
-    e.stageY,
+  const dunyaNoktasi = sahnedenDunyaya(
+    event.stageX,
+    event.stageY,
   );
 
-  const x = dunyaNoktasi.x;
-  const y = dunyaNoktasi.y;
-  const snap = hesaplaSnap(x, y);
+  const snap = hesaplaSnap(
+    dunyaNoktasi.x,
+    dunyaNoktasi.y,
+  );
 
   const nesneyeMiknatislandiMi =
-  snap.snapTuru === "OBJECT";
+    snap.snapTuru === "OBJECT";
 
   if (aktifMod === "LINE") {
     cizgiModundaTiklama(
-     snap,
-    nesneyeMiknatislandiMi,
+      snap,
+      nesneyeMiknatislandiMi,
     );
-
-} else {
-   kutuModundaTiklama(snap);
-}
+  } else {
+    kutuModundaTiklama(snap);
+  }
 
   ekraniGuncelle();
 });
 
-// MOUSE HAREKETİ: önizlemeyi güncelle
-stage.on("stagemousemove", (e) => {
+// Fare hareketi: önizlemeyi güncelle.
+stage.on("stagemousemove", (event) => {
   if (aktifMod === "SELECT") return;
   if (!mevcutCizim) return;
 
-  const dunyaNoktasi =
-  sahnedenDunyaya(
-    e.stageX,
-    e.stageY,
+  const dunyaNoktasi = sahnedenDunyaya(
+    event.stageX,
+    event.stageY,
   );
 
-const snap = hesaplaSnap(
-  dunyaNoktasi.x,
-  dunyaNoktasi.y,
-);
+  const snap = hesaplaSnap(
+    dunyaNoktasi.x,
+    dunyaNoktasi.y,
+  );
 
   onizlemeKatmani.graphics.clear();
 
@@ -120,15 +108,11 @@ const snap = hesaplaSnap(
   stage.update();
 });
 
-function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
-
+function cizgiModundaTiklama(
+  snap,
+  nesneyeMiknatislandiMi,
+) {
   if (!mevcutCizim) {
-    const grupId =
-      aktifCizimGrupId ??
-      crypto.randomUUID();
-
-    setAktifCizimGrupId(grupId);
-
     setMevcutCizim({
       x1: snap.x,
       y1: snap.y,
@@ -139,8 +123,6 @@ function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
     return;
   }
 
-  // Shift basılı değilse açı en yakın 45°'nin katına kilitlenir,
-  // Shift basılıyken çizgi tamamen serbest açıda çizilebilir.
   const kilitliNokta = aciyaKilitle(
     mevcutCizim.x1,
     mevcutCizim.y1,
@@ -159,32 +141,27 @@ function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
     mevcutCizim.y1 !== finalNokta.y;
 
   if (cizgiBosDegil) {
-  cizgiEkle(
-    {
+    cizgiEkle({
       x1: mevcutCizim.x1,
       y1: mevcutCizim.y1,
       x2: finalNokta.x,
       y2: finalNokta.y,
-    },
-    aktifCizimGrupId,
-  );
+    });
 
-  kesisimleriKoseyeDonustur();
-}
+    kesisimleriKoseyeDonustur();
+  }
 
   if (nesneyeMiknatislandiMi) {
-  setMevcutCizim(null);
-  setAktifCizimGrupId(null);
-
-  onizlemeKatmani.graphics.clear();
-} else {
-  setMevcutCizim({
-    x1: finalNokta.x,
-    y1: finalNokta.y,
-    x2: finalNokta.x,
-    y2: finalNokta.y,
-  });
-}
+    setMevcutCizim(null);
+    onizlemeKatmani.graphics.clear();
+  } else {
+    setMevcutCizim({
+      x1: finalNokta.x,
+      y1: finalNokta.y,
+      x2: finalNokta.x,
+      y2: finalNokta.y,
+    });
+  }
 
   odalariYenidenHesapla();
 }
@@ -209,39 +186,15 @@ function kutuModundaTiklama(snap) {
   const h = Math.round(mevcutCizim.h);
 
   cizgiEkle([
-    {
-      x1,
-      y1,
-      x2: x1 + w,
-      y2: y1,
-    },
-    {
-      x1: x1 + w,
-      y1,
-      x2: x1 + w,
-      y2: y1 + h,
-    },
-    {
-      x1: x1 + w,
-      y1: y1 + h,
-      x2: x1,
-      y2: y1 + h,
-    },
-    {
-      x1,
-      y1: y1 + h,
-      x2: x1,
-      y2: y1,
-    },
+    { x1, y1, x2: x1 + w, y2: y1 },
+    { x1: x1 + w, y1, x2: x1 + w, y2: y1 + h },
+    { x1: x1 + w, y1: y1 + h, x2: x1, y2: y1 + h },
+    { x1, y1: y1 + h, x2: x1, y2: y1 },
   ]);
 
   kesisimleriKoseyeDonustur();
-
   setMevcutCizim(null);
-  setAktifCizimGrupId(null);
-
   onizlemeKatmani.graphics.clear();
-  
   odalariYenidenHesapla();
 }
 
@@ -258,33 +211,21 @@ function cizgiOnizlemesiniGuncelle(snap) {
   mevcutCizim.y2 = Math.round(kilitliNokta.y);
 
   onizlemeKatmani.graphics
-  .beginStroke("#710ee946")
-  .setStrokeStyle(
-    8,
-    "round",
-    "round",
-  )
-  .moveTo(mevcutCizim.x1, mevcutCizim.y1)
-  .lineTo(mevcutCizim.x2, mevcutCizim.y2)
-  .endStroke();
+    .beginStroke("#710ee946")
+    .setStrokeStyle(8, "round", "round")
+    .moveTo(mevcutCizim.x1, mevcutCizim.y1)
+    .lineTo(mevcutCizim.x2, mevcutCizim.y2)
+    .endStroke();
 
-onizlemeKatmani.graphics
-  .beginFill("#9a44ef47")
-  .drawCircle(
-    mevcutCizim.x1,
-    mevcutCizim.y1,
-    4,
-  )
-  .endFill();
+  onizlemeKatmani.graphics
+    .beginFill("#9a44ef47")
+    .drawCircle(mevcutCizim.x1, mevcutCizim.y1, 4)
+    .endFill();
 
-onizlemeKatmani.graphics
-  .beginFill("#9144ef3a")
-  .drawCircle(
-    mevcutCizim.x2,
-    mevcutCizim.y2,
-    4,
-  )
-  .endFill();
+  onizlemeKatmani.graphics
+    .beginFill("#9144ef3a")
+    .drawCircle(mevcutCizim.x2, mevcutCizim.y2, 4)
+    .endFill();
 }
 
 function kutuOnizlemesiniGuncelle(snap) {
@@ -303,7 +244,6 @@ function kutuOnizlemesiniGuncelle(snap) {
 
   const hedefX = mevcutCizim.startX + rawW;
   const hedefY = mevcutCizim.startY + rawH;
-
   const esikMesafe = SNAP_MESAFESI / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
@@ -334,34 +274,28 @@ function kutuOnizlemesiniGuncelle(snap) {
     rawH = rawH >= 0 ? kareBoyutu : -kareBoyutu;
   }
 
-  mevcutCizim.x =
-    rawW < 0
-      ? mevcutCizim.startX + rawW
-      : mevcutCizim.startX;
+  mevcutCizim.x = rawW < 0
+    ? mevcutCizim.startX + rawW
+    : mevcutCizim.startX;
 
-  mevcutCizim.y =
-    rawH < 0
-      ? mevcutCizim.startY + rawH
-      : mevcutCizim.startY;
+  mevcutCizim.y = rawH < 0
+    ? mevcutCizim.startY + rawH
+    : mevcutCizim.startY;
 
   mevcutCizim.w = Math.abs(rawW);
   mevcutCizim.h = Math.abs(rawH);
 
   onizlemeKatmani.graphics
-  .beginFill("rgba(156, 14, 233, 0.2)")
-  .beginStroke("#690ee957")
-  .setStrokeStyle(
-    8,
-    "round",
-    "round",
-  )
-  .drawRoundRect(
-    mevcutCizim.x,
-    mevcutCizim.y,
-    mevcutCizim.w,
-    mevcutCizim.h,
-    4, // köşe yarıçapı
-  )
-  .endStroke()
-  .endFill();
+    .beginFill("rgba(156, 14, 233, 0.2)")
+    .beginStroke("#690ee957")
+    .setStrokeStyle(8, "round", "round")
+    .drawRoundRect(
+      mevcutCizim.x,
+      mevcutCizim.y,
+      mevcutCizim.w,
+      mevcutCizim.h,
+      4,
+    )
+    .endStroke()
+    .endFill();
 }

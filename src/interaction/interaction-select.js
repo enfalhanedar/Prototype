@@ -5,7 +5,7 @@ import { cizgiUzerindeEnYakinNokta } from "../geometry/snap.js";
 
 // Seçim mesafesi ekran pikseli cinsindendir.
 // Zoom yapılsa bile çizgiye tıklama kolaylığı yaklaşık aynı kalır.
-const SECIM_EKRAN_MESAFESI = 12;
+const SECIM_EKRAN_MESAFESI = 6;
 
 /**
  * Verilen dünya koordinatına en yakın çizgiyi bulur.
