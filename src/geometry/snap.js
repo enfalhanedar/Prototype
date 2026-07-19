@@ -36,8 +36,8 @@ export function cizgiUzerindeEnYakinNokta(x, y, x1, y1, x2, y2) {
 
 export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
   let enYakinNokta = {
-    x: Math.round(mouseX),
-    y: Math.round(mouseY),
+    x: mouseX,
+    y: mouseY,
     snapTuru: "NONE",
   };
 
@@ -112,8 +112,8 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
         enKisaMesafe = sonuc.mesafe;
 
         enYakinNokta = {
-          x: Math.round(sonuc.x),
-          y: Math.round(sonuc.y),
+          x: sonuc.x,
+          y: sonuc.y,
           snapTuru: "OBJECT",
         };
       }

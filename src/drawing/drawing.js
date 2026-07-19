@@ -139,20 +139,29 @@ function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
     return;
   }
 
+  // Bir nesneye (mevcut köşe/kenar) miknatislandiysa, açı kilidi
+  // noktayı o nesnenin üzerinden kaydırıp döngünün tam kapanmasını
+  // engelleyebilir. Bu yüzden nesneye miknatislaninca açı kilidi
+  // atlanır ve snap noktası aynen kullanılır.
+  //
   // Shift basılı değilse açı en yakın 45°'nin katına kilitlenir,
   // Shift basılıyken çizgi tamamen serbest açıda çizilebilir.
-  const kilitliNokta = aciyaKilitle(
-    mevcutCizim.x1,
-    mevcutCizim.y1,
-    snap.x,
-    snap.y,
-    shiftBasili,
-  );
+  const kilitliNokta = nesneyeMiknatislandiMi
+    ? { x: snap.x, y: snap.y }
+    : aciyaKilitle(
+        mevcutCizim.x1,
+        mevcutCizim.y1,
+        snap.x,
+        snap.y,
+        shiftBasili,
+      );
 
-  const finalNokta = {
-    x: Math.round(kilitliNokta.x),
-    y: Math.round(kilitliNokta.y),
-  };
+  const finalNokta = nesneyeMiknatislandiMi
+    ? { x: kilitliNokta.x, y: kilitliNokta.y }
+    : {
+        x: Math.round(kilitliNokta.x),
+        y: Math.round(kilitliNokta.y),
+      };
 
   const cizgiBosDegil =
     mevcutCizim.x1 !== finalNokta.x ||
@@ -246,16 +255,20 @@ function kutuModundaTiklama(snap) {
 }
 
 function cizgiOnizlemesiniGuncelle(snap) {
-  const kilitliNokta = aciyaKilitle(
-    mevcutCizim.x1,
-    mevcutCizim.y1,
-    snap.x,
-    snap.y,
-    shiftBasili,
-  );
+  const nesneyeMiknatislandiMi = snap.snapTuru === "OBJECT";
 
-  mevcutCizim.x2 = Math.round(kilitliNokta.x);
-  mevcutCizim.y2 = Math.round(kilitliNokta.y);
+  const kilitliNokta = nesneyeMiknatislandiMi
+    ? { x: snap.x, y: snap.y }
+    : aciyaKilitle(
+        mevcutCizim.x1,
+        mevcutCizim.y1,
+        snap.x,
+        snap.y,
+        shiftBasili,
+      );
+
+  mevcutCizim.x2 = kilitliNokta.x;
+  mevcutCizim.y2 = kilitliNokta.y;
 
   onizlemeKatmani.graphics
   .beginStroke("#710ee946")
