@@ -9,14 +9,17 @@ import {
 } from "../core/state.js";
 
 import {
+  canvas,
   stage,
   viewport,
   onizlemeKatmani,
+  hizalamaKatmani,
 } from "../core/stage.js";
 
 import {
   hesaplaSnap,
   aciyaKilitle,
+  hizalamaBul,
 } from "../geometry/snap.js";
 
 import {
@@ -59,6 +62,7 @@ window.addEventListener("keydown", (event) => {
   setAktifCizimGrupId(null);
 
   onizlemeKatmani.graphics.clear();
+  hizalamaKatmani.graphics.clear();
   stage.update();
 });
 
@@ -77,14 +81,8 @@ stage.on("stagemousedown", (e) => {
   const y = dunyaNoktasi.y;
   const snap = hesaplaSnap(x, y);
 
-  const nesneyeMiknatislandiMi =
-  snap.snapTuru === "OBJECT";
-
   if (aktifMod === "LINE") {
-    cizgiModundaTiklama(
-     snap,
-    nesneyeMiknatislandiMi,
-    );
+    cizgiModundaTiklama(snap);
 
 } else {
    kutuModundaTiklama(snap);
@@ -114,13 +112,14 @@ const snap = hesaplaSnap(
   if (aktifMod === "LINE") {
     cizgiOnizlemesiniGuncelle(snap);
   } else {
+    hizalamaKatmani.graphics.clear();
     kutuOnizlemesiniGuncelle(snap);
   }
 
   stage.update();
 });
 
-function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
+function cizgiModundaTiklama(snap) {
 
   if (!mevcutCizim) {
     const grupId =
@@ -139,29 +138,42 @@ function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
     return;
   }
 
-  // Bir nesneye (mevcut köşe/kenar) miknatislandiysa, açı kilidi
-  // noktayı o nesnenin üzerinden kaydırıp döngünün tam kapanmasını
-  // engelleyebilir. Bu yüzden nesneye miknatislaninca açı kilidi
-  // atlanır ve snap noktası aynen kullanılır.
+  // Nesneye değme iki türlü olabilir: tam bir köşeye (CORNER) ya da
+  // bir çizginin gövdesine/kenarına (EDGE). Her iki durumda da
+  // tıklama çizim zincirini bitirir (aşağıda). Ama açı kilidi sadece
+  // tam bir köşeye miknatislaninca atlanır; çünkü köşeye tıklamak
+  // "bu noktaya birleştir" gibi kesin bir niyettir ve açı kilidi
+  // noktayı kaydırıp döngünün tam kapanmasını engelleyebilir.
   //
-  // Shift basılı değilse açı en yakın 45°'nin katına kilitlenir,
-  // Shift basılıyken çizgi tamamen serbest açıda çizilebilir.
-  const kilitliNokta = nesneyeMiknatislandiMi
-    ? { x: snap.x, y: snap.y }
-    : aciyaKilitle(
-        mevcutCizim.x1,
-        mevcutCizim.y1,
-        snap.x,
-        snap.y,
-        shiftBasili,
-      );
+  // Yakın duvarlar arasında dik/45° çizgi çekerken sırf yakındaki
+  // bir duvarın gövdesine (kenarına) değmiş olmak açı kilidini
+  // BOZMAMALI - aksi halde dik çizgi çizmek neredeyse imkansız
+  // hale gelir. O yüzden EDGE değmesinde açı kilidi normal şekilde
+  // uygulanmaya devam eder.
+  const nesneObjeyeDegdiMi =
+    snap.snapTuru === "CORNER" ||
+    snap.snapTuru === "EDGE";
 
-  const finalNokta = nesneyeMiknatislandiMi
-    ? { x: kilitliNokta.x, y: kilitliNokta.y }
-    : {
-        x: Math.round(kilitliNokta.x),
-        y: Math.round(kilitliNokta.y),
-      };
+  const koseyeMiknatislandiMi =
+    snap.snapTuru === "CORNER";
+
+  const { nokta: kilitliNokta, hizalama } =
+    cizimHedefNoktasiniHesapla(
+      snap,
+      koseyeMiknatislandiMi,
+    );
+
+  const finalNokta = {
+    x:
+      koseyeMiknatislandiMi || hizalama.x
+        ? kilitliNokta.x
+        : Math.round(kilitliNokta.x),
+
+    y:
+      koseyeMiknatislandiMi || hizalama.y
+        ? kilitliNokta.y
+        : Math.round(kilitliNokta.y),
+  };
 
   const cizgiBosDegil =
     mevcutCizim.x1 !== finalNokta.x ||
@@ -181,11 +193,12 @@ function cizgiModundaTiklama(snap,nesneyeMiknatislandiMi) {
   kesisimleriKoseyeDonustur();
 }
 
-  if (nesneyeMiknatislandiMi) {
+  if (nesneObjeyeDegdiMi) {
   setMevcutCizim(null);
   setAktifCizimGrupId(null);
 
   onizlemeKatmani.graphics.clear();
+  hizalamaKatmani.graphics.clear();
 } else {
   setMevcutCizim({
     x1: finalNokta.x,
@@ -250,25 +263,145 @@ function kutuModundaTiklama(snap) {
   setAktifCizimGrupId(null);
 
   onizlemeKatmani.graphics.clear();
-  
+  hizalamaKatmani.graphics.clear();
+
   odalariYenidenHesapla();
 }
 
+/**
+ * Çizim sırasında bir sonraki noktayı belirler.
+ *
+ * Öncelik sırası:
+ *   1) Tam bir köşeye (mevcut bir çizginin ucuna) miknatislandiysa, o
+ *      nokta aynen kullanılır. Bir çizginin gövdesine/kenarına (EDGE)
+ *      değmek bu kapsama GİRMEZ - yakın duvarlar arasında dik çizgi
+ *      çekerken sırf bir duvarın gövdesine yakın olmak açı kilidini
+ *      bozmasın diye.
+ *   2) Aksi halde önce açı kilidi uygulanır (Shift basılı değilken 45°'nin
+ *      katlarına kilitlenir, Shift basılıyken serbest açı). Eksen kilidi
+ *      HER ZAMAN önceliklidir; hizalama cetveli kilidi bozmaz.
+ *   3) Açı kilidiyle bulunan nokta, mevcut çizgilerin köşelerinden
+ *      birine çok yakınsa (küçük bir tolerans içinde), sadece o kadarcık
+ *      bir ince ayarla tam üzerine oturtulur. Shift basılıyken açı zaten
+ *      serbest kaldığından bu adım pratikte tam bir hizalama cetveli gibi
+ *      davranır.
+ */
+function cizimHedefNoktasiniHesapla(
+  snap,
+  koseyeMiknatislandiMi,
+) {
+  if (koseyeMiknatislandiMi) {
+    return {
+      nokta: { x: snap.x, y: snap.y },
+      hizalama: { x: null, y: null },
+    };
+  }
+
+  const kilitliNokta = aciyaKilitle(
+    mevcutCizim.x1,
+    mevcutCizim.y1,
+    snap.x,
+    snap.y,
+    shiftBasili,
+  );
+
+  const hizalama = hizalamaBul(kilitliNokta);
+
+  if (!hizalama.x && !hizalama.y) {
+    return {
+      nokta: kilitliNokta,
+      hizalama,
+    };
+  }
+
+  return {
+    nokta: {
+      x: hizalama.x ? hizalama.x.deger : kilitliNokta.x,
+      y: hizalama.y ? hizalama.y.deger : kilitliNokta.y,
+    },
+    hizalama,
+  };
+}
+
+/**
+ * Hizalanan eksen(ler) için ekranda kesikli bir cetvel çizgisi
+ * ve hizalanılan köşenin üzerinde küçük bir işaret gösterir.
+ */
+function hizalamaCizgileriniCiz(hizalama) {
+  hizalamaKatmani.graphics.clear();
+
+  if (!hizalama.x && !hizalama.y) {
+    return;
+  }
+
+  const solUst = viewport.globalToLocal(0, 0);
+
+  const sagAlt = viewport.globalToLocal(
+    canvas.width,
+    canvas.height,
+  );
+
+  const renk = "#f43f5e";
+  const grafik = hizalamaKatmani.graphics;
+
+  grafik
+    .beginStroke(renk)
+    .setStrokeStyle(1 / viewport.scaleX)
+    .setStrokeDash(
+      [6 / viewport.scaleX, 4 / viewport.scaleX],
+      0,
+    );
+
+  if (hizalama.x) {
+    grafik
+      .moveTo(hizalama.x.deger, solUst.y)
+      .lineTo(hizalama.x.deger, sagAlt.y);
+  }
+
+  if (hizalama.y) {
+    grafik
+      .moveTo(solUst.x, hizalama.y.deger)
+      .lineTo(sagAlt.x, hizalama.y.deger);
+  }
+
+  grafik.endStroke();
+
+  const isaretYaricap = 3 / viewport.scaleX;
+
+  grafik.beginFill(renk);
+
+  if (hizalama.x) {
+    grafik.drawCircle(
+      hizalama.x.kaynak.x,
+      hizalama.x.kaynak.y,
+      isaretYaricap,
+    );
+  }
+
+  if (hizalama.y) {
+    grafik.drawCircle(
+      hizalama.y.kaynak.x,
+      hizalama.y.kaynak.y,
+      isaretYaricap,
+    );
+  }
+
+  grafik.endFill();
+}
+
 function cizgiOnizlemesiniGuncelle(snap) {
-  const nesneyeMiknatislandiMi = snap.snapTuru === "OBJECT";
+  const koseyeMiknatislandiMi = snap.snapTuru === "CORNER";
 
-  const kilitliNokta = nesneyeMiknatislandiMi
-    ? { x: snap.x, y: snap.y }
-    : aciyaKilitle(
-        mevcutCizim.x1,
-        mevcutCizim.y1,
-        snap.x,
-        snap.y,
-        shiftBasili,
-      );
+  const { nokta: hedefNokta, hizalama } =
+    cizimHedefNoktasiniHesapla(
+      snap,
+      koseyeMiknatislandiMi,
+    );
 
-  mevcutCizim.x2 = kilitliNokta.x;
-  mevcutCizim.y2 = kilitliNokta.y;
+  mevcutCizim.x2 = hedefNokta.x;
+  mevcutCizim.y2 = hedefNokta.y;
+
+  hizalamaCizgileriniCiz(hizalama);
 
   onizlemeKatmani.graphics
   .beginStroke("#710ee946")

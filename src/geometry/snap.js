@@ -73,7 +73,7 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
       enYakinNokta = {
         x: cizgi.x1,
         y: cizgi.y1,
-        snapTuru: "OBJECT",
+        snapTuru: "CORNER",
       };
     }
 
@@ -90,7 +90,7 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
       enYakinNokta = {
         x: cizgi.x2,
         y: cizgi.y2,
-        snapTuru: "OBJECT",
+        snapTuru: "CORNER",
       };
     }
   }
@@ -114,14 +114,17 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
         enYakinNokta = {
           x: sonuc.x,
           y: sonuc.y,
-          snapTuru: "OBJECT",
+          snapTuru: "EDGE",
         };
       }
     }
   }
 
-  // Nesneye snap olduysa grid kontrol etme
-  if (enYakinNokta.snapTuru === "OBJECT") {
+  // Nesneye (köşe ya da kenar) snap olduysa grid kontrol etme
+  if (
+    enYakinNokta.snapTuru === "CORNER" ||
+    enYakinNokta.snapTuru === "EDGE"
+  ) {
     return enYakinNokta;
   }
 
@@ -137,6 +140,65 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
   }
 
   return enYakinNokta;
+}
+
+// Çizim sırasında, üzerinde çalışılan nokta mevcut çizgilerin
+// köşelerinden biriyle yatayda veya dikeyde hizalandığında bunu
+// haber vermek (ve o eksene kilitlemek) için kullanılan mesafe.
+const HIZALAMA_EKRAN_MESAFESI = 6;
+
+/**
+ * Verilen dünya noktasını, mevcut çizgilerin köşe noktalarıyla
+ * yatay (aynı Y) ve dikey (aynı X) hizalanma açısından karşılaştırır.
+ *
+ * Her eksen için en yakın eşleşmeyi döndürür (varsa); eşleşme yoksa
+ * o eksen için null döner.
+ */
+export function hizalamaBul(nokta, haricTutulacakIdler = []) {
+  const esik = HIZALAMA_EKRAN_MESAFESI / viewport.scaleX;
+  const haricSet = new Set(haricTutulacakIdler);
+
+  let enYakinX = null;
+  let enYakinY = null;
+
+  for (const cizgi of cizgiler) {
+    if (haricSet.has(cizgi.id)) {
+      continue;
+    }
+
+    for (const aday of [
+      { x: cizgi.x1, y: cizgi.y1 },
+      { x: cizgi.x2, y: cizgi.y2 },
+    ]) {
+      const farkX = Math.abs(aday.x - nokta.x);
+
+      if (
+        farkX < esik &&
+        (!enYakinX || farkX < enYakinX.mesafe)
+      ) {
+        enYakinX = {
+          deger: aday.x,
+          mesafe: farkX,
+          kaynak: aday,
+        };
+      }
+
+      const farkY = Math.abs(aday.y - nokta.y);
+
+      if (
+        farkY < esik &&
+        (!enYakinY || farkY < enYakinY.mesafe)
+      ) {
+        enYakinY = {
+          deger: aday.y,
+          mesafe: farkY,
+          kaynak: aday,
+        };
+      }
+    }
+  }
+
+  return { x: enYakinX, y: enYakinY };
 }
 
 // Çizim aracı, Shift basılı değilken açıyı bu adımın katlarına

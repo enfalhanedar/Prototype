@@ -8,6 +8,7 @@ import {
 import {
   stage,
   onizlemeKatmani,
+  hizalamaKatmani,
 } from "./stage.js";
 
 import { hoverTemizle } from "../interaction/interaction-hover.js";
@@ -32,6 +33,7 @@ export function modDegistir(yeniMod) {
   hoverTemizle();
 
   onizlemeKatmani.graphics.clear();
+  hizalamaKatmani.graphics.clear();
 
   if (yeniMod !== "SELECT") {
     setSeciliGrupId(null);

@@ -37,13 +37,22 @@ export const secimKatmani =
   new createjs.Shape();
 
 /*
+ * Çizim sırasında, üzerinde çalışılan noktanın mevcut çizgilerin
+ * köşeleriyle yatay/dikey hizalandığını gösteren kesikli cetvel
+ * çizgileri bu katmana çizilir.
+ */
+export const hizalamaKatmani =
+  new createjs.Shape();
+
+/*
  * Çizim sırası:
  *
  * grid en arkada,
  * oda dolguları onun üzerinde,
  * çizgiler daha üstte,
  * etiketler çizgilerin üzerinde,
- * önizleme ve seçim en üstte.
+ * önizleme ve seçim en üstte,
+ * hizalama cetveli her şeyin üzerinde görünür kalsın diye en önde.
  */
 viewport.addChild(
   gridKatmani,
@@ -53,6 +62,7 @@ viewport.addChild(
   odaEtiketKatmani,
   onizlemeKatmani,
   secimKatmani,
+  hizalamaKatmani,
 );
 
 /*
