@@ -105,7 +105,7 @@ function benzersizTSirala(tDegerleri) {
 /**
  * Çizginin kesişim noktalarına göre yeni parçalarını oluşturur.
  */
-function cizgiyiParcala(cizgi, tDegerleri) {
+export function cizgiyiParcala(cizgi, tDegerleri) {
   const siraliT = benzersizTSirala([0, ...tDegerleri, 1]);
 
   const parcalar = [];
@@ -134,12 +134,6 @@ function cizgiyiParcala(cizgi, tDegerleri) {
 
       x2: bitis.x,
       y2: bitis.y,
-
-      /*
-       * Bütün parçalar aynı çizim grubunda kalır.
-       * Böylece seçim mantığın bozulmaz.
-       */
-      groupId: cizgi.groupId ?? cizgi.id ?? crypto.randomUUID(),
 
       kaynakCizgiId: cizgi.kaynakCizgiId ?? cizgi.id ?? null,
     });
