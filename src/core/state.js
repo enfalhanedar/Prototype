@@ -17,6 +17,10 @@ export let seciliCizgiIdleri = [];
 export let gridGorunur = true;
 export let gridSnapAktif = true;
 
+// 1 dünya birimi = 1 santimetre
+export const PIXEL_PER_METRE = 100;
+export const GRID_SNAP_EKRAN_MESAFESI = 10;
+
 // Görünüm ayarları
 export const gorunumAyarlari = {
   grid: true,
@@ -44,11 +48,6 @@ export function gorunumAyariniDegistir(ayar) {
 
   setGorunumAyari(ayar, !gorunumAyarlari[ayar]);
 }
-
-// 1 dünya birimi = 1 santimetre
-export const PIXEL_PER_METRE = 100;
-
-export const GRID_SNAP_EKRAN_MESAFESI = 10;
 
 export function setAktifMod(mod) {
   aktifMod = mod;

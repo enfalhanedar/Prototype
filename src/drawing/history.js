@@ -174,35 +174,4 @@ export function tumunuSil() {
 const tumunuSilButonu = document.getElementById("btnClear");
 tumunuSilButonu?.addEventListener("click", tumunuSil);
 
-// Çizgileri dışarı aktaran fonksiyon
-function exportJSON(data) {
-  // 1. JSON verisini okunabilir (formatlı) bir metne dönüştür
-  const jsonString = JSON.stringify(data, null, 2);
 
-  // 2. Bu metinden sanal bir dosya (Blob) oluştur
-  const blob = new Blob([jsonString], { type: "application/json" });
-
-  // 3. Dosyayı indirmek için geçici bir link (a etiketi) yarat
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = "cizim-verileri.json"; // İnecek dosyanın adı
-
-  // 4. Linki tetikle ve bellekten temizle
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
-// Butona tıklama olayı (Event Listener) ekle
-document.getElementById("btnExportJson").addEventListener("click", () => {
-  // cizgiler değişkeninin adından emin olmalısın.
-  // Konsoldaki 'cizgiler' dizisini buraya parametre olarak gönderiyoruz.
-  if (typeof cizgiler !== "undefined" && cizgiler.length > 0) {
-    exportJSON(cizgiler);
-  } else {
-    alert("Dışarı aktarılacak aktif bir çizim bulunamadı!");
-  }
-});
