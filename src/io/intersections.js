@@ -3,6 +3,11 @@ import {
   setCizgiler,
 } from "../core/state.js";
 
+import {
+  koseleriBirlestir,
+  ortusenKenarlariBirlestir,
+} from "./kose-temizligi.js";
+
 const KESISIM_TOLERANSI = 0.001;
 const MINIMUM_CIZGI_UZUNLUGU = 0.01;
 
@@ -297,39 +302,73 @@ export function kesisimleriKoseyeDonustur() {
         noktalar.length > 0,
     );
 
-  if (!bolunmesiGerekenVarMi) {
-    return false;
-  }
+  let calismaKumesi = cizgiler;
+  let degistiMi = false;
 
-  const yeniCizgiler = [];
+  if (bolunmesiGerekenVarMi) {
+    const yeniCizgiler = [];
 
-  for (
-    let i = 0;
-    i < cizgiler.length;
-    i += 1
-  ) {
-    const cizgi = cizgiler[i];
+    for (
+      let i = 0;
+      i < cizgiler.length;
+      i += 1
+    ) {
+      const cizgi = cizgiler[i];
 
-    const tDegerleri =
-      bolmeNoktalari[i];
+      const tDegerleri =
+        bolmeNoktalari[i];
 
-    if (tDegerleri.length === 0) {
-      yeniCizgiler.push(cizgi);
-      continue;
+      if (tDegerleri.length === 0) {
+        yeniCizgiler.push(cizgi);
+        continue;
+      }
+
+      const parcalar =
+        cizgiyiParcala(
+          cizgi,
+          tDegerleri,
+        );
+
+      yeniCizgiler.push(
+        ...parcalar,
+      );
     }
 
-    const parcalar =
-      cizgiyiParcala(
-        cizgi,
-        tDegerleri,
-      );
-
-    yeniCizgiler.push(
-      ...parcalar,
-    );
+    calismaKumesi = yeniCizgiler;
+    degistiMi = true;
   }
 
-  setCizgiler(yeniCizgiler);
+  /*
+   * Kesişim bölmesi kendi başına yeterli değil: iki bağımsız snap/bölme
+   * yolu aynı köşeyi ufak bir kaymayla iki ayrı nokta gibi üretebilir,
+   * ya da paralel/collinear çizgiler (kesişim mantığı bunları hiç
+   * yakalamaz, bkz. cizgiKesisiminiBul) üst üste binebilir. Bu yüzden
+   * kesişim bulunsa da bulunmasa da her seferinde bir güvenlik ağı
+   * olarak köşe birleştirme + yinelenen/kapsanan kenar silme çalışır.
+   */
+  const birlestirmeSonucu =
+    koseleriBirlestir(calismaKumesi);
 
-  return true;
+  calismaKumesi =
+    birlestirmeSonucu.cizgiler;
+
+  degistiMi =
+    degistiMi ||
+    birlestirmeSonucu.degistiMi;
+
+  const birlestirmeSonucu2 =
+    ortusenKenarlariBirlestir(
+      calismaKumesi,
+    );
+
+  calismaKumesi = birlestirmeSonucu2.cizgiler;
+
+  degistiMi =
+    degistiMi || birlestirmeSonucu2.degistiMi;
+
+  if (degistiMi) {
+    setCizgiler(calismaKumesi);
+  }
+
+  return degistiMi;
 }
