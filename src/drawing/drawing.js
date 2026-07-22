@@ -17,9 +17,7 @@ import {
 
 import { hesaplaSnap, aciyaKilitle, hizalamaBul } from "../geometry/snap.js";
 
-import { kesisimleriKoseyeDonustur } from "../geometry/intersections.js";
 import { sahnedenDunyaya } from "../camera/camera.js";
-import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
 import { cizgiEkle } from "./history.js";
 
@@ -142,16 +140,6 @@ function cizgiModundaTiklama(snap) {
       y2: finalNokta.y,
     });
 
-    /*
-     * Kesişimlerden dolayı çizgiler bölünebilir.
-     * Oda hesabından önce bunu çalıştır.
-     */
-    kesisimleriKoseyeDonustur();
-
-    /*
-     * Yeni çizgiden sonra odaları hemen hesapla.
-     */
-    odalariYenidenHesapla();
   }
 
   /*
@@ -210,12 +198,12 @@ function kutuModundaTiklama(snap) {
     { x1, y1: y1 + h, x2: x1, y2: y1 },
   ]);
 
-  kesisimleriKoseyeDonustur();
+  
   setMevcutCizim(null);
   onizlemeKatmani.graphics.clear();
   hizalamaKatmani.graphics.clear();
 
-  odalariYenidenHesapla();
+  
 }
 
 /**
