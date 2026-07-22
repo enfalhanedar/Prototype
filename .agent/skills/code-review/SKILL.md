@@ -18,17 +18,16 @@ description: >
   ÇIKTI:    Review checklist raporu, yanıtlanmış feedback listesi, düzeltilmiş kod.
 -->
 
-
 # Code Review Skill
 
 ## İki Mod
 
 Bu skill iki farklı durumda devreye girer:
 
-| Mod | Ne Zaman | Ne Yapar |
-|-----|----------|----------|
-| **A — Pre-Commit Review** | Commit öncesi, kendi kendinle | Checklist çalıştır, commit'e hazır mı karar ver |
-| **B — Feedback Response** | Başkası review yaptı, feedback geldi | Her yorumu sınıflandır, yanıtla, düzelt |
+| Mod                       | Ne Zaman                             | Ne Yapar                                        |
+| ------------------------- | ------------------------------------ | ----------------------------------------------- |
+| **A — Pre-Commit Review** | Commit öncesi, kendi kendinle        | Checklist çalıştır, commit'e hazır mı karar ver |
+| **B — Feedback Response** | Başkası review yaptı, feedback geldi | Her yorumu sınıflandır, yanıtla, düzelt         |
 
 ---
 
@@ -102,14 +101,17 @@ Commit mesajının yanına veya PR açıklamasına eklemek için:
 **Değişiklik:** <ne yaptım, neden>
 **Test Durumu:** ✅ Tüm testler geçiyor / ⚠️ X test skip edildi (gerekçe: ...)
 **Checklist:**
-  - 🔴 Kritik: Temiz
-  - 🟡 Önemli: [varsa not]
-  - 🔵 Kalite: [varsa not]
+
+- 🔴 Kritik: Temiz
+- 🟡 Önemli: [varsa not]
+- 🔵 Kalite: [varsa not]
 
 **Özellikle dikkat çekilmek istenen:**
+
 - <reviewer'ın bakmasını istediğin yer>
 
 **Bilinçli atlanan kısayollar (deliberate shortcuts):**
+
 - <varsa gerekçesiyle>
 ```
 
@@ -169,10 +171,12 @@ Tüm düzeltmeler tamamlandığında review'ı güncelle:
 ## Düzeltme Özeti
 
 Toplam yorum: 8
+
 - Düzeltildi: 7
 - Reddedildi (gerekçeyle): 1 → "NIT yorumu: mevcut isimlendirme proje konvansiyonuyla uyumlu"
 
 Önemli değişiklikler:
+
 - Timeout + retry mekanizması eklendi (güvenlik açısından kritik)
 - 2 refactor (netlik için)
 

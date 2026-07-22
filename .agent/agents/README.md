@@ -6,12 +6,12 @@ listesi ve kullandığı skill'ler.
 
 ## Personalar
 
-| Dosya | İsim | Uzmanlık | Ne Zaman Devreye Girer |
-|-------|------|----------|------------------------|
-| `designer.md` | 🎨 Aria | UI/UX, motion design, design token sistemleri, erişilebilirlik | Görsel tasarım, komponent spec'i, animasyon kararları |
-| `frontend-dev.md` | 💻 Felix | React/Vue, CSS mimarisi, Core Web Vitals, komponent testleri | UI implementasyonu, frontend performansı |
-| `backend-dev.md` | ⚙️ Bora | API tasarımı, veritabanı, auth, güvenlik, servis mimarisi | Endpoint, migration, iş mantığı, güvenlik |
-| `devops.md` | 🚀 Deva | Docker/K8s, CI/CD, cloud, monitoring, kriz operasyonu | Deploy, pipeline, altyapı, production sorunları |
+| Dosya             | İsim     | Uzmanlık                                                       | Ne Zaman Devreye Girer                                |
+| ----------------- | -------- | -------------------------------------------------------------- | ----------------------------------------------------- |
+| `designer.md`     | 🎨 Aria  | UI/UX, motion design, design token sistemleri, erişilebilirlik | Görsel tasarım, komponent spec'i, animasyon kararları |
+| `frontend-dev.md` | 💻 Felix | React/Vue, CSS mimarisi, Core Web Vitals, komponent testleri   | UI implementasyonu, frontend performansı              |
+| `backend-dev.md`  | ⚙️ Bora  | API tasarımı, veritabanı, auth, güvenlik, servis mimarisi      | Endpoint, migration, iş mantığı, güvenlik             |
+| `devops.md`       | 🚀 Deva  | Docker/K8s, CI/CD, cloud, monitoring, kriz operasyonu          | Deploy, pipeline, altyapı, production sorunları       |
 
 ## Nasıl Kullanılır
 

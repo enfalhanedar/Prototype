@@ -1,8 +1,4 @@
-import {
-  canvas,
-  stage,
-  viewport,
-} from "../core/stage.js";
+import { canvas, stage, viewport } from "../core/stage.js";
 
 import { gridiCiz } from "../geometry/grid.js";
 import { ekraniGuncelle } from "../drawing/render.js";
@@ -17,17 +13,11 @@ let oncekiMouseX = 0;
 let oncekiMouseY = 0;
 
 export function zoomDegeriniSinirla(zoom) {
-  return Math.min(
-    MAX_ZOOM,
-    Math.max(MIN_ZOOM, zoom),
-  );
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
 }
 
 export function sahnedenDunyaya(stageX, stageY) {
-  return viewport.globalToLocal(
-    stageX,
-    stageY,
-  );
+  return viewport.globalToLocal(stageX, stageY);
 }
 
 export function dunyadanSahneye(x, y) {
@@ -39,29 +29,21 @@ export function zoomYap(
   merkezX = canvas.width / 2,
   merkezY = canvas.height / 2,
 ) {
-  const sinirliZoom =
-    zoomDegeriniSinirla(yeniZoom);
+  const sinirliZoom = zoomDegeriniSinirla(yeniZoom);
 
-  const zoomOncesiNokta =
-    viewport.globalToLocal(
-      merkezX,
-      merkezY,
-    );
+  const zoomOncesiNokta = viewport.globalToLocal(merkezX, merkezY);
 
   viewport.scaleX = sinirliZoom;
   viewport.scaleY = sinirliZoom;
 
-  const zoomSonrasiNokta =
-    viewport.localToGlobal(
-      zoomOncesiNokta.x,
-      zoomOncesiNokta.y,
-    );
+  const zoomSonrasiNokta = viewport.localToGlobal(
+    zoomOncesiNokta.x,
+    zoomOncesiNokta.y,
+  );
 
-  viewport.x +=
-    merkezX - zoomSonrasiNokta.x;
+  viewport.x += merkezX - zoomSonrasiNokta.x;
 
-  viewport.y +=
-    merkezY - zoomSonrasiNokta.y;
+  viewport.y += merkezY - zoomSonrasiNokta.y;
 
   gridiCiz();
 
@@ -74,15 +56,11 @@ export function zoomYap(
 }
 
 export function zoomIn() {
-  zoomYap(
-    viewport.scaleX * ZOOM_ADIMI,
-  );
+  zoomYap(viewport.scaleX * ZOOM_ADIMI);
 }
 
 export function zoomOut() {
-  zoomYap(
-    viewport.scaleX / ZOOM_ADIMI,
-  );
+  zoomYap(viewport.scaleX / ZOOM_ADIMI);
 }
 
 export function zoomSifirla() {
@@ -98,13 +76,11 @@ export function zoomSifirla() {
 }
 
 function zoomBilgisiniGuncelle() {
-  const zoomYazisi =
-    document.getElementById("zoomValue");
+  const zoomYazisi = document.getElementById("zoomValue");
 
   if (!zoomYazisi) return;
 
-  zoomYazisi.textContent =
-    `${Math.round(viewport.scaleX * 100)}%`;
+  zoomYazisi.textContent = `${Math.round(viewport.scaleX * 100)}%`;
 }
 
 // Mouse tekerleği ile zoom
@@ -113,27 +89,18 @@ canvas.addEventListener(
   (event) => {
     event.preventDefault();
 
-    const rect =
-      canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-    const mouseX =
-      (event.clientX - rect.left) *
-      (canvas.width / rect.width);
+    const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
 
-    const mouseY =
-      (event.clientY - rect.top) *
-      (canvas.height / rect.height);
+    const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
 
     const yeniZoom =
       event.deltaY < 0
         ? viewport.scaleX * ZOOM_ADIMI
         : viewport.scaleX / ZOOM_ADIMI;
 
-    zoomYap(
-      yeniZoom,
-      mouseX,
-      mouseY,
-    );
+    zoomYap(yeniZoom, mouseX, mouseY);
   },
   {
     passive: false,
@@ -141,99 +108,63 @@ canvas.addEventListener(
 );
 
 // Sağ tuşa basınca pan başlasın
-canvas.addEventListener(
-  "pointerdown",
-  (event) => {
-    if (event.button !== 2) return;
+canvas.addEventListener("pointerdown", (event) => {
+  if (event.button !== 2) return;
 
-    event.preventDefault();
+  event.preventDefault();
 
-    sagTuslaGeziliyor = true;
+  sagTuslaGeziliyor = true;
 
-    oncekiMouseX = event.clientX;
-    oncekiMouseY = event.clientY;
+  oncekiMouseX = event.clientX;
+  oncekiMouseY = event.clientY;
 
-    canvas.setPointerCapture(
-      event.pointerId,
-    );
+  canvas.setPointerCapture(event.pointerId);
 
-    canvas.style.cursor = "grabbing";
-  },
-);
+  canvas.style.cursor = "grabbing";
+});
 
 // Sağ tuş basılıyken viewport hareket etsin
-canvas.addEventListener(
-  "pointermove",
-  (event) => {
-    if (!sagTuslaGeziliyor) return;
+canvas.addEventListener("pointermove", (event) => {
+  if (!sagTuslaGeziliyor) return;
 
-    const rect =
-      canvas.getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
 
-    const oranX =
-      canvas.width / rect.width;
+  const oranX = canvas.width / rect.width;
 
-    const oranY =
-      canvas.height / rect.height;
+  const oranY = canvas.height / rect.height;
 
-    const dx =
-      (event.clientX - oncekiMouseX) *
-      oranX;
+  const dx = (event.clientX - oncekiMouseX) * oranX;
 
-    const dy =
-      (event.clientY - oncekiMouseY) *
-      oranY;
+  const dy = (event.clientY - oncekiMouseY) * oranY;
 
-    viewport.x += dx;
-    viewport.y += dy;
+  viewport.x += dx;
+  viewport.y += dy;
 
-    oncekiMouseX = event.clientX;
-    oncekiMouseY = event.clientY;
+  oncekiMouseX = event.clientX;
+  oncekiMouseY = event.clientY;
 
-    gridiCiz();
-    stage.update();
-  },
-);
+  gridiCiz();
+  stage.update();
+});
 
 function sagTusGezmesiniBitir(event) {
   if (!sagTuslaGeziliyor) return;
 
   sagTuslaGeziliyor = false;
 
-  if (
-    canvas.hasPointerCapture(
-      event.pointerId,
-    )
-  ) {
-    canvas.releasePointerCapture(
-      event.pointerId,
-    );
+  if (canvas.hasPointerCapture(event.pointerId)) {
+    canvas.releasePointerCapture(event.pointerId);
   }
 
   canvas.style.cursor = "default";
 }
 
-canvas.addEventListener(
-  "pointerup",
-  sagTusGezmesiniBitir,
-);
+canvas.addEventListener("pointerup", sagTusGezmesiniBitir);
 
-canvas.addEventListener(
-  "pointercancel",
-  sagTusGezmesiniBitir,
-);
+canvas.addEventListener("pointercancel", sagTusGezmesiniBitir);
 
-document
-  .getElementById("btnZoomIn")
-  ?.addEventListener("click", zoomIn);
+document.getElementById("btnZoomIn")?.addEventListener("click", zoomIn);
 
-document
-  .getElementById("btnZoomOut")
-  ?.addEventListener("click", zoomOut);
+document.getElementById("btnZoomOut")?.addEventListener("click", zoomOut);
 
-document
-  .getElementById("btnZoomReset")
-  ?.addEventListener(
-    "click",
-    zoomSifirla,
-  );
+document.getElementById("btnZoomReset")?.addEventListener("click", zoomSifirla);

@@ -5,18 +5,18 @@ Temel: [omergocmen/vibe-coder-kit](https://github.com/omergocmen/vibe-coder-kit)
 
 ## Dizin Haritası
 
-| Dizin | İçerik | Ne İşe Yarar |
-|-------|--------|--------------|
-| `agents/` | 4 uzman persona | Göreve göre uzman kimliği yükler (tasarım, frontend, backend, devops) |
-| `skills/` | 20 iş akışı (her biri `<isim>/SKILL.md`) | Komutla tetiklenen, adım adım süreç tanımları |
-| `rules/` | 3 zorunlu kural seti | Her görevde istisnasız geçerli standartlar |
-| `knowledge/` | Kalıcı bilgi tabanı | Oturumlar arası hafıza — kararlar, tuzaklar, kurallar |
-| `reviews/` | Mimari inceleme raporları | `architecture-review` çıktıları buraya yazılır |
-| `audits/` | Denetim raporları | `dependency-audit`, `security-scanner` çıktıları |
-| `incidents/` | Olay kayıtları | `incident-response` timeline + post-mortem'leri |
-| `AGENTS.md` | Oturum başlatma talimatı | Asistan her oturumda ilk bunu okur |
-| `CURRENT_TASK.md` | Aktif görev | Şu an ne üzerinde çalışılıyor |
-| `OPEN_QUESTIONS.md` | Açık sorular | Henüz karar verilmemiş konular |
+| Dizin               | İçerik                                   | Ne İşe Yarar                                                          |
+| ------------------- | ---------------------------------------- | --------------------------------------------------------------------- |
+| `agents/`           | 4 uzman persona                          | Göreve göre uzman kimliği yükler (tasarım, frontend, backend, devops) |
+| `skills/`           | 20 iş akışı (her biri `<isim>/SKILL.md`) | Komutla tetiklenen, adım adım süreç tanımları                         |
+| `rules/`            | 3 zorunlu kural seti                     | Her görevde istisnasız geçerli standartlar                            |
+| `knowledge/`        | Kalıcı bilgi tabanı                      | Oturumlar arası hafıza — kararlar, tuzaklar, kurallar                 |
+| `reviews/`          | Mimari inceleme raporları                | `architecture-review` çıktıları buraya yazılır                        |
+| `audits/`           | Denetim raporları                        | `dependency-audit`, `security-scanner` çıktıları                      |
+| `incidents/`        | Olay kayıtları                           | `incident-response` timeline + post-mortem'leri                       |
+| `AGENTS.md`         | Oturum başlatma talimatı                 | Asistan her oturumda ilk bunu okur                                    |
+| `CURRENT_TASK.md`   | Aktif görev                              | Şu an ne üzerinde çalışılıyor                                         |
+| `OPEN_QUESTIONS.md` | Açık sorular                             | Henüz karar verilmemiş konular                                        |
 
 ## Tam İş Akışı
 

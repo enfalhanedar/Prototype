@@ -4,11 +4,7 @@ import {
   secimiTemizle,
 } from "../core/state.js";
 
-import {
-  stage,
-  viewport,
-  secimKatmani,
-} from "../core/stage.js";
+import { stage, viewport, secimKatmani } from "../core/stage.js";
 
 import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
@@ -21,19 +17,11 @@ const silButonu = document.getElementById("btnDeleteSelected");
 const KESISIM_TOLERANSI = 0.001;
 
 function noktaKutuIcindeMi(x, y, kutu) {
-  return (
-    x >= kutu.sol &&
-    x <= kutu.sag &&
-    y >= kutu.ust &&
-    y <= kutu.alt
-  );
+  return x >= kutu.sol && x <= kutu.sag && y >= kutu.ust && y <= kutu.alt;
 }
 
 function yon(a, b, c) {
-  return (
-    (b.x - a.x) * (c.y - a.y) -
-    (b.y - a.y) * (c.x - a.x)
-  );
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 }
 
 function noktaCizgiAraligindaMi(a, b, c) {
@@ -52,14 +40,8 @@ function cizgilerKesisiyorMu(a1, a2, b1, b2) {
   const yon4 = yon(b1, b2, a2);
 
   const genelKesisim =
-    (
-      (yon1 > 0 && yon2 < 0) ||
-      (yon1 < 0 && yon2 > 0)
-    ) &&
-    (
-      (yon3 > 0 && yon4 < 0) ||
-      (yon3 < 0 && yon4 > 0)
-    );
+    ((yon1 > 0 && yon2 < 0) || (yon1 < 0 && yon2 > 0)) &&
+    ((yon3 > 0 && yon4 < 0) || (yon3 < 0 && yon4 > 0));
 
   if (genelKesisim) {
     return true;
@@ -135,30 +117,10 @@ function cizgiSecimKutusuylaKesisiyorMu(cizgi, kutu) {
   };
 
   return (
-    cizgilerKesisiyorMu(
-      cizgiBaslangici,
-      cizgiBitisi,
-      solUst,
-      sagUst,
-    ) ||
-    cizgilerKesisiyorMu(
-      cizgiBaslangici,
-      cizgiBitisi,
-      sagUst,
-      sagAlt,
-    ) ||
-    cizgilerKesisiyorMu(
-      cizgiBaslangici,
-      cizgiBitisi,
-      sagAlt,
-      solAlt,
-    ) ||
-    cizgilerKesisiyorMu(
-      cizgiBaslangici,
-      cizgiBitisi,
-      solAlt,
-      solUst,
-    )
+    cizgilerKesisiyorMu(cizgiBaslangici, cizgiBitisi, solUst, sagUst) ||
+    cizgilerKesisiyorMu(cizgiBaslangici, cizgiBitisi, sagUst, sagAlt) ||
+    cizgilerKesisiyorMu(cizgiBaslangici, cizgiBitisi, sagAlt, solAlt) ||
+    cizgilerKesisiyorMu(cizgiBaslangici, cizgiBitisi, solAlt, solUst)
   );
 }
 
@@ -171,12 +133,7 @@ function secimKutusundakiCizgileriBul(baslangic, bitis) {
   };
 
   return cizgiler
-    .filter((cizgi) =>
-      cizgiSecimKutusuylaKesisiyorMu(
-        cizgi,
-        secimKutusu,
-      ),
-    )
+    .filter((cizgi) => cizgiSecimKutusuylaKesisiyorMu(cizgi, secimKutusu))
     .map((cizgi) => cizgi.id);
 }
 
@@ -215,10 +172,7 @@ export function kutuSecimGuncelle(dunyaNoktasi) {
     return;
   }
 
-  secimKutusunuCiz(
-    kutuSecimBaslangici,
-    dunyaNoktasi,
-  );
+  secimKutusunuCiz(kutuSecimBaslangici, dunyaNoktasi);
 }
 
 export function kutuSecimBitir(dunyaNoktasi) {
@@ -226,11 +180,10 @@ export function kutuSecimBitir(dunyaNoktasi) {
     return;
   }
 
-  const bulunanCizgiIdleri =
-    secimKutusundakiCizgileriBul(
-      kutuSecimBaslangici,
-      dunyaNoktasi,
-    );
+  const bulunanCizgiIdleri = secimKutusundakiCizgileriBul(
+    kutuSecimBaslangici,
+    dunyaNoktasi,
+  );
 
   setSeciliCizgiIdleri(bulunanCizgiIdleri);
 

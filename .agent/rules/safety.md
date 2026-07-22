@@ -6,12 +6,14 @@
   çalışan sisteme dokunmama prensibi bu dosyada tanımlıdır.
   Bu kurallar her görevde, istisnasız uygulanır.
 -->
+
 ---
+
 name: safety
 description: >
-  Prevents irreversible damage to systems and data.
-  Destructive commands require explicit user approval.
-  Working systems must not be touched unless the task directly requires it.
+Prevents irreversible damage to systems and data.
+Destructive commands require explicit user approval.
+Working systems must not be touched unless the task directly requires it.
 ---
 
 # Safety Rules
@@ -30,6 +32,7 @@ docker system prune
 ```
 
 **Gösterim formatı:**
+
 ```
 ⚠️  Yıkıcı komut tespit edildi — onay gerekiyor:
 
@@ -50,12 +53,14 @@ Eğer bir sistem şu anda çalışıyorsa (test geçiyor, production'da aktif, k
 - Yeni özellik eklerken mevcut çalışan kodu kırmak zorundaysan → önce kullanıcıya bildir ve alternatif öner
 
 **Pratik kural:**
+
 ```
 Yeni şey eklenince mevcut testler kırılıyorsa → dur ve bildir.
 "Bunu düzeltmek için şunu yapmam gerekiyor" de, sessizce değiştirme.
 ```
 
 Yeni bir özellik eklendiğinde şu sıra uygulanır:
+
 1. Mevcut testleri çalıştır — yeşil mi? → başla
 2. Değişiklik sonrası testleri tekrar çalıştır
 3. Kırılan test varsa → önce bunu raporla, sonra düzelt
@@ -66,11 +71,11 @@ Yeni bir özellik eklendiğinde şu sıra uygulanır:
 
 Aşağıdaki işlemlerden önce rollback adımı tanımlanır:
 
-| İşlem | Rollback |
-|-------|---------|
-| Database migration | Down migration yazılmış ve test edilmiş |
-| Production deploy | Önceki versiyon tag'i mevcut, deploy geri alınabilir |
+| İşlem              | Rollback                                             |
+| ------------------ | ---------------------------------------------------- |
+| Database migration | Down migration yazılmış ve test edilmiş              |
+| Production deploy  | Önceki versiyon tag'i mevcut, deploy geri alınabilir |
 | Config değişikliği | Eski değer yorum olarak veya `.env.example`'da saklı |
-| Büyük refactor | Feature branch'te yapılır, main'e dokunulmaz |
+| Büyük refactor     | Feature branch'te yapılır, main'e dokunulmaz         |
 
 Rollback tanımlanmadan yıkıcı işleme başlanmaz.

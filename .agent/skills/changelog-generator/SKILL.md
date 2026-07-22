@@ -41,14 +41,14 @@ git log --since="2026-06-01" --oneline
 
 ### 2. Kategorize Et
 
-| Commit type | CHANGELOG bölümü |
-|-------------|------------------|
-| `feat` | Added |
-| `fix` | Fixed |
-| `refactor`, `perf` | Changed |
-| `revert` + kaldırmalar | Removed |
-| `feat!`, `BREAKING CHANGE` | ⚠️ Breaking Changes |
-| `chore`, `ci`, `style` | (genellikle atlanır) |
+| Commit type                | CHANGELOG bölümü     |
+| -------------------------- | -------------------- |
+| `feat`                     | Added                |
+| `fix`                      | Fixed                |
+| `refactor`, `perf`         | Changed              |
+| `revert` + kaldırmalar     | Removed              |
+| `feat!`, `BREAKING CHANGE` | ⚠️ Breaking Changes  |
+| `chore`, `ci`, `style`     | (genellikle atlanır) |
 
 **Anlamsız mesajlar** ("wip", "fix2", "update"): `git show <hash>` ile diff'e bak, ne yaptığını anla, changelog'a anlamlı cümleyle yaz.
 
@@ -68,15 +68,19 @@ Keep a Changelog formatında:
 ## [1.3.0] - 2026-07-16
 
 ### Added
+
 - User registration endpoint with email verification (#42)
 
 ### Fixed
+
 - Null refresh token causing 500 on rotation (#51)
 
 ### Changed
+
 - Migrated user IDs from integer to UUID
 
 ### ⚠️ Breaking Changes
+
 - /api/users/:id now expects UUID string — see migration guide
 ```
 

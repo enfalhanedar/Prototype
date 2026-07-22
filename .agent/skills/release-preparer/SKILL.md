@@ -30,12 +30,12 @@ description: >
 
 ### Aşama 1: Ön Kontroller (Koruyucular)
 
-| Sıra | Kontrol | Skill | Bloklar mı? |
-|------|---------|-------|-------------|
-| 1 | Tüm testler geçiyor | `test-guard` | ✅ Evet |
-| 2 | Güvenlik taraması temiz | `security-scanner` | ✅ Kritik bulgu bloklar |
-| 3 | Env/config tutarlı | `env-validator` | ✅ Eksik anahtar bloklar |
-| 4 | Bağımlılık açığı yok | `dependency-audit` | ✅ Critical CVE bloklar |
+| Sıra | Kontrol                 | Skill              | Bloklar mı?              |
+| ---- | ----------------------- | ------------------ | ------------------------ |
+| 1    | Tüm testler geçiyor     | `test-guard`       | ✅ Evet                  |
+| 2    | Güvenlik taraması temiz | `security-scanner` | ✅ Kritik bulgu bloklar  |
+| 3    | Env/config tutarlı      | `env-validator`    | ✅ Eksik anahtar bloklar |
+| 4    | Bağımlılık açığı yok    | `dependency-audit` | ✅ Critical CVE bloklar  |
 
 ### Aşama 2: Sürüm Hazırlığı
 
@@ -46,35 +46,42 @@ description: >
 ### Aşama 3: Paketleme ve Doğrulama
 
 8. **Production build al:**
+
 ```bash
 npm run build
 # Build hatası = release iptal
 ```
+
 9. **Smoke test** — uygulama ayağa kalkıyor mu, kritik akış çalışıyor mu?
 
 ### Aşama 4: Karar
 
 **✅ Her şey temizse:**
+
 ```bash
 git tag -a v<X.Y.Z> -m "Release v<X.Y.Z> — <özet>"
 ```
+
 ```markdown
 ## Release Hazır: v1.3.0
+
 - [x] 48/48 test geçti
 - [x] Güvenlik: temiz
 - [x] Env: senkron
 - [x] Bağımlılık: kritik açık yok
 - [x] CHANGELOG + docs güncel
 - [x] Build başarılı
-→ Tag atıldı. Deploy edilebilir. Rollback: v1.2.3 tag'i mevcut.
+      → Tag atıldı. Deploy edilebilir. Rollback: v1.2.3 tag'i mevcut.
 ```
 
 **❌ Sorun varsa:**
+
 ```markdown
 ## Release Engellendi
+
 1. 🔴 security-scanner: hardcoded key (src/config.ts:12) → rotate + env'e taşı
 2. 🔴 test-guard: 2 test başarısız → rapor ekte
-Çözülmeden release yok.
+   Çözülmeden release yok.
 ```
 
 ## Rules

@@ -15,11 +15,7 @@ import {
   hizalamaKatmani,
 } from "../core/stage.js";
 
-import {
-  hesaplaSnap,
-  aciyaKilitle,
-  hizalamaBul,
-} from "../geometry/snap.js";
+import { hesaplaSnap, aciyaKilitle, hizalamaBul } from "../geometry/snap.js";
 
 import { kesisimleriKoseyeDonustur } from "../io/intersections.js";
 import { sahnedenDunyaya } from "../camera/camera.js";
@@ -62,15 +58,9 @@ stage.on("stagemousedown", (event) => {
   if (aktifMod === "SELECT") return;
   if (event.nativeEvent.button === 2) return;
 
-  const dunyaNoktasi = sahnedenDunyaya(
-    event.stageX,
-    event.stageY,
-  );
+  const dunyaNoktasi = sahnedenDunyaya(event.stageX, event.stageY);
 
-  const snap = hesaplaSnap(
-    dunyaNoktasi.x,
-    dunyaNoktasi.y,
-  );
+  const snap = hesaplaSnap(dunyaNoktasi.x, dunyaNoktasi.y);
 
   if (aktifMod === "LINE") {
     cizgiModundaTiklama(snap);
@@ -86,15 +76,9 @@ stage.on("stagemousemove", (event) => {
   if (aktifMod === "SELECT") return;
   if (!mevcutCizim) return;
 
-  const dunyaNoktasi = sahnedenDunyaya(
-    event.stageX,
-    event.stageY,
-  );
+  const dunyaNoktasi = sahnedenDunyaya(event.stageX, event.stageY);
 
-  const snap = hesaplaSnap(
-    dunyaNoktasi.x,
-    dunyaNoktasi.y,
-  );
+  const snap = hesaplaSnap(dunyaNoktasi.x, dunyaNoktasi.y);
 
   onizlemeKatmani.graphics.clear();
 
@@ -121,17 +105,14 @@ function cizgiModundaTiklama(snap) {
   }
 
   const nesneyeMiknatislandiMi =
-    snap.snapTuru === "CORNER" ||
-    snap.snapTuru === "EDGE";
+    snap.snapTuru === "CORNER" || snap.snapTuru === "EDGE";
 
-  const koseyeMiknatislandiMi =
-    snap.snapTuru === "CORNER";
+  const koseyeMiknatislandiMi = snap.snapTuru === "CORNER";
 
-  const { nokta: kilitliNokta, hizalama } =
-    cizimHedefNoktasiniHesapla(
-      snap,
-      koseyeMiknatislandiMi,
-    );
+  const { nokta: kilitliNokta, hizalama } = cizimHedefNoktasiniHesapla(
+    snap,
+    koseyeMiknatislandiMi,
+  );
 
   const finalNokta = {
     x:
@@ -146,8 +127,7 @@ function cizgiModundaTiklama(snap) {
   };
 
   const cizgiBosDegil =
-    mevcutCizim.x1 !== finalNokta.x ||
-    mevcutCizim.y1 !== finalNokta.y;
+    mevcutCizim.x1 !== finalNokta.x || mevcutCizim.y1 !== finalNokta.y;
 
   /*
    * Çizgi eklenmeden önce kaç oda olduğunu sakla.
@@ -177,13 +157,9 @@ function cizgiModundaTiklama(snap) {
   /*
    * Oda sayısı arttıysa yeni bir kapalı alan oluşmuştur.
    */
-  const yeniOdaOlustu =
-    odalar.length > oncekiOdaSayisi;
+  const yeniOdaOlustu = odalar.length > oncekiOdaSayisi;
 
-  if (
-    yeniOdaOlustu ||
-    nesneyeMiknatislandiMi
-  ) {
+  if (yeniOdaOlustu || nesneyeMiknatislandiMi) {
     /*
      * Oda oluştuysa veya mevcut nesneye bağlandıysa
      * çizim zincirini tamamen bitir.
@@ -260,10 +236,7 @@ function kutuModundaTiklama(snap) {
  *      serbest kaldığından bu adım pratikte tam bir hizalama cetveli gibi
  *      davranır.
  */
-function cizimHedefNoktasiniHesapla(
-  snap,
-  koseyeMiknatislandiMi,
-) {
+function cizimHedefNoktasiniHesapla(snap, koseyeMiknatislandiMi) {
   if (koseyeMiknatislandiMi) {
     return {
       nokta: { x: snap.x, y: snap.y },
@@ -310,10 +283,7 @@ function hizalamaCizgileriniCiz(hizalama) {
 
   const solUst = viewport.globalToLocal(0, 0);
 
-  const sagAlt = viewport.globalToLocal(
-    canvas.width,
-    canvas.height,
-  );
+  const sagAlt = viewport.globalToLocal(canvas.width, canvas.height);
 
   const renk = "#f43f5e";
   const grafik = hizalamaKatmani.graphics;
@@ -321,10 +291,7 @@ function hizalamaCizgileriniCiz(hizalama) {
   grafik
     .beginStroke(renk)
     .setStrokeStyle(1 / viewport.scaleX)
-    .setStrokeDash(
-      [6 / viewport.scaleX, 4 / viewport.scaleX],
-      0,
-    );
+    .setStrokeDash([6 / viewport.scaleX, 4 / viewport.scaleX], 0);
 
   if (hizalama.x) {
     grafik
@@ -345,19 +312,11 @@ function hizalamaCizgileriniCiz(hizalama) {
   grafik.beginFill(renk);
 
   if (hizalama.x) {
-    grafik.drawCircle(
-      hizalama.x.kaynak.x,
-      hizalama.x.kaynak.y,
-      isaretYaricap,
-    );
+    grafik.drawCircle(hizalama.x.kaynak.x, hizalama.x.kaynak.y, isaretYaricap);
   }
 
   if (hizalama.y) {
-    grafik.drawCircle(
-      hizalama.y.kaynak.x,
-      hizalama.y.kaynak.y,
-      isaretYaricap,
-    );
+    grafik.drawCircle(hizalama.y.kaynak.x, hizalama.y.kaynak.y, isaretYaricap);
   }
 
   grafik.endFill();
@@ -366,11 +325,10 @@ function hizalamaCizgileriniCiz(hizalama) {
 function cizgiOnizlemesiniGuncelle(snap) {
   const koseyeMiknatislandiMi = snap.snapTuru === "CORNER";
 
-  const { nokta: hedefNokta, hizalama } =
-    cizimHedefNoktasiniHesapla(
-      snap,
-      koseyeMiknatislandiMi,
-    );
+  const { nokta: hedefNokta, hizalama } = cizimHedefNoktasiniHesapla(
+    snap,
+    koseyeMiknatislandiMi,
+  );
 
   mevcutCizim.x2 = hedefNokta.x;
   mevcutCizim.y2 = hedefNokta.y;
@@ -400,10 +358,7 @@ function kutuOnizlemesiniGuncelle(snap) {
   let rawH = snap.y - mevcutCizim.startY;
 
   if (aktifMod === "SQUARE") {
-    const kareBoyutu = Math.max(
-      Math.abs(rawW),
-      Math.abs(rawH),
-    );
+    const kareBoyutu = Math.max(Math.abs(rawW), Math.abs(rawH));
 
     rawW = rawW >= 0 ? kareBoyutu : -kareBoyutu;
     rawH = rawH >= 0 ? kareBoyutu : -kareBoyutu;
@@ -432,22 +387,15 @@ function kutuOnizlemesiniGuncelle(snap) {
   }
 
   if (aktifMod === "SQUARE") {
-    const kareBoyutu = Math.max(
-      Math.abs(rawW),
-      Math.abs(rawH),
-    );
+    const kareBoyutu = Math.max(Math.abs(rawW), Math.abs(rawH));
 
     rawW = rawW >= 0 ? kareBoyutu : -kareBoyutu;
     rawH = rawH >= 0 ? kareBoyutu : -kareBoyutu;
   }
 
-  mevcutCizim.x = rawW < 0
-    ? mevcutCizim.startX + rawW
-    : mevcutCizim.startX;
+  mevcutCizim.x = rawW < 0 ? mevcutCizim.startX + rawW : mevcutCizim.startX;
 
-  mevcutCizim.y = rawH < 0
-    ? mevcutCizim.startY + rawH
-    : mevcutCizim.startY;
+  mevcutCizim.y = rawH < 0 ? mevcutCizim.startY + rawH : mevcutCizim.startY;
 
   mevcutCizim.w = Math.abs(rawW);
   mevcutCizim.h = Math.abs(rawH);

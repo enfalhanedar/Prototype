@@ -4,4 +4,4 @@
      project-context-primer oturum başında bu tabloyu tarar. -->
 
 | Date | Type | Topic | Summary |
-|------|------|-------|---------|
+| ---- | ---- | ----- | ------- |

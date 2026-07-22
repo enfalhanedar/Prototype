@@ -25,6 +25,7 @@ description: >
 ## When to Trigger
 
 Run after:
+
 - A public API endpoint is added, changed, or removed
 - A CLI command or flag is modified
 - A new environment variable or config key is introduced
@@ -44,6 +45,7 @@ git diff HEAD~1 --name-only        # Files changed in last commit
 ```
 
 Categorize changes:
+
 - **API changes** → affects `docs/api/`, OpenAPI/Swagger specs, `README.md`
 - **Config changes** → affects `.env.example`, `docs/configuration.md`
 - **Dependency changes** → affects `README.md` (setup section), `docs/getting-started.md`
@@ -72,11 +74,13 @@ For each doc file that touches the changed area, read it and flag stale sections
 Update in this order (highest impact first):
 
 #### A. README.md
+
 - Setup instructions still accurate?
 - Tech stack section reflects current stack?
 - Any removed features still mentioned?
 
 #### B. .env.example / Configuration Docs
+
 For every new env variable added to code, add a corresponding entry:
 
 ```bash
@@ -85,13 +89,15 @@ NEW_VAR_NAME=example_value
 ```
 
 Document in `docs/configuration.md`:
+
 ```markdown
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| NEW_VAR_NAME | Yes | — | What it controls |
+| Variable     | Required | Default | Description      |
+| ------------ | -------- | ------- | ---------------- |
+| NEW_VAR_NAME | Yes      | —       | What it controls |
 ```
 
 #### C. API Docs
+
 For every endpoint change, update the relevant doc:
 
 ```markdown
@@ -105,26 +111,33 @@ For every endpoint change, update the relevant doc:
 ```
 
 #### D. CHANGELOG.md
+
 Append an entry under `## [Unreleased]`:
 
 ```markdown
 ### Added
+
 - <new feature description>
 
 ### Changed
+
 - <what was modified and why>
 
 ### Fixed
+
 - <bug fixed>
 
 ### Removed
+
 - <what was removed>
 ```
 
 Follow [Keep a Changelog](https://keepachangelog.com) format.
 
 #### E. Architecture Docs
+
 If a new service, module, or significant component was added:
+
 - Update the component list in `docs/architecture.md`
 - Note any new external dependencies or integrations
 - If a diagram exists (Mermaid, Draw.io), update it

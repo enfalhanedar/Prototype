@@ -65,7 +65,7 @@ KODDA VAR, .env.example'DA YOK  → eksik (kritik — yeni geliştirici çalış
 - Uygulama başlangıcına fail-fast doğrulama öner:
 
 ```typescript
-const required = ['DATABASE_URL', 'JWT_SECRET'];
+const required = ["DATABASE_URL", "JWT_SECRET"];
 for (const key of required) {
   if (!process.env[key]) throw new Error(`Missing env var: ${key}`);
 }
@@ -77,9 +77,11 @@ for (const key of required) {
 ## Env Validation — <tarih>
 
 **Eksik (.env.example'a eklendi):**
+
 - STRIPE_WEBHOOK_SECRET — src/payments/webhook.ts:8
 
 **Bayat (onay bekliyor):**
+
 - OLD_API_URL — kodda kullanım bulunamadı
 
 **Güvenlik:** ✅ .env gitignore'da, placeholder'lar temiz

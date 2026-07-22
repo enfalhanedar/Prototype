@@ -9,11 +9,7 @@ import "./interaction/interaction.js";
 import "./camera/camera.js";
 import "./io/export.js";
 
-
-import {
-  gridiCiz,
-  gridButonlariniGuncelle,
-} from "./geometry/grid.js";
+import { gridiCiz, gridButonlariniGuncelle } from "./geometry/grid.js";
 
 gridiCiz();
 gridButonlariniGuncelle();

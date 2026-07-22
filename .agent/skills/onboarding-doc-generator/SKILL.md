@@ -56,15 +56,23 @@ sequenceDiagram
 # Architecture
 
 ## Ne Yapar (1 cümle)
+
 ## Stack
+
 ## Klasör Haritası — her klasörün tek cümlelik görevi
+
 ## Kritik Akışlar — mermaid diyagramlarıyla
+
 ## Veri Modeli — ana tablolar/ilişkiler
+
 ## Harici Bağımlılıklar — servis, ne için, nerede konfigüre
+
 ## Nereye Ne Eklenir
+
 - Yeni endpoint → src/api/routes/ + service + test
 - Yeni sayfa → src/pages/ + route kaydı
 - Yeni migration → npm run migration:create
+
 ## Bilinen Tuzaklar — .agent/knowledge gotcha'larından
 ```
 
@@ -87,6 +95,7 @@ npm test                # gerçekten geçiyor mu?
 
 ```markdown
 ## Onboarding Doc Hazır
+
 - ARCHITECTURE.md: 5 akış diyagramı, klasör haritası, tuzak listesi
 - Kurulum: 7 adım, temiz ortamda doğrulandı ✅
 - Doğrulanamayan: production deploy adımı (erişim yok) — işaretlendi

@@ -5,11 +5,13 @@
   Yorum stili, debug log temizliği ve hassas veri yönetimi
   bu dosyada tanımlanmıştır. Her commit öncesi kontrol edilir.
 -->
+
 ---
+
 name: code-hygiene
 description: >
-  Keeps code clean and maintainable. Defines comment style (method-level only),
-  debug log cleanup policy, and environment variable / sensitive data handling.
+Keeps code clean and maintainable. Defines comment style (method-level only),
+debug log cleanup policy, and environment variable / sensitive data handling.
 ---
 
 # Code Hygiene Rules
@@ -39,6 +41,7 @@ async function findUserByEmail(email: string) {
 **Kural:** Bir satırı açıklamak zorunda hissediyorsan, kod yeterince açık değildir. Yorumu sil, kodu düzelt.
 
 İstisnalar (tek kabul edilen):
+
 - `// TODO: #123 — açıklaması` (ticket numarası zorunlu)
 - `// FIXME: #456 — nedeni` (ticket numarası zorunlu)
 
@@ -48,13 +51,14 @@ async function findUserByEmail(email: string) {
 
 Görev tamamlandıktan sonra, commit öncesinde şunlar kaldırılır:
 
-| Dil | Temizlenecekler |
-|-----|----------------|
+| Dil                   | Temizlenecekler                                                             |
+| --------------------- | --------------------------------------------------------------------------- |
 | JavaScript/TypeScript | `console.log`, `console.warn`, `console.error`, `console.table`, `debugger` |
-| Python | `print()` (loglama için değil debug için kullanılanlar) |
-| CSS/HTML | Geçici `outline: 1px solid red` veya test renkleri |
+| Python                | `print()` (loglama için değil debug için kullanılanlar)                     |
+| CSS/HTML              | Geçici `outline: 1px solid red` veya test renkleri                          |
 
 **Kontrol komutu:**
+
 ```bash
 # Commit öncesi — staged dosyalarda debug log var mı?
 git diff --staged | grep -E "console\.(log|warn|error|table)|debugger|print\("

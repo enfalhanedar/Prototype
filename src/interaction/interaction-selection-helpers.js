@@ -1,7 +1,4 @@
-import {
-  cizgiler,
-  seciliCizgiIdleri,
-} from "../core/state.js";
+import { cizgiler, seciliCizgiIdleri } from "../core/state.js";
 
 const NOKTA_TOLERANSI = 0.001;
 
@@ -24,31 +21,19 @@ function cizgiNoktalarlaEslesiyorMu(cizgi, a, b) {
   };
 
   return (
-    (
-      noktalarEsitMi(baslangic, a) &&
-      noktalarEsitMi(bitis, b)
-    ) ||
-    (
-      noktalarEsitMi(baslangic, b) &&
-      noktalarEsitMi(bitis, a)
-    )
+    (noktalarEsitMi(baslangic, a) && noktalarEsitMi(bitis, b)) ||
+    (noktalarEsitMi(baslangic, b) && noktalarEsitMi(bitis, a))
   );
 }
 
 export function seciliCizgileriBul() {
   const seciliIdSeti = new Set(seciliCizgiIdleri);
 
-  return cizgiler.filter((cizgi) =>
-    seciliIdSeti.has(cizgi.id),
-  );
+  return cizgiler.filter((cizgi) => seciliIdSeti.has(cizgi.id));
 }
 
 export function odaCizgiIdleriniBul(oda) {
-  if (
-    !oda ||
-    !Array.isArray(oda.noktalar) ||
-    oda.noktalar.length < 2
-  ) {
+  if (!oda || !Array.isArray(oda.noktalar) || oda.noktalar.length < 2) {
     return [];
   }
 
@@ -56,19 +41,10 @@ export function odaCizgiIdleriniBul(oda) {
 
   for (let i = 0; i < oda.noktalar.length; i += 1) {
     const baslangic = oda.noktalar[i];
-    const bitis =
-      oda.noktalar[
-        (i + 1) % oda.noktalar.length
-      ];
+    const bitis = oda.noktalar[(i + 1) % oda.noktalar.length];
 
     for (const cizgi of cizgiler) {
-      if (
-        cizgiNoktalarlaEslesiyorMu(
-          cizgi,
-          baslangic,
-          bitis,
-        )
-      ) {
+      if (cizgiNoktalarlaEslesiyorMu(cizgi, baslangic, bitis)) {
         bulunanIdler.add(cizgi.id);
       }
     }

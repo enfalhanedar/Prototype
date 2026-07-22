@@ -46,14 +46,14 @@ git grep -nE "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}"
 
 ### 2. Tehlikeli Kod Desenleri
 
-| Desen | Risk | Aranacak |
-|-------|------|----------|
-| `eval(`, `new Function(` | Kod enjeksiyonu | JS/TS |
-| SQL string birleştirme | SQL injection | `"SELECT ... " +`, f-string SQL |
-| `innerHTML =`, `dangerouslySetInnerHTML` | XSS | Frontend |
-| `pickle.loads`, `yaml.load` (safe olmayan) | Deserialization | Python |
-| Doğrulanmamış redirect | Open redirect | `res.redirect(req.query...)` |
-| `chmod 777`, geniş CORS (`*`) | Yanlış yapılandırma | Config |
+| Desen                                      | Risk                | Aranacak                        |
+| ------------------------------------------ | ------------------- | ------------------------------- |
+| `eval(`, `new Function(`                   | Kod enjeksiyonu     | JS/TS                           |
+| SQL string birleştirme                     | SQL injection       | `"SELECT ... " +`, f-string SQL |
+| `innerHTML =`, `dangerouslySetInnerHTML`   | XSS                 | Frontend                        |
+| `pickle.loads`, `yaml.load` (safe olmayan) | Deserialization     | Python                          |
+| Doğrulanmamış redirect                     | Open redirect       | `res.redirect(req.query...)`    |
+| `chmod 777`, geniş CORS (`*`)              | Yanlış yapılandırma | Config                          |
 
 ### 3. .env Hijyeni
 
@@ -67,12 +67,15 @@ git grep -nE "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|AKIA[0-9A-Z]{16}"
 ## Security Scan — <tarih>
 
 ### 🔴 Kritik
+
 - src/config.ts:12 — hardcoded API key → env değişkenine taşı + key'i rotate et
 
 ### 🟡 Yüksek
+
 - src/db/query.ts:45 — SQL string birleştirme → parametreli sorguya çevir
 
 ### 🔵 Bilgi
+
 - CORS tüm origin'lere açık — production'da daraltılmalı
 
 **Karar:** ❌ Kritik bulgu var — release/commit önerilmez.

@@ -41,6 +41,7 @@ vulture src/
 ```
 
 Ek manuel taramalar:
+
 - Hiç import edilmeyen dosyalar
 - Hiç çağrılmayan export'lar
 - Yorum satırına alınmış eski kod blokları
@@ -56,6 +57,7 @@ git grep -n "helperName"          # sadece import değil, string olarak da ara
 ```
 
 Şüpheli durumlar (SİLME, işaretle):
+
 - Framework convention'la çağrılan kod (lifecycle, magic methods)
 - Reflection / `getattr` / dinamik import hedefleri
 - Public API olarak dışa açılan export'lar (başka repo kullanıyor olabilir)
@@ -76,10 +78,12 @@ git commit -m "chore: remove orphaned UserBadge component"
 ## Dead Code Cleanup — <tarih>
 
 **Silinen:** 14 dosya, ~1.200 satır
+
 - src/utils/oldFormatter.ts — hiç import edilmiyordu
 - src/components/LegacyModal/ — v2'de değiştirilmişti
 
 **Şüpheli (insan kararı bekliyor):**
+
 - src/plugins/hooks.ts — string ile dinamik çağrı olabilir (plugin sistemi)
 
 **Testler:** ✅ 48/48 geçiyor

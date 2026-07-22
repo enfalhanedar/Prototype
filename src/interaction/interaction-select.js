@@ -13,8 +13,7 @@ const SECIM_EKRAN_MESAFESI = 6;
 export function tiklananCizgiyiBul(x, y) {
   let bulunanCizgi = null;
 
-  let enKisaMesafe =
-    SECIM_EKRAN_MESAFESI / viewport.scaleX;
+  let enKisaMesafe = SECIM_EKRAN_MESAFESI / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
     const sonuc = cizgiUzerindeEnYakinNokta(
@@ -41,9 +40,7 @@ export function tiklananCizgiyiBul(x, y) {
  */
 export function tiklananOdayiBul(x, y) {
   const bulunanOdalar = odalar
-    .filter((oda) =>
-      noktaPoligonIcinde(x, y, oda.noktalar),
-    )
+    .filter((oda) => noktaPoligonIcinde(x, y, oda.noktalar))
     .sort((a, b) => a.alan - b.alan);
 
   return bulunanOdalar[0] ?? null;

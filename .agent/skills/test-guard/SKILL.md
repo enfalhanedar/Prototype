@@ -62,12 +62,12 @@ npm test -- --coverage
 
 ### 4. Karar Ver
 
-| Durum | Aksiyon |
-|-------|---------|
-| Tüm testler geçti, coverage stabil | ✅ "Commit'e hazır" |
-| Test başarısız | ❌ Commit engellenir — rapor üret |
-| Coverage %70 altına düştü | ⚠️ Uyar, gerekçe iste |
-| Değişen modülün hiç testi yok | ⚠️ Uyar, test yazılmasını öner |
+| Durum                              | Aksiyon                           |
+| ---------------------------------- | --------------------------------- |
+| Tüm testler geçti, coverage stabil | ✅ "Commit'e hazır"               |
+| Test başarısız                     | ❌ Commit engellenir — rapor üret |
+| Coverage %70 altına düştü          | ⚠️ Uyar, gerekçe iste             |
+| Değişen modülün hiç testi yok      | ⚠️ Uyar, test yazılmasını öner    |
 
 ### 5. Başarısızlık Raporu
 
@@ -77,12 +77,14 @@ npm test -- --coverage
 **Başarısız testler:** 2/48
 
 ### userService.test.ts › createUser › hashes password
+
 - Beklenen: hash uzunluğu 60
 - Alınan: undefined
 - Muhtemel neden: bcrypt import'u kaldırılmış (satır 3)
 - Önerilen düzeltme: <somut öneri>
 
 **Testi olmayan değişen dosyalar:**
+
 - src/utils/dateHelper.ts — test yazılması önerilir
 ```
 

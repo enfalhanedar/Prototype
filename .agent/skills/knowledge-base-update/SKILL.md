@@ -27,7 +27,7 @@ description: >
 
 Activate this skill when any of the following occur:
 
-- An architectural or tech-stack decision is made (and the *why* matters)
+- An architectural or tech-stack decision is made (and the _why_ matters)
 - A non-obvious bug is fixed (root cause + fix documented)
 - A 3rd-party service/API has a quirk, limit, or gotcha discovered
 - A project convention is established (naming, folder structure, patterns)
@@ -40,13 +40,13 @@ Activate this skill when any of the following occur:
 
 Choose the category that best describes what was learned:
 
-| Type | When to Use |
-|------|------------|
-| `decision` | Architecture, tech choices, trade-offs |
-| `convention` | Naming rules, code patterns, folder structures |
-| `bug` | Root cause + fix for a non-obvious problem |
-| `gotcha` | 3rd-party quirk, env issue, edge case trap |
-| `research` | Answer to a question requiring significant investigation |
+| Type         | When to Use                                              |
+| ------------ | -------------------------------------------------------- |
+| `decision`   | Architecture, tech choices, trade-offs                   |
+| `convention` | Naming rules, code patterns, folder structures           |
+| `bug`        | Root cause + fix for a non-obvious problem               |
+| `gotcha`     | 3rd-party quirk, env issue, edge case trap               |
+| `research`   | Answer to a question requiring significant investigation |
 
 ### 2. Determine the File Path
 
@@ -69,21 +69,27 @@ tags: [<tag1>, <tag2>]
 ---
 
 ## Summary
+
 <One or two sentences — what was learned, bottom line up front>
 
 ## Context
+
 <Why this came up. What problem were we solving?>
 
 ## Decision / Finding
+
 <The actual content. Be specific. Include code snippets if helpful.>
 
 ## Rationale
+
 <Why this choice over alternatives. What alternatives were rejected and why.>
 
 ## Consequences
+
 <What does this affect going forward? What to watch out for?>
 
 ## References
+
 - <File path, PR link, conversation snippet, or external URL>
 ```
 
@@ -101,18 +107,19 @@ If `INDEX.md` doesn't exist yet, create it with this header first:
 # Project Knowledge Base
 
 | Date | Type | Topic | Summary |
-|------|------|-------|---------|
+| ---- | ---- | ----- | ------- |
 ```
 
 ### 5. Confirm to User
 
 After writing, report:
+
 - What was saved and where
 - The one-line summary that was added to the index
 
 ## Rules
 
-- **Never summarize vaguely.** "We decided to use X" is useless without *why*.
+- **Never summarize vaguely.** "We decided to use X" is useless without _why_.
 - **Include the anti-pattern.** If something was tried and rejected, document it — that's often the most valuable knowledge.
 - **Keep entries atomic.** One topic per file. Don't bundle unrelated decisions.
 - **Date is mandatory.** Future agents need to know how fresh this knowledge is.

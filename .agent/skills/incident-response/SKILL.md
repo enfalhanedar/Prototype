@@ -34,17 +34,18 @@ description: >
 
 **First: breathe. Then classify.**
 
-| Severity | Definition | Response Time |
-|----------|-----------|---------------|
-| P1 — Critical | Full outage, data loss, security breach | Immediate |
-| P2 — High | Major feature broken, significant users affected | < 30 min |
-| P3 — Medium | Partial degradation, workaround exists | < 2 hours |
-| P4 — Low | Minor bug, cosmetic issue | Next sprint |
+| Severity      | Definition                                       | Response Time |
+| ------------- | ------------------------------------------------ | ------------- |
+| P1 — Critical | Full outage, data loss, security breach          | Immediate     |
+| P2 — High     | Major feature broken, significant users affected | < 30 min      |
+| P3 — Medium   | Partial degradation, workaround exists           | < 2 hours     |
+| P4 — Low      | Minor bug, cosmetic issue                        | Next sprint   |
 
 Open `.agent/incidents/INC-<YYYY-MM-DD>-<slug>.md` and write:
 
 ```markdown
 # Incident: <short title>
+
 **Date:** <YYYY-MM-DD HH:MM UTC>
 **Severity:** P<N>
 **Status:** Investigating
@@ -56,6 +57,7 @@ Open `.agent/incidents/INC-<YYYY-MM-DD>-<slug>.md` and write:
 Don't guess. Collect data first.
 
 Checklist:
+
 - [ ] What is the user-visible symptom?
 - [ ] When did it start? (check monitoring, not just "someone reported it")
 - [ ] What changed recently? (last deploy, config change, dependency update)
@@ -98,9 +100,10 @@ Document every action taken in the incident file with timestamps.
 
 ### 4. Root Cause Analysis
 
-Once contained, find the *real* cause — not just the symptom.
+Once contained, find the _real_ cause — not just the symptom.
 
 Use the **5 Whys** technique:
+
 ```
 Why did users see a 500 error?
 → Because the database query timed out.
@@ -118,11 +121,13 @@ The root cause is almost never the immediate technical failure — it's the proc
 ### 5. Fix and Deploy
 
 Write the fix:
+
 - Smallest possible change that resolves the issue
 - Add a test that would have caught this
 - Double-check the fix in staging before production
 
 Deploy:
+
 - Monitor metrics during deploy
 - Keep someone watching logs for 15 minutes post-deploy
 - Confirm symptom is resolved with a real user test
@@ -135,35 +140,40 @@ Within 24h of resolution, write a post-mortem in `.agent/incidents/INC-<date>-<s
 # Post-Mortem: <title>
 
 ## Summary
+
 <2-3 sentences: what happened, how long, how many users affected>
 
 ## Timeline
-| Time (UTC) | Event |
-|------------|-------|
-| HH:MM | Issue first occurred (inferred from logs) |
-| HH:MM | First alert / user report |
-| HH:MM | Incident declared |
-| HH:MM | Mitigation applied |
-| HH:MM | Root cause identified |
-| HH:MM | Fix deployed |
-| HH:MM | Incident resolved |
+
+| Time (UTC) | Event                                     |
+| ---------- | ----------------------------------------- |
+| HH:MM      | Issue first occurred (inferred from logs) |
+| HH:MM      | First alert / user report                 |
+| HH:MM      | Incident declared                         |
+| HH:MM      | Mitigation applied                        |
+| HH:MM      | Root cause identified                     |
+| HH:MM      | Fix deployed                              |
+| HH:MM      | Incident resolved                         |
 
 ## Root Cause
+
 <The actual root cause — not just the symptom>
 
 ## What Went Well
+
 - <something that helped — good monitoring, fast rollback, etc.>
 
 ## What Went Poorly
+
 - <something that made it worse — slow detection, unclear runbook, etc.>
 
 ## Action Items
 
-| Action | Owner | Due Date |
-|--------|-------|----------|
-| Add missing index to migration convention | <name> | <date> |
-| Add test for query performance | <name> | <date> |
-| Set up alert for DB query p99 latency | <name> | <date> |
+| Action                                    | Owner  | Due Date |
+| ----------------------------------------- | ------ | -------- |
+| Add missing index to migration convention | <name> | <date>   |
+| Add test for query performance            | <name> | <date>   |
+| Set up alert for DB query p99 latency     | <name> | <date>   |
 ```
 
 ### 7. Update the Knowledge Base

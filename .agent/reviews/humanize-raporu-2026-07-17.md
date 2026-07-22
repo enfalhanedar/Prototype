@@ -6,14 +6,14 @@ kodda kalan "AI/chat oturumu" izlerinin temizlenmesi.
 
 ## Bulunan ve Düzeltilen
 
-| Kategori | Bulunan | Düzeltilen |
-|----------|---------|------------|
-| Jenerik isimlendirme | 0 | - (proje zaten tutarlı Türkçe domain dili kullanıyor: `cizgiler`, `odalar`, `aktifMod`...) |
-| Diff-anlatan / oturum yorumları ("YENİ:", "DEĞİŞİKLİK:", "eklendi", "aynı kalıyor") | 11 | 11 |
-| AI sohbet citation artığı (`[cite: 2]`) | 4 | 4 |
-| Yorum numaralandırma çakışması (render.js) | 1 | 1 |
-| Tören kodu / gereksiz soyutlama | 0 belirgin örnek | - |
-| Ders kitabı deseni ↔ proje deyimi uyumsuzluğu | 0 | - (proje zaten kendi deyimini — EaselJS + Türkçe fonksiyon adları — tutarlı sürdürüyor) |
+| Kategori                                                                            | Bulunan          | Düzeltilen                                                                                 |
+| ----------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------ |
+| Jenerik isimlendirme                                                                | 0                | - (proje zaten tutarlı Türkçe domain dili kullanıyor: `cizgiler`, `odalar`, `aktifMod`...) |
+| Diff-anlatan / oturum yorumları ("YENİ:", "DEĞİŞİKLİK:", "eklendi", "aynı kalıyor") | 11               | 11                                                                                         |
+| AI sohbet citation artığı (`[cite: 2]`)                                             | 4                | 4                                                                                          |
+| Yorum numaralandırma çakışması (render.js)                                          | 1                | 1                                                                                          |
+| Tören kodu / gereksiz soyutlama                                                     | 0 belirgin örnek | -                                                                                          |
+| Ders kitabı deseni ↔ proje deyimi uyumsuzluğu                                       | 0                | - (proje zaten kendi deyimini — EaselJS + Türkçe fonksiyon adları — tutarlı sürdürüyor)    |
 
 ### Değiştirilen dosyalar
 

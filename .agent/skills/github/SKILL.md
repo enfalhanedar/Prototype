@@ -20,7 +20,6 @@ description: >
   ÇIKTI:    Clean commit history, PR açıklaması, güncellenmiş CHANGELOG.
 -->
 
-
 # GitHub Skill
 
 ## Temel Kural
@@ -44,22 +43,23 @@ Bu kural ihlal edilemez. "Küçük değişiklik" veya "sadece bir satır" istisn
 
 ### Type Listesi
 
-| Type | Ne Zaman Kullanılır |
-|------|-------------------|
-| `feat` | Yeni özellik |
-| `fix` | Bug düzeltmesi |
-| `refactor` | Davranış değişmeden kod düzenlemesi |
-| `style` | Formatlama, boşluk (işlevsel değişiklik yok) |
-| `test` | Test ekleme veya düzenleme |
-| `docs` | Dokümantasyon değişikliği |
-| `chore` | Build, dependency, config güncellemesi |
-| `perf` | Performans iyileştirmesi |
-| `ci` | CI/CD pipeline değişikliği |
-| `revert` | Önceki commit'i geri alma |
+| Type       | Ne Zaman Kullanılır                          |
+| ---------- | -------------------------------------------- |
+| `feat`     | Yeni özellik                                 |
+| `fix`      | Bug düzeltmesi                               |
+| `refactor` | Davranış değişmeden kod düzenlemesi          |
+| `style`    | Formatlama, boşluk (işlevsel değişiklik yok) |
+| `test`     | Test ekleme veya düzenleme                   |
+| `docs`     | Dokümantasyon değişikliği                    |
+| `chore`    | Build, dependency, config güncellemesi       |
+| `perf`     | Performans iyileştirmesi                     |
+| `ci`       | CI/CD pipeline değişikliği                   |
+| `revert`   | Önceki commit'i geri alma                    |
 
 ### Scope (Opsiyonel ama Önerilir)
 
 Etkilenen modül, komponent veya katman:
+
 ```
 feat(auth): add refresh token rotation
 fix(userService): handle null email in validation
@@ -110,6 +110,7 @@ git checkout -b refactor/button-loading-state
 ```
 
 Branch isimlendirme kuralları:
+
 - Lowercase, kebab-case
 - Type ile başlar (`feat/`, `fix/`, `refactor/`, `hotfix/`)
 - `main` veya `master`'a direkt commit atılmaz
@@ -147,6 +148,7 @@ Testler: userService.test.ts — 8 test, hepsi geçiyor"
 ```
 
 **Atomik commit'ler:**
+
 - Bir commit, bir mantıksal değişiklik
 - Migration + model + service = 3 ayrı commit
 - "misc fixes" veya "wip" commit'leri yasak
@@ -161,6 +163,7 @@ git show HEAD           # Son commit'in diff'ini kontrol et
 ```
 
 Commit mesajı yanlışsa hemen düzelt (push öncesinde):
+
 ```bash
 git commit --amend -m "fix(auth): handle null refresh token in rotation"
 ```
@@ -178,6 +181,7 @@ git push
 ```
 
 **Push öncesi:**
+
 ```bash
 # Testler son kez çalıştırılır
 npm test
@@ -229,12 +233,15 @@ Her PR için `CHANGELOG.md`'nin `[Unreleased]` bölümüne ekle:
 ## [Unreleased]
 
 ### Added
+
 - User registration endpoint (POST /api/auth/register) with email verification
 
 ### Fixed
+
 - Null refresh token causing 500 error on token rotation
 
 ### Changed
+
 - User ID format migrated from integer to UUID (breaking)
 ```
 
@@ -243,6 +250,7 @@ Her PR için `CHANGELOG.md`'nin `[Unreleased]` bölümüne ekle:
 ## Özel Durumlar
 
 ### Hotfix (Production Emergency)
+
 ```bash
 # Main'den hotfix branch aç
 git checkout -b hotfix/null-pointer-login main
@@ -256,11 +264,13 @@ git checkout develop && git merge hotfix/null-pointer-login
 ```
 
 ### Commit Geri Alma (Push Öncesi)
+
 ```bash
 git reset HEAD~1 --soft    # Commit geri al, değişiklikler staged kalır
 ```
 
 ### Tag ve Release
+
 ```bash
 git tag -a v1.2.0 -m "Release v1.2.0 — user registration feature"
 git push origin v1.2.0

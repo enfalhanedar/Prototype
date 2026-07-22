@@ -4,24 +4,16 @@ import {
   setHoverKoseNoktasi,
 } from "../core/state.js";
 
-import {
-  canvas,
-  odaKatmani,
-} from "../core/stage.js";
+import { canvas, odaKatmani } from "../core/stage.js";
 
-import {
-  hesaplaSnap,
-  hesaplaCizgiTasimaSnap,
-} from "../geometry/snap.js";
+import { hesaplaSnap, hesaplaCizgiTasimaSnap } from "../geometry/snap.js";
 
 import { gecmiseKaydet } from "../drawing/history.js";
 import { odalariYenidenHesapla } from "../drawing/rooms.js";
 import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 
-import {
-  kesisimleriKoseyeDonustur,
-} from "../io/intersections.js";
+import { kesisimleriKoseyeDonustur } from "../io/intersections.js";
 
 const BAGLANTI_TOLERANSI = 0.01;
 const KOSE_TOLERANSI = 0.001;
@@ -150,15 +142,11 @@ function koseyeBagliUclariBul(koseNoktasi) {
 }
 
 function tasimayiHazirla(dunyaNoktasi, cizgiIdleri) {
-  const benzersizIdler = [
-    ...new Set(cizgiIdleri.filter(Boolean)),
-  ];
+  const benzersizIdler = [...new Set(cizgiIdleri.filter(Boolean))];
 
   const idSeti = new Set(benzersizIdler);
 
-  const bulunanCizgiler = cizgiler.filter(
-    (cizgi) => idSeti.has(cizgi.id),
-  );
+  const bulunanCizgiler = cizgiler.filter((cizgi) => idSeti.has(cizgi.id));
 
   if (bulunanCizgiler.length === 0) {
     suruklemeAktif = false;
@@ -173,17 +161,12 @@ function tasimayiHazirla(dunyaNoktasi, cizgiIdleri) {
   suruklemeBaslangicX = dunyaNoktasi.x;
   suruklemeBaslangicY = dunyaNoktasi.y;
 
-  tasinanCizgiIdleri = bulunanCizgiler.map(
-    (cizgi) => cizgi.id,
-  );
+  tasinanCizgiIdleri = bulunanCizgiler.map((cizgi) => cizgi.id);
 
   orijinalTumCizgiler = structuredClone(cizgiler);
-  orijinalTasinanCizgiler =
-    structuredClone(bulunanCizgiler);
+  orijinalTasinanCizgiler = structuredClone(bulunanCizgiler);
 
-  bagliKomsuUclar = bagliKomsuUclariBul(
-    new Set(tasinanCizgiIdleri),
-  );
+  bagliKomsuUclar = bagliKomsuUclariBul(new Set(tasinanCizgiIdleri));
 
   odaKatmani.visible = false;
   canvas.style.cursor = "grabbing";
@@ -192,33 +175,21 @@ function tasimayiHazirla(dunyaNoktasi, cizgiIdleri) {
   silButonunuKonumlandir();
 }
 
-export function cizgileriSuruklemeyeHazirla(
-  cizgiIdleri,
-  dunyaNoktasi,
-) {
+export function cizgileriSuruklemeyeHazirla(cizgiIdleri, dunyaNoktasi) {
   tasimayiHazirla(
     dunyaNoktasi,
-    Array.isArray(cizgiIdleri)
-      ? cizgiIdleri
-      : [cizgiIdleri],
+    Array.isArray(cizgiIdleri) ? cizgiIdleri : [cizgiIdleri],
   );
 }
 
-export function tekilCizgiSecVeSuruklemeyeHazirla(
-  cizgi,
-  dunyaNoktasi,
-) {
+export function tekilCizgiSecVeSuruklemeyeHazirla(cizgi, dunyaNoktasi) {
   setSeciliCizgiIdleri([cizgi.id]);
 
-  tasimayiHazirla(
-    dunyaNoktasi,
-    [cizgi.id],
-  );
+  tasimayiHazirla(dunyaNoktasi, [cizgi.id]);
 }
 
 export function koseSuruklemeyeHazirla(koseNoktasi) {
-  const bulunanUclar =
-    koseyeBagliUclariBul(koseNoktasi);
+  const bulunanUclar = koseyeBagliUclariBul(koseNoktasi);
 
   if (bulunanUclar.length === 0) return;
 
@@ -239,26 +210,18 @@ export function koseSuruklemeyeHazirla(koseNoktasi) {
 function bagliKomsuUclariGuncelle() {
   for (const baglanti of bagliKomsuUclar) {
     const komsuCizgi = cizgiler.find(
-      (cizgi) =>
-        cizgi.id === baglanti.komsuCizgiId,
+      (cizgi) => cizgi.id === baglanti.komsuCizgiId,
     );
 
     const kaynakCizgi = cizgiler.find(
-      (cizgi) =>
-        cizgi.id === baglanti.kaynakCizgiId,
+      (cizgi) => cizgi.id === baglanti.kaynakCizgiId,
     );
 
     if (!komsuCizgi || !kaynakCizgi) continue;
 
-    const yeniX =
-      baglanti.kaynakUc === "v1"
-        ? kaynakCizgi.x1
-        : kaynakCizgi.x2;
+    const yeniX = baglanti.kaynakUc === "v1" ? kaynakCizgi.x1 : kaynakCizgi.x2;
 
-    const yeniY =
-      baglanti.kaynakUc === "v1"
-        ? kaynakCizgi.y1
-        : kaynakCizgi.y2;
+    const yeniY = baglanti.kaynakUc === "v1" ? kaynakCizgi.y1 : kaynakCizgi.y2;
 
     if (baglanti.komsuUc === "v1") {
       komsuCizgi.x1 = yeniX;
@@ -275,31 +238,26 @@ function cizgileriTasi(dunyaNoktasi) {
     return;
   }
 
-  const hamDx =
-    dunyaNoktasi.x - suruklemeBaslangicX;
+  const hamDx = dunyaNoktasi.x - suruklemeBaslangicX;
 
-  const hamDy =
-    dunyaNoktasi.y - suruklemeBaslangicY;
+  const hamDy = dunyaNoktasi.y - suruklemeBaslangicY;
 
   /*
    * Seçili çizgilerin tamamı için uygulanacak
    * ortak snap farkını hesapla.
    */
-  const snapSonucu =
-    hesaplaCizgiTasimaSnap(
-      orijinalTasinanCizgiler,
-      hamDx,
-      hamDy,
-      tasinanCizgiIdleri,
-    );
+  const snapSonucu = hesaplaCizgiTasimaSnap(
+    orijinalTasinanCizgiler,
+    hamDx,
+    hamDy,
+    tasinanCizgiIdleri,
+  );
 
   /*
    * Orijinal çizgilere hızlı erişim için harita oluştur.
    */
   const orijinalHarita = new Map(
-    orijinalTasinanCizgiler.map(
-      (cizgi) => [cizgi.id, cizgi],
-    ),
+    orijinalTasinanCizgiler.map((cizgi) => [cizgi.id, cizgi]),
   );
 
   /*
@@ -308,24 +266,19 @@ function cizgileriTasi(dunyaNoktasi) {
    * eklemek yerine başlangıç konumu kullanılır.
    */
   for (const cizgi of cizgiler) {
-    const orijinal =
-      orijinalHarita.get(cizgi.id);
+    const orijinal = orijinalHarita.get(cizgi.id);
 
     if (!orijinal) {
       continue;
     }
 
-    cizgi.x1 =
-      orijinal.x1 + snapSonucu.dx;
+    cizgi.x1 = orijinal.x1 + snapSonucu.dx;
 
-    cizgi.y1 =
-      orijinal.y1 + snapSonucu.dy;
+    cizgi.y1 = orijinal.y1 + snapSonucu.dy;
 
-    cizgi.x2 =
-      orijinal.x2 + snapSonucu.dx;
+    cizgi.x2 = orijinal.x2 + snapSonucu.dx;
 
-    cizgi.y2 =
-      orijinal.y2 + snapSonucu.dy;
+    cizgi.y2 = orijinal.y2 + snapSonucu.dy;
   }
 
   /*
@@ -343,17 +296,15 @@ function koseyiTasi(dunyaNoktasi) {
    * çizgiler kendi eski konumlarına yapışıp sürüklemeyi
    * kare kare/donuk hale getirmesin diye hariç tutulur.
    */
-  const haricTutulacakIdler =
-    bagliCizgiReferanslari.map(
-      (referans) => referans.id,
-    );
+  const haricTutulacakIdler = bagliCizgiReferanslari.map(
+    (referans) => referans.id,
+  );
 
-  const snapSonucu =
-    hesaplaSnap(
-      dunyaNoktasi.x,
-      dunyaNoktasi.y,
-      haricTutulacakIdler,
-    );
+  const snapSonucu = hesaplaSnap(
+    dunyaNoktasi.x,
+    dunyaNoktasi.y,
+    haricTutulacakIdler,
+  );
 
   setHoverKoseNoktasi({
     x: snapSonucu.x,
@@ -361,9 +312,7 @@ function koseyiTasi(dunyaNoktasi) {
   });
 
   for (const referans of bagliCizgiReferanslari) {
-    const mevcutCizgi = cizgiler.find(
-      (cizgi) => cizgi.id === referans.id,
-    );
+    const mevcutCizgi = cizgiler.find((cizgi) => cizgi.id === referans.id);
 
     if (!mevcutCizgi) continue;
 
@@ -402,10 +351,7 @@ export function suruklemeyiBitir() {
 
   suruklemeAktif = false;
 
-  canvas.style.cursor =
-    hareketGerceklesti
-      ? "default"
-      : "pointer";
+  canvas.style.cursor = hareketGerceklesti ? "default" : "pointer";
 
   if (hareketGerceklesti) {
     kesisimleriKoseyeDonustur();

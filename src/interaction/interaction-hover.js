@@ -22,8 +22,7 @@ export function hoverGuncelle(dunyaNoktasi) {
   let yeniHoverKose = null;
   let yeniHoverCizgiId = null;
 
-  const koseHoverToleransi =
-    10 / viewport.scaleX;
+  const koseHoverToleransi = 10 / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
     const birinciUcMesafesi = Math.hypot(
@@ -55,20 +54,12 @@ export function hoverGuncelle(dunyaNoktasi) {
 
   if (!yeniHoverKose) {
     yeniHoverCizgiId =
-      tiklananCizgiyiBul(
-        dunyaNoktasi.x,
-        dunyaNoktasi.y,
-      )?.id ?? null;
+      tiklananCizgiyiBul(dunyaNoktasi.x, dunyaNoktasi.y)?.id ?? null;
   }
 
-  const koseDegisti =
-    !noktalarAyniMi(
-      yeniHoverKose,
-      mevcutHoverKose,
-    );
+  const koseDegisti = !noktalarAyniMi(yeniHoverKose, mevcutHoverKose);
 
-  const cizgiDegisti =
-    yeniHoverCizgiId !== mevcutHoverCizgiId;
+  const cizgiDegisti = yeniHoverCizgiId !== mevcutHoverCizgiId;
 
   if (!koseDegisti && !cizgiDegisti) {
     return;
@@ -84,9 +75,7 @@ export function hoverGuncelle(dunyaNoktasi) {
 }
 
 export function hoverTemizle() {
-  const degisiklikVar =
-    mevcutHoverKose !== null ||
-    mevcutHoverCizgiId !== null;
+  const degisiklikVar = mevcutHoverKose !== null || mevcutHoverCizgiId !== null;
 
   mevcutHoverKose = null;
   mevcutHoverCizgiId = null;

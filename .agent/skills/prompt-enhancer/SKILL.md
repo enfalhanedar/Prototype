@@ -12,12 +12,13 @@
 -->
 
 ---
+
 name: prompt-enhancer
 description: >
-  Takes a vague or incomplete user request and transforms it into a precise,
-  actionable prompt. Identifies missing dimensions (what, why, who, success criteria,
-  constraints) and either asks targeted questions or fills gaps with explicit assumptions.
-  Runs before other skills to improve input quality.
+Takes a vague or incomplete user request and transforms it into a precise,
+actionable prompt. Identifies missing dimensions (what, why, who, success criteria,
+constraints) and either asks targeted questions or fills gaps with explicit assumptions.
+Runs before other skills to improve input quality.
 ---
 
 # Prompt Enhancer Skill
@@ -34,11 +35,11 @@ Bir isteğin kalitesi, çıktısının kalitesini belirler. Bu skill, agent'ın 
 
 Şu sinyallerden biri varsa bu skill devreye girer:
 
-- İstek tek cümle ve detaysız: *"Login'i düzelt"*, *"Performansı artır"*, *"Daha iyi görünsün"*
-- İstek birden fazla şekilde yorumlanabilir: *"Kullanıcı flow'unu iyileştir"*
-- Hedef kitle veya bağlam yok: *"Bir dashboard ekle"*
-- Başarı kriteri belirsiz: *"Hızlandır"*, *"Temizle"*, *"Optimize et"*
-- Kapsam sınırı yok: *"Auth sistemini yenile"*
+- İstek tek cümle ve detaysız: _"Login'i düzelt"_, _"Performansı artır"_, _"Daha iyi görünsün"_
+- İstek birden fazla şekilde yorumlanabilir: _"Kullanıcı flow'unu iyileştir"_
+- Hedef kitle veya bağlam yok: _"Bir dashboard ekle"_
+- Başarı kriteri belirsiz: _"Hızlandır"_, _"Temizle"_, _"Optimize et"_
+- Kapsam sınırı yok: _"Auth sistemini yenile"_
 
 ---
 
@@ -48,14 +49,14 @@ Bir isteğin kalitesi, çıktısının kalitesini belirler. Bu skill, agent'ın 
 
 İlk olarak ne tür bir istek olduğunu belirle:
 
-| Tür | Örnek | Eksik Boyutlar |
-|-----|-------|----------------|
-| **Bug fix** | "Login çalışmıyor" | Hangi koşulda? Hata mesajı? Her zaman mı? |
-| **Yeni özellik** | "Profil sayfası ekle" | Kim kullanacak? İçerik ne? Tasarım referansı? |
-| **Refactor** | "Kodu temizle" | Hangi dosya/modül? Temizden kasıt ne? |
-| **Performans** | "Hızlandır" | Hangi sayfa/endpoint? Hedef süre? Mevcut süre? |
-| **Tasarım** | "Daha güzel yap" | Referans var mı? Hangi element? Hangi bağlam? |
-| **Altyapı** | "Deploy otomatikleştir" | Hangi ortam? Mevcut pipeline? Tetikleyici ne? |
+| Tür              | Örnek                   | Eksik Boyutlar                                 |
+| ---------------- | ----------------------- | ---------------------------------------------- |
+| **Bug fix**      | "Login çalışmıyor"      | Hangi koşulda? Hata mesajı? Her zaman mı?      |
+| **Yeni özellik** | "Profil sayfası ekle"   | Kim kullanacak? İçerik ne? Tasarım referansı?  |
+| **Refactor**     | "Kodu temizle"          | Hangi dosya/modül? Temizden kasıt ne?          |
+| **Performans**   | "Hızlandır"             | Hangi sayfa/endpoint? Hedef süre? Mevcut süre? |
+| **Tasarım**      | "Daha güzel yap"        | Referans var mı? Hangi element? Hangi bağlam?  |
+| **Altyapı**      | "Deploy otomatikleştir" | Hangi ortam? Mevcut pipeline? Tetikleyici ne?  |
 
 ---
 
@@ -125,20 +126,25 @@ Her iki stratejide de son çıktı format aşağıdaki gibi olur:
 <spesifik, tek yorumlu açıklama>
 
 **Kapsam İçi:**
+
 - <madde>
 - <madde>
 
 **Kapsam Dışı:**
+
 - <madde> (kapsam dışı bırakma gerekçesi)
 
 **Başarı Kriterleri:**
+
 1. <ölçülebilir kriter>
 2. <ölçülebilir kriter>
 
 **Teknik Kısıtlar:**
+
 - <stack, platform, bağımlılık>
 
 **Açık Kalan Sorular:**
+
 - <varsa — bunlar ilerleyen aşamada cevaplanacak>
 
 **Önerilen Sonraki Skill:**
@@ -167,14 +173,16 @@ Onay gelmeden bir sonraki skill'e geçilmez.
 
 ### Örnek 1: Bug Fix
 
-**Kullanıcı:** *"Şifre sıfırlama çalışmıyor"*
+**Kullanıcı:** _"Şifre sıfırlama çalışmıyor"_
 
 **Tespit:**
+
 - WHAT: şifre sıfırlama — ama hangi adımda?
 - HOW: hata mesajı yok
 - WHO: tüm kullanıcılar mı, belirli biri mi?
 
 **Strateji A — Sor:**
+
 ```
 "Şifre sıfırlama" akışının hangi adımında sorun var?
   a) Email gönderilmiyor mu?
@@ -186,11 +194,12 @@ Onay gelmeden bir sonraki skill'e geçilmez.
 
 ### Örnek 2: Performans
 
-**Kullanıcı:** *"Sayfa çok yavaş"*
+**Kullanıcı:** _"Sayfa çok yavaş"_
 
 **Tespit:** 6 boyutun 5'i eksik.
 
 **Strateji B — Varsay ve Göster:**
+
 ```
 Şu varsayımlarla devam edeyim:
 - Hangi sayfa: /dashboard (en çok kullanılan)

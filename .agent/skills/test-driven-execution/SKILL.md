@@ -31,7 +31,8 @@ description: >
 
 > "A feature is not done when code is written. It is done when the tests pass."
 
-Tests written *before* code serve three purposes:
+Tests written _before_ code serve three purposes:
+
 1. They force clarity on what "correct" actually means
 2. They prevent the agent from drifting into over-engineering
 3. They provide instant verification that the task is complete
@@ -42,9 +43,10 @@ Tests written *before* code serve three purposes:
 
 Read the task description and extract every "must" and "should":
 
-**Example task:** *"Add a user registration endpoint"*
+**Example task:** _"Add a user registration endpoint"_
 
 Extracted criteria:
+
 - Must accept `email`, `password`, `name` in request body
 - Must return 201 on success with the created user (excluding password)
 - Must return 400 if email is already registered
@@ -89,7 +91,7 @@ Scenario: Successful registration
 
 ### 3. Confirm Tests Fail (Red)
 
-Run the tests *before* writing any implementation:
+Run the tests _before_ writing any implementation:
 
 ```bash
 npm test
@@ -105,6 +107,7 @@ pytest
 Now implement the feature. The goal is simple: **make the tests pass**.
 
 Rules during implementation:
+
 - Write only what is needed to pass the tests — nothing more
 - If you find yourself writing code with no corresponding test, stop and write the test first
 - Don't optimize yet — correctness first
@@ -117,6 +120,7 @@ npm test --watch
 ### 5. Refactor (Refactor)
 
 Once all tests pass:
+
 - Clean up the code (naming, structure, duplication)
 - Run tests again after every refactor step to confirm nothing broke
 - Add edge case tests for anything discovered during implementation

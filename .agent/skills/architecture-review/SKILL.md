@@ -23,7 +23,7 @@ description: >
 
 ## When to Trigger
 
-- After `writing-plans` produces an implementation plan, *before* `executing-plans`
+- After `writing-plans` produces an implementation plan, _before_ `executing-plans`
 - When a significant refactor is proposed
 - When adding a new external service or integration
 - When the team is debating between two approaches
@@ -36,6 +36,7 @@ description: >
 Read the implementation plan (typically `implementation_plan.md` or the artifact from `writing-plans`).
 
 Extract:
+
 - Components being built
 - Data flow between components
 - External dependencies
@@ -48,24 +49,28 @@ Work through each checklist section. For every "No" or "Unclear" answer, flag it
 ---
 
 #### A. Complexity Check
+
 - [ ] Is this the simplest solution that could work?
 - [ ] Are there off-the-shelf solutions (libraries, services) that cover 80%+ of this?
 - [ ] Does each component have a single, clear responsibility?
 - [ ] Would a junior developer understand this in 30 minutes?
 
 #### B. Coupling & Cohesion
+
 - [ ] Can each module be tested in isolation?
 - [ ] Are there circular dependencies? (A needs B needs A)
 - [ ] Is data ownership clear? (only one place writes to each piece of state)
 - [ ] Is the public API surface minimal? (don't expose what doesn't need to be exposed)
 
 #### C. Data & State
+
 - [ ] Is the source of truth for each piece of data clearly defined?
 - [ ] What happens if the datastore goes down?
 - [ ] Is there any global mutable state? If so, is it justified?
 - [ ] Are database migrations planned for any schema changes?
 
 #### D. Failure Modes
+
 - [ ] What happens when each external service is unavailable?
 - [ ] Are there retry mechanisms with backoff for network calls?
 - [ ] Are there timeouts on all I/O operations?
@@ -73,6 +78,7 @@ Work through each checklist section. For every "No" or "Unclear" answer, flag it
 - [ ] What does a partial failure look like to the user?
 
 #### E. Security
+
 - [ ] Is all user input validated and sanitized?
 - [ ] Are secrets managed via env vars / secrets manager (not hardcoded)?
 - [ ] Is authentication and authorization clearly separated?
@@ -80,18 +86,21 @@ Work through each checklist section. For every "No" or "Unclear" answer, flag it
 - [ ] Does the principle of least privilege apply to service accounts?
 
 #### F. Scalability
+
 - [ ] What is the expected load in 6 months? Does the design handle it?
 - [ ] Are there any obvious N+1 query problems?
 - [ ] Is any caching planned? Is the invalidation strategy defined?
 - [ ] Are background jobs used for anything that could block the request cycle?
 
 #### G. Observability
+
 - [ ] Is structured logging planned?
 - [ ] Are there metrics/health endpoints?
 - [ ] Will errors surface in a monitoring tool (not just logs)?
 - [ ] Is there a way to trace a request end-to-end?
 
 #### H. Operability
+
 - [ ] Can this be deployed without downtime?
 - [ ] Is there a rollback plan if the deployment goes wrong?
 - [ ] Are environment differences (dev/staging/prod) documented?
@@ -102,15 +111,16 @@ Work through each checklist section. For every "No" or "Unclear" answer, flag it
 
 For each "No" or "Unclear" found above, classify it:
 
-| Class | Meaning | Action |
-|-------|---------|--------|
-| 🔴 Blocker | Must fix before implementation | Revise plan |
+| Class      | Meaning                               | Action                |
+| ---------- | ------------------------------------- | --------------------- |
+| 🔴 Blocker | Must fix before implementation        | Revise plan           |
 | 🟡 Warning | Should address, can proceed carefully | Add a task to backlog |
-| 🔵 Note | Nice to have, low risk | Document and move on |
+| 🔵 Note    | Nice to have, low risk                | Document and move on  |
 
 ### 4. Produce the Review Report
 
 Her zaman ayrı bir dosyaya yaz — **plan dosyasını kirletme**:
+
 ```
 .agent/reviews/architecture-review-<plan-slug>.md
 ```
@@ -119,27 +129,36 @@ Eğer bu review'dan önemli bir mimari karar çıktıysa, ek olarak `knowledge-b
 
 ```markdown
 # Architecture Review — <plan name>
+
 **Date:** <YYYY-MM-DD>
 **Reviewer:** Agent
 
 ## Verdict
+
 <Approved | Approved with conditions | Revisions required>
 
 ## 🔴 Blockers
+
 ### 1. <Finding title>
+
 **Checklist item:** Failure Modes — timeout on I/O
 **Issue:** The email service call has no timeout. If SendGrid hangs, the entire request thread blocks.
 **Recommendation:** Wrap in a 5-second timeout; use a background job queue for non-critical emails.
 
 ## 🟡 Warnings
+
 ### 1. <Finding title>
+
 ...
 
 ## 🔵 Notes
+
 ### 1. <Finding title>
+
 ...
 
 ## Summary
+
 <Overall health of the architecture in 2-3 sentences.>
 ```
 

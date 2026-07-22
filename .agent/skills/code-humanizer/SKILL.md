@@ -93,7 +93,7 @@ if (users && users.length > 0) {
 }
 
 // ✅ İnsan izi
-const emails = users.flatMap(u => u?.email ?? []);
+const emails = users.flatMap((u) => u?.email ?? []);
 ```
 
 Aranacaklar: asla tetiklenmeyen null-check yığınları, tek satırlık işlev için
@@ -137,12 +137,12 @@ AI her şeyi aynı ağırlıkta yazar. İnsan önemliyi öne çıkarır:
 ```markdown
 ## Humanize Raporu — <tarih>
 
-| Kategori | Bulunan | Düzeltilen |
-|----------|---------|------------|
-| Jenerik isim | 34 | 34 |
-| Anlatıcı yorum | 58 | 58 (12'si gerekçe yorumuna çevrildi) |
-| Tören kodu | 9 blok | 7 (2'si gerçekten gerekli — not düşüldü) |
-| Desen uyumsuzluğu | 4 | 4 (React Query'ye geçirildi) |
+| Kategori          | Bulunan | Düzeltilen                               |
+| ----------------- | ------- | ---------------------------------------- |
+| Jenerik isim      | 34      | 34                                       |
+| Anlatıcı yorum    | 58      | 58 (12'si gerekçe yorumuna çevrildi)     |
+| Tören kodu        | 9 blok  | 7 (2'si gerçekten gerekli — not düşüldü) |
+| Desen uyumsuzluğu | 4       | 4 (React Query'ye geçirildi)             |
 
 **Davranış değişikliği:** Yok — testler yeşil.
 **Knowledge'a eklenen convention:** 3 (isimlendirme sözlüğü, hata deseni, tarih kütüphanesi)

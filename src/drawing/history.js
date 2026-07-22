@@ -21,8 +21,8 @@ export function gecmiseKaydet(durum = cizgiler) {
  * Yardımcı Fonksiyon: Bir noktanın, verilen çizginin gövdesi üzerinde olup olmadığını kontrol eder.
  */
 function noktaCizgiUzerindeMi(px, py, cizgi) {
-  const TOLERANS = 1.0;        // Çizginin üstünde sayılması için piksel toleransı
-  const KOSE_TOLERANSI = 2.0;  // Köşelere yakınlık toleransı (köşeleri bölmemek için)
+  const TOLERANS = 1.0; // Çizginin üstünde sayılması için piksel toleransı
+  const KOSE_TOLERANSI = 2.0; // Köşelere yakınlık toleransı (köşeleri bölmemek için)
 
   const dStart = Math.hypot(cizgi.x1 - px, cizgi.y1 - py);
   const dEnd = Math.hypot(cizgi.x2 - px, cizgi.y2 - py);
@@ -52,7 +52,7 @@ export function dinamikBolmeUygula() {
     const tarayanCizgi = cizgiler[t];
     const uclar = [
       { x: tarayanCizgi.x1, y: tarayanCizgi.y1 },
-      { x: tarayanCizgi.x2, y: tarayanCizgi.y2 }
+      { x: tarayanCizgi.x2, y: tarayanCizgi.y2 },
     ];
 
     uclar.forEach((uc) => {
@@ -60,7 +60,10 @@ export function dinamikBolmeUygula() {
         const mevcut = aktifCizgiler[i];
 
         // Kendisini veya zaten silinmiş bir çizgiyi bölmesin
-        if (mevcut.id === tarayanCizgi.id || silinecekCizgiIdleri.has(mevcut.id)) {
+        if (
+          mevcut.id === tarayanCizgi.id ||
+          silinecekCizgiIdleri.has(mevcut.id)
+        ) {
           continue;
         }
 
@@ -73,7 +76,7 @@ export function dinamikBolmeUygula() {
             x1: mevcut.x1,
             y1: mevcut.y1,
             x2: uc.x,
-            y2: uc.y
+            y2: uc.y,
           };
 
           const parca2 = {
@@ -81,22 +84,24 @@ export function dinamikBolmeUygula() {
             x1: uc.x,
             y1: uc.y,
             x2: mevcut.x2,
-            y2: mevcut.y2
+            y2: mevcut.y2,
           };
 
           bolunmusCizgiler.push(parca1, parca2);
-          
+
           // Aktif listeyi anlık güncelliyoruz
-          aktifCizgiler = aktifCizgiler.filter(c => c.id !== mevcut.id);
+          aktifCizgiler = aktifCizgiler.filter((c) => c.id !== mevcut.id);
           aktifCizgiler.push(parca1, parca2);
-          break; 
+          break;
         }
       }
     });
   }
 
   if (degisiklikVarMi) {
-    const kalanCizgiler = cizgiler.filter(c => !silinecekCizgiIdleri.has(c.id));
+    const kalanCizgiler = cizgiler.filter(
+      (c) => !silinecekCizgiIdleri.has(c.id),
+    );
     setCizgiler([...kalanCizgiler, ...bolunmusCizgiler]);
   }
 
@@ -106,9 +111,7 @@ export function dinamikBolmeUygula() {
 export function cizgiEkle(yeniCizgiler) {
   gecmiseKaydet();
 
-  const liste = Array.isArray(yeniCizgiler)
-    ? yeniCizgiler
-    : [yeniCizgiler];
+  const liste = Array.isArray(yeniCizgiler) ? yeniCizgiler : [yeniCizgiler];
 
   const kimlikliCizgiler = liste.map((cizgi) => ({
     ...cizgi,
@@ -173,33 +176,33 @@ tumunuSilButonu?.addEventListener("click", tumunuSil);
 
 // Çizgileri dışarı aktaran fonksiyon
 function exportJSON(data) {
-    // 1. JSON verisini okunabilir (formatlı) bir metne dönüştür
-    const jsonString = JSON.stringify(data, null, 2);
-    
-    // 2. Bu metinden sanal bir dosya (Blob) oluştur
-    const blob = new Blob([jsonString], { type: "application/json" });
-    
-    // 3. Dosyayı indirmek için geçici bir link (a etiketi) yarat
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    
-    link.href = url;
-    link.download = "cizim-verileri.json"; // İnecek dosyanın adı
-    
-    // 4. Linki tetikle ve bellekten temizle
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+  // 1. JSON verisini okunabilir (formatlı) bir metne dönüştür
+  const jsonString = JSON.stringify(data, null, 2);
+
+  // 2. Bu metinden sanal bir dosya (Blob) oluştur
+  const blob = new Blob([jsonString], { type: "application/json" });
+
+  // 3. Dosyayı indirmek için geçici bir link (a etiketi) yarat
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "cizim-verileri.json"; // İnecek dosyanın adı
+
+  // 4. Linki tetikle ve bellekten temizle
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 // Butona tıklama olayı (Event Listener) ekle
 document.getElementById("btnExportJson").addEventListener("click", () => {
-    // cizgiler değişkeninin adından emin olmalısın. 
-    // Konsoldaki 'cizgiler' dizisini buraya parametre olarak gönderiyoruz.
-    if (typeof cizgiler !== 'undefined' && cizgiler.length > 0) {
-        exportJSON(cizgiler);
-    } else {
-        alert("Dışarı aktarılacak aktif bir çizim bulunamadı!");
-    }
+  // cizgiler değişkeninin adından emin olmalısın.
+  // Konsoldaki 'cizgiler' dizisini buraya parametre olarak gönderiyoruz.
+  if (typeof cizgiler !== "undefined" && cizgiler.length > 0) {
+    exportJSON(cizgiler);
+  } else {
+    alert("Dışarı aktarılacak aktif bir çizim bulunamadı!");
+  }
 });

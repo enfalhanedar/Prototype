@@ -1,8 +1,4 @@
-import {
-  setAktifMod,
-  setMevcutCizim,
-  secimiTemizle,
-} from "./state.js";
+import { setAktifMod, setMevcutCizim, secimiTemizle } from "./state.js";
 
 import {
   stage,
@@ -49,10 +45,7 @@ export function modDegistir(yeniMod) {
   Object.entries(tools).forEach(([mod, buton]) => {
     if (!buton) return;
 
-    buton.className =
-      mod === yeniMod
-        ? aktifButonClass
-        : pasifButonClass;
+    buton.className = mod === yeniMod ? aktifButonClass : pasifButonClass;
   });
 
   stage.update();

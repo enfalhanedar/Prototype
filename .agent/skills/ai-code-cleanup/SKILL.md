@@ -39,16 +39,16 @@ description: >
 
 Hiçbir şeyi değiştirmeden projeyi tara ve **AI kod kokuları** envanteri çıkar:
 
-| Koku | Neden AI'a Özgü | Nasıl Bulunur |
-|------|-----------------|---------------|
-| Paralel kopyalar | Her istekte sıfırdan benzer kod üretilir | `npx jscpd src/` (duplicate detector) |
-| Desen tutarsızlığı | Farklı oturumlar farklı stil kullanır | Aynı işi yapan dosyaları karşılaştır (fetch/axios karışımı, 3 farklı hata deseni) |
-| God-file | Her şey "çalışan dosyaya" eklenir | 500+ satır dosyalar: `find src -name "*.ts" | xargs wc -l | sort -rn | head` |
-| Ölü iskele | Yarım bırakılan denemeler | Kullanılmayan export/import (`ts-prune`, `depcheck`) |
-| Hayalet API | Var olmayan metot/parametre halüsinasyonu | Tip kontrolü + testler: `tsc --noEmit` |
-| Gereksiz yorum gürültüsü | Her satırı açıklayan AI yorumları | code-hygiene ihlali taraması |
-| Kopyala-yapıştır config | Anlaşılmadan eklenen ayarlar | Kullanılmayan config anahtarları (env-validator) |
-| Aşırı savunmacı kod | Her yerde gereksiz try-catch/null check | Hiç tetiklenmeyen catch blokları |
+| Koku                     | Neden AI'a Özgü                           | Nasıl Bulunur                                                                     |
+| ------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------- |
+| Paralel kopyalar         | Her istekte sıfırdan benzer kod üretilir  | `npx jscpd src/` (duplicate detector)                                             |
+| Desen tutarsızlığı       | Farklı oturumlar farklı stil kullanır     | Aynı işi yapan dosyaları karşılaştır (fetch/axios karışımı, 3 farklı hata deseni) |
+| God-file                 | Her şey "çalışan dosyaya" eklenir         | 500+ satır dosyalar: `find src -name "*.ts"                                       | xargs wc -l | sort -rn | head` |
+| Ölü iskele               | Yarım bırakılan denemeler                 | Kullanılmayan export/import (`ts-prune`, `depcheck`)                              |
+| Hayalet API              | Var olmayan metot/parametre halüsinasyonu | Tip kontrolü + testler: `tsc --noEmit`                                            |
+| Gereksiz yorum gürültüsü | Her satırı açıklayan AI yorumları         | code-hygiene ihlali taraması                                                      |
+| Kopyala-yapıştır config  | Anlaşılmadan eklenen ayarlar              | Kullanılmayan config anahtarları (env-validator)                                  |
+| Aşırı savunmacı kod      | Her yerde gereksiz try-catch/null check   | Hiç tetiklenmeyen catch blokları                                                  |
 
 Çıktıyı `.agent/reviews/ai-cleanup-envanter-<tarih>.md` dosyasına yaz:
 sorun → dosya/satır → şiddet (yüksek/orta/düşük).
@@ -63,7 +63,7 @@ Refactor'dan önce mevcut davranışı testlerle sabitle:
 
 1. Var olan testleri çalıştır — geçenler baseline'dır.
 2. Test edilmeyen **kritik akışlara** karakterizasyon testi yaz:
-   *doğru davranışı değil, MEVCUT davranışı test et* (bug bile olsa — bug ayrı iş).
+   _doğru davranışı değil, MEVCUT davranışı test et_ (bug bile olsa — bug ayrı iş).
 3. En azından smoke test: uygulama açılıyor mu, ana akış çalışıyor mu?
 
 ```
@@ -134,14 +134,14 @@ Temizlik bittikten sonra aynı dağınıklığın geri gelmemesi için:
 ```markdown
 ## AI Code Cleanup — <tarih>
 
-| Metrik | Önce | Sonra |
-|--------|------|-------|
-| Toplam satır | 14.200 | 9.800 |
-| 500+ satır dosya | 6 | 0 |
-| Duplicate blok (jscpd) | %18 | %3 |
-| Ölü export | 41 | 0 |
-| Hata deseni sayısı | 3 farklı | 1 standart |
-| Test sayısı / coverage | 12 / %31 | 47 / %68 |
+| Metrik                 | Önce     | Sonra      |
+| ---------------------- | -------- | ---------- |
+| Toplam satır           | 14.200   | 9.800      |
+| 500+ satır dosya       | 6        | 0          |
+| Duplicate blok (jscpd) | %18      | %3         |
+| Ölü export             | 41       | 0          |
+| Hata deseni sayısı     | 3 farklı | 1 standart |
+| Test sayısı / coverage | 12 / %31 | 47 / %68   |
 
 **Davranış değişikliği:** Yok (karakterizasyon testleri geçiyor)
 **Bulunan ve AYRI görev açılan bug'lar:** 2 (listede)

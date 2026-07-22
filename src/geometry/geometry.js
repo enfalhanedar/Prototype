@@ -1,8 +1,5 @@
 export function noktalarEsitMi(a, b, tolerans = 0.001) {
-  return (
-    Math.abs(a.x - b.x) <= tolerans &&
-    Math.abs(a.y - b.y) <= tolerans
-  );
+  return Math.abs(a.x - b.x) <= tolerans && Math.abs(a.y - b.y) <= tolerans;
 }
 
 export function poligonAlani(noktalar) {
@@ -22,20 +19,13 @@ export function poligonAlani(noktalar) {
 export function noktaPoligonIcinde(x, y, noktalar) {
   let iceride = false;
 
-  for (
-    let i = 0, j = noktalar.length - 1;
-    i < noktalar.length;
-    j = i, i += 1
-  ) {
+  for (let i = 0, j = noktalar.length - 1; i < noktalar.length; j = i, i += 1) {
     const a = noktalar[i];
     const b = noktalar[j];
 
     const yatayIsinKesisiyor =
       a.y > y !== b.y > y &&
-      x <
-        ((b.x - a.x) * (y - a.y)) /
-          (b.y - a.y || Number.EPSILON) +
-          a.x;
+      x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y || Number.EPSILON) + a.x;
 
     if (yatayIsinKesisiyor) {
       iceride = !iceride;
@@ -67,10 +57,5 @@ export function poligonSinirlari(noktalar) {
 }
 
 export function kutularKesisiyorMu(a, b) {
-  return !(
-    a.sag < b.sol ||
-    a.sol > b.sag ||
-    a.alt < b.ust ||
-    a.ust > b.alt
-  );
+  return !(a.sag < b.sol || a.sol > b.sag || a.alt < b.ust || a.ust > b.alt);
 }

@@ -1,30 +1,30 @@
 /* Canvas içindeki fare imlecini çizim işaretine dönüştürür */
 canvas {
-    cursor: crosshair;
+  cursor: crosshair;
 }
 
 /* Gelecekte ekleyeceğimiz özel animasyonlar veya stiller buraya gelebilir */
 .bg-slate-850 {
-    background-color: #56346b;
+  background-color: #56346b;
 }
 .bg-slate-750 {
-    background-color: #594471;
+  background-color: #594471;
 }
 
 .export-btn {
   display: inline-flex;
-  align-items: center;      /* Dikeyde tam ortalar */
-  justify-content: center;  /* Yatayda tam ortalar (Yazıyı ve ikonu merkeze alır) */
-  gap: 8px;                 /* İkon ile yazı arasındaki boşluk */
-  background-color: #8b5cf6; 
+  align-items: center; /* Dikeyde tam ortalar */
+  justify-content: center; /* Yatayda tam ortalar (Yazıyı ve ikonu merkeze alır) */
+  gap: 8px; /* İkon ile yazı arasındaki boşluk */
+  background-color: #8b5cf6;
   color: #ffffff;
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
   padding: 8px 16px;
-  min-width: 140px;         /* Butona ideal bir minimum genişlik verir */
+  min-width: 140px; /* Butona ideal bir minimum genişlik verir */
   border: 1px solid #8b5cf6;
-  border-radius: 8px; 
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 2px 4px rgba(139, 92, 246, 0.1);
@@ -32,9 +32,9 @@ canvas {
 
 /* Üzerine gelindiğinde (Hover) */
 .export-btn:hover {
-  background-color: #7c3aed; 
+  background-color: #7c3aed;
   border-color: #7c3aed;
-  transform: translateY(-1px); 
+  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 

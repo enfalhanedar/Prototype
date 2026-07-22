@@ -6,13 +6,13 @@ iki kez yapılmaz, aynı hataya iki kez düşülmez.
 
 ## Girdi Türleri
 
-| Tür | Ne Saklanır |
-|-----|-------------|
-| `decision` | Mimari seçimler, teknoloji tercihleri ve gerekçeleri |
+| Tür          | Ne Saklanır                                               |
+| ------------ | --------------------------------------------------------- |
+| `decision`   | Mimari seçimler, teknoloji tercihleri ve gerekçeleri      |
 | `convention` | İsimlendirme kuralları, kod pattern'leri, klasör yapıları |
-| `bug` | Belirsiz sorunların kök nedeni ve çözümü |
-| `gotcha` | 3. parti servis tuzakları, ortam sorunları, edge case'ler |
-| `research` | Ciddi araştırma gerektiren soruların cevapları |
+| `bug`        | Belirsiz sorunların kök nedeni ve çözümü                  |
+| `gotcha`     | 3. parti servis tuzakları, ortam sorunları, edge case'ler |
+| `research`   | Ciddi araştırma gerektiren soruların cevapları            |
 
 ## Yapı
 

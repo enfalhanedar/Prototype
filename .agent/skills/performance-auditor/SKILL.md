@@ -31,14 +31,14 @@ description: >
 
 ### 1. Statik Analiz — Yaygın Tuzaklar
 
-| Tuzak | Aranacak |
-|-------|----------|
-| Döngü içinde await | `for` içinde `await` (Promise.all'a çevrilebilir mi?) |
-| N+1 sorgu | Döngü içinde `findById`/query çağrısı |
-| Tüm kütüphane import'u | `import _ from 'lodash'` (→ `lodash/pick`) |
-| Gereksiz re-render | Inline object/function prop'lar, eksik memo |
-| Index'siz sorgu | WHERE/ORDER BY kolonlarında index var mı? |
-| Büyük senkron işlem | Request döngüsünü bloklayan CPU işi |
+| Tuzak                  | Aranacak                                              |
+| ---------------------- | ----------------------------------------------------- |
+| Döngü içinde await     | `for` içinde `await` (Promise.all'a çevrilebilir mi?) |
+| N+1 sorgu              | Döngü içinde `findById`/query çağrısı                 |
+| Tüm kütüphane import'u | `import _ from 'lodash'` (→ `lodash/pick`)            |
+| Gereksiz re-render     | Inline object/function prop'lar, eksik memo           |
+| Index'siz sorgu        | WHERE/ORDER BY kolonlarında index var mı?             |
+| Büyük senkron işlem    | Request döngüsünü bloklayan CPU işi                   |
 
 ```bash
 # Örnek: döngü içinde await
@@ -76,13 +76,15 @@ Düşük etki                → ERKEN OPTİMİZASYON — dokunma, not düş
 ## Performance Audit — <tarih>
 
 ### İlk 5 Kazanım
+
 1. **N+1 sorgu** — src/services/orderService.ts:34
    Etki: liste sayfası 50 sorgu → 2 sorgu. Düzeltme: JOIN / include kullan.
 2. **Döngüde await** — src/jobs/mailer.ts:12
    Etki: 100 mail 100sn → ~5sn. Düzeltme: Promise.all + batch limit.
-...
+   ...
 
 ### Erken Optimizasyon (dokunulmadı)
+
 - memo eklenmemiş küçük komponentler — ölçülebilir etki yok
 ```
 

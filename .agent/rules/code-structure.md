@@ -6,25 +6,27 @@
   Amaç: hiçbir dosyanın "çöp konteynerine" dönüşmemesi ve mimarinin
   zamanla erimemesi. Her yeni dosya/fonksiyonda geçerlidir.
 -->
+
 ---
+
 name: code-structure
 description: >
-  Keeps the physical shape of the codebase healthy: file and function size
-  limits, layered architecture with one-way dependencies, folder conventions,
-  import ordering, and nesting depth. Prevents god-files and architecture decay.
+Keeps the physical shape of the codebase healthy: file and function size
+limits, layered architecture with one-way dependencies, folder conventions,
+import ordering, and nesting depth. Prevents god-files and architecture decay.
 ---
 
 # Code Structure Rules
 
 ## 1. Boyut Limitleri
 
-| Öğe | Uyarı Eşiği | Kesin Sınır | Aşılırsa |
-|-----|-------------|-------------|----------|
-| Dosya | 300 satır | **500 satır** | Sorumluluklara göre böl (yeni modül/komponent) |
-| Fonksiyon/metot | 40 satır | **60 satır** | Alt fonksiyonlara ayır |
-| Komponent (UI) | 200 satır | **300 satır** | Alt komponent + hook'a ayır |
-| Fonksiyon parametresi | 4 | **5** | Options objesi kullan |
-| İç içe geçme (nesting) | 3 seviye | **4 seviye** | Early return / guard clause / extract |
+| Öğe                    | Uyarı Eşiği | Kesin Sınır   | Aşılırsa                                       |
+| ---------------------- | ----------- | ------------- | ---------------------------------------------- |
+| Dosya                  | 300 satır   | **500 satır** | Sorumluluklara göre böl (yeni modül/komponent) |
+| Fonksiyon/metot        | 40 satır    | **60 satır**  | Alt fonksiyonlara ayır                         |
+| Komponent (UI)         | 200 satır   | **300 satır** | Alt komponent + hook'a ayır                    |
+| Fonksiyon parametresi  | 4           | **5**         | Options objesi kullan                          |
+| İç içe geçme (nesting) | 3 seviye    | **4 seviye**  | Early return / guard clause / extract          |
 
 ```typescript
 // ❌ 4 seviye nesting
@@ -111,6 +113,7 @@ Bu kuralların denetleyicileri:
 - `dead-code-cleaner` — bölme sonrası artık kullanılmayan parçalar
 
 Mümkünse otomatikleştir (ESLint):
+
 ```json
 {
   "rules": {

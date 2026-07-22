@@ -4,5 +4,5 @@
      .agent/knowledge/ altına 'decision' olarak taşınır ve buradan silinir. -->
 
 | Tarih | Soru | Bağlam | Karar Sahibi |
-|-------|------|--------|--------------|
-| | | | |
+| ----- | ---- | ------ | ------------ |
+|       |      |        |              |

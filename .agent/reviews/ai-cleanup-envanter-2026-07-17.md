@@ -13,16 +13,16 @@ sona tutarlı bir Türkçe domain dili kullanıyor (`cizgiler`, `odalar`, `aktif
 
 ## Bulgular
 
-| Koku | Bulundu mu? | Detay | Şiddet |
-|------|-------------|-------|--------|
-| God-file (500+ satır) | Hayır | En büyük dosya `drawing.js` — 358 satır | - |
-| Paralel kopyalar / duplicate fonksiyon | Hayır | `jscpd` ile taranabilecek belirgin bir kopya yok; `zoomIn`/`zoomOut` gibi simetrik çiftler kabul edilebilir boyutta | - |
-| Hayalet API / yanlış EaselJS kullanımı | Hayır | `createjs.Stage/Container/Shape/Text` API'leri doğru kullanılmış | - |
-| Ölü iskele / kullanılmayan export | Hayır | Taramada kullanılmayan export bulunmadı | - |
-| Kopyala-yapıştır config | Hayır | `.env` yok, hassas değer yok | - |
-| Aşırı savunmacı kod | Düşük | DOM sorgularında yaygın `?.` kullanımı var (örn. `document.getElementById(...)?.addEventListener`) — index.html'de elementler hep mevcut olduğundan çoğu gereksiz ama zararsız, dokunulmadı | Düşük |
-| **Gereksiz yorum gürültüsü / diff-anlatan yorumlar** | **Evet** | Aşağıda liste — AI/chat oturumundan kalan "YENİ:", "DEĞİŞİKLİK:", "eklendi", "[cite: 2]" gibi izler | Orta |
-| Debug log / console.log | Kısmi | `interaction.js:85` içinde tek bir `console.warn` var — hata durumunu bilgilendirmek için meşru, debug amaçlı değil | - |
+| Koku                                                 | Bulundu mu? | Detay                                                                                                                                                                                       | Şiddet |
+| ---------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| God-file (500+ satır)                                | Hayır       | En büyük dosya `drawing.js` — 358 satır                                                                                                                                                     | -      |
+| Paralel kopyalar / duplicate fonksiyon               | Hayır       | `jscpd` ile taranabilecek belirgin bir kopya yok; `zoomIn`/`zoomOut` gibi simetrik çiftler kabul edilebilir boyutta                                                                         | -      |
+| Hayalet API / yanlış EaselJS kullanımı               | Hayır       | `createjs.Stage/Container/Shape/Text` API'leri doğru kullanılmış                                                                                                                            | -      |
+| Ölü iskele / kullanılmayan export                    | Hayır       | Taramada kullanılmayan export bulunmadı                                                                                                                                                     | -      |
+| Kopyala-yapıştır config                              | Hayır       | `.env` yok, hassas değer yok                                                                                                                                                                | -      |
+| Aşırı savunmacı kod                                  | Düşük       | DOM sorgularında yaygın `?.` kullanımı var (örn. `document.getElementById(...)?.addEventListener`) — index.html'de elementler hep mevcut olduğundan çoğu gereksiz ama zararsız, dokunulmadı | Düşük  |
+| **Gereksiz yorum gürültüsü / diff-anlatan yorumlar** | **Evet**    | Aşağıda liste — AI/chat oturumundan kalan "YENİ:", "DEĞİŞİKLİK:", "eklendi", "[cite: 2]" gibi izler                                                                                         | Orta   |
+| Debug log / console.log                              | Kısmi       | `interaction.js:85` içinde tek bir `console.warn` var — hata durumunu bilgilendirmek için meşru, debug amaçlı değil                                                                         | -      |
 
 ### Diff-anlatan / AI-oturumu yorumları (detay)
 

@@ -50,6 +50,7 @@ Run the audit steps for each ecosystem found.
 ### 2. Security Vulnerability Scan
 
 #### Node.js
+
 ```bash
 npm audit
 # or
@@ -59,12 +60,14 @@ pnpm audit
 ```
 
 #### Python
+
 ```bash
 pip install pip-audit
 pip-audit
 ```
 
 #### General (all ecosystems)
+
 ```bash
 # If using GitHub: check Security tab → Dependabot alerts
 # If using Snyk:
@@ -73,28 +76,31 @@ snyk test
 
 **Triage each finding:**
 
-| Severity | Action |
-|----------|--------|
+| Severity | Action                                |
+| -------- | ------------------------------------- |
 | Critical | Fix immediately before any other work |
-| High | Fix before next release |
-| Medium | Schedule for current sprint |
-| Low | Track, fix when touching related code |
+| High     | Fix before next release               |
+| Medium   | Schedule for current sprint           |
+| Low      | Track, fix when touching related code |
 
 ---
 
 ### 3. Outdated Package Scan
 
 #### Node.js
+
 ```bash
 npm outdated
 ```
 
 #### Python
+
 ```bash
 pip list --outdated
 ```
 
 For each outdated package, check:
+
 1. **How many major versions behind?** (1 minor = low urgency, 2+ major = high urgency)
 2. **Is it a direct or transitive dependency?**
 3. **Does the changelog mention breaking changes?**
@@ -104,17 +110,20 @@ For each outdated package, check:
 ### 4. Unused Dependency Detection
 
 #### Node.js
+
 ```bash
 npx depcheck
 ```
 
 #### Python
+
 ```bash
 pip install deptry
 deptry .
 ```
 
 For each unused dependency flagged:
+
 - Verify it's truly unused (some are peer deps or used at runtime via config)
 - If confirmed unused, remove from `package.json` / `requirements.txt`
 - Re-run the app and tests to confirm nothing breaks
@@ -136,13 +145,13 @@ pip-licenses
 
 **License risk tiers:**
 
-| License | Risk |
-|---------|------|
-| MIT, Apache 2.0, BSD | Safe for most uses |
-| LGPL | Generally OK, check linking requirements |
-| GPL | Risk if distributing proprietary software |
-| AGPL | High risk — requires open-sourcing if used via network |
-| Unknown | Must investigate before use |
+| License              | Risk                                                   |
+| -------------------- | ------------------------------------------------------ |
+| MIT, Apache 2.0, BSD | Safe for most uses                                     |
+| LGPL                 | Generally OK, check linking requirements               |
+| GPL                  | Risk if distributing proprietary software              |
+| AGPL                 | High risk — requires open-sourcing if used via network |
+| Unknown              | Must investigate before use                            |
 
 ---
 
@@ -154,6 +163,7 @@ Write findings to `.agent/audits/dependency-audit-<YYYY-MM-DD>.md`:
 # Dependency Audit — <YYYY-MM-DD>
 
 ## Summary
+
 - **Critical vulnerabilities:** <N>
 - **High vulnerabilities:** <N>
 - **Outdated packages:** <N>
@@ -163,6 +173,7 @@ Write findings to `.agent/audits/dependency-audit-<YYYY-MM-DD>.md`:
 ## Critical / High — Action Required
 
 ### <package-name> @ <version>
+
 - **CVE:** CVE-XXXX-XXXXX
 - **Severity:** Critical
 - **Description:** <what the vulnerability is>
@@ -171,19 +182,22 @@ Write findings to `.agent/audits/dependency-audit-<YYYY-MM-DD>.md`:
 
 ## Outdated Packages
 
-| Package | Current | Latest | Urgency | Notes |
-|---------|---------|--------|---------|-------|
-| express | 4.17.1 | 5.0.0 | High | Major version — review changelog |
-| lodash | 4.17.20 | 4.17.21 | Low | Patch only |
+| Package | Current | Latest  | Urgency | Notes                            |
+| ------- | ------- | ------- | ------- | -------------------------------- |
+| express | 4.17.1  | 5.0.0   | High    | Major version — review changelog |
+| lodash  | 4.17.20 | 4.17.21 | Low     | Patch only                       |
 
 ## Unused Dependencies (safe to remove)
+
 - `left-pad` — not imported anywhere
 - `moment` — replaced by `date-fns` but not removed
 
 ## License Issues
+
 - `<package>` uses GPL-3.0 — review with team before next release
 
 ## Recommendations
+
 1. <prioritized action>
 2. <prioritized action>
 ```
@@ -203,6 +217,7 @@ pip install --upgrade <package>
 ```
 
 After upgrading:
+
 1. Run the full test suite
 2. Do a smoke test of the running app
 3. Commit with message: `chore: dependency security updates <YYYY-MM-DD>`

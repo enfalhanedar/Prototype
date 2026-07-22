@@ -17,9 +17,35 @@ export let seciliCizgiIdleri = [];
 export let gridGorunur = true;
 export let gridSnapAktif = true;
 
-// 1 dünya birimi = 1 santimetre kabul edilir.
-// Yani 100 dünya birimi = 1 metre. Grid adımı ve çizgi
-// uzunluk etiketleri bu sabite göre hesaplanır.
+// Görünüm ayarları
+export const gorunumAyarlari = {
+  grid: true,
+  odaAdlari: true,
+};
+
+export function setGorunumAyari(ayar, deger) {
+  if (!(ayar in gorunumAyarlari)) {
+    console.warn(`Bilinmeyen görünüm ayarı: ${ayar}`);
+    return;
+  }
+
+  gorunumAyarlari[ayar] = Boolean(deger);
+
+  if (ayar === "grid") {
+    gridGorunur = gorunumAyarlari.grid;
+  }
+}
+
+export function gorunumAyariniDegistir(ayar) {
+  if (!(ayar in gorunumAyarlari)) {
+    console.warn(`Bilinmeyen görünüm ayarı: ${ayar}`);
+    return;
+  }
+
+  setGorunumAyari(ayar, !gorunumAyarlari[ayar]);
+}
+
+// 1 dünya birimi = 1 santimetre
 export const PIXEL_PER_METRE = 100;
 
 export const GRID_SNAP_EKRAN_MESAFESI = 10;
@@ -46,9 +72,7 @@ export function setRedoStack(yeniRedoStack) {
 }
 
 export function setSeciliCizgiIdleri(cizgiIdleri) {
-  seciliCizgiIdleri = [
-    ...new Set(cizgiIdleri.filter(Boolean)),
-  ];
+  seciliCizgiIdleri = [...new Set(cizgiIdleri.filter(Boolean))];
 }
 
 export function secimiTemizle() {
@@ -56,7 +80,8 @@ export function secimiTemizle() {
 }
 
 export function setGridGorunur(deger) {
-  gridGorunur = deger;
+  gridGorunur = Boolean(deger);
+  gorunumAyarlari.grid = gridGorunur;
 }
 
 export function setGridSnapAktif(deger) {

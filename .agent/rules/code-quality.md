@@ -5,12 +5,14 @@
   DRY prensibi uygulanır ama over-engineering yapılmaz.
   "Yeterince iyi" ile "aşırı soyutlama" arasındaki dengeyi tanımlar.
 -->
+
 ---
+
 name: code-quality
 description: >
-  Enforces DRY without over-engineering. Duplicate code is refactored when
-  it appears 3+ times or would cause bugs if not updated consistently.
-  Abstractions must earn their complexity — no premature generalization.
+Enforces DRY without over-engineering. Duplicate code is refactored when
+it appears 3+ times or would cause bugs if not updated consistently.
+Abstractions must earn their complexity — no premature generalization.
 ---
 
 # Code Quality Rules
@@ -23,13 +25,14 @@ Aynı kod bloğu **3 veya daha fazla** yerde tekrar ediyorsa → extract et.
 
 ```typescript
 // ❌ 3 yerde tekrar eden aynı doğrulama
-if (!email || !email.includes('@')) throw new Error('Invalid email');  // kullanıcı kaydında
-if (!email || !email.includes('@')) throw new Error('Invalid email');  // login'de
-if (!email || !email.includes('@')) throw new Error('Invalid email');  // şifre sıfırlamada
+if (!email || !email.includes("@")) throw new Error("Invalid email"); // kullanıcı kaydında
+if (!email || !email.includes("@")) throw new Error("Invalid email"); // login'de
+if (!email || !email.includes("@")) throw new Error("Invalid email"); // şifre sıfırlamada
 
 // ✅ Bir kez yaz, her yerde kullan
 function validateEmail(email: string): void {
-  if (!email || !email.includes('@')) throw new ValidationError('Invalid email');
+  if (!email || !email.includes("@"))
+    throw new ValidationError("Invalid email");
 }
 ```
 
@@ -65,13 +68,13 @@ Birinde "hayır" → olduğu yerde bırak.
 
 Şu işaretlerden biri görünüyorsa → dur, kullanıcıya bildir:
 
-| Gösterge | Ne Anlama Gelir |
-|----------|----------------|
-| Factory'nin Factory'si | Çok fazla dolaylı yönlendirme |
-| 5'ten fazla parametre alan fonksiyon | Görev çok büyük, böl |
-| Interface'i sadece 1 yer implement ediyor | Erken soyutlama |
-| Util klasöründe 20+ küçük fonksiyon | Organize edilmemiş sepetin büyümesi |
-| Her şey konfigüre edilebilir | Ne yapacağı belirsiz |
+| Gösterge                                  | Ne Anlama Gelir                     |
+| ----------------------------------------- | ----------------------------------- |
+| Factory'nin Factory'si                    | Çok fazla dolaylı yönlendirme       |
+| 5'ten fazla parametre alan fonksiyon      | Görev çok büyük, böl                |
+| Interface'i sadece 1 yer implement ediyor | Erken soyutlama                     |
+| Util klasöründe 20+ küçük fonksiyon       | Organize edilmemiş sepetin büyümesi |
+| Her şey konfigüre edilebilir              | Ne yapacağı belirsiz                |
 
 ---
 

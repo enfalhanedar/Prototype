@@ -24,6 +24,7 @@ description: >
 ## When to Trigger
 
 **Always run first** when:
+
 - Starting a new conversation about this project
 - A subagent is spawned to work on a module
 - Picking up work after a gap of more than a day
@@ -36,6 +37,7 @@ description: >
 Read `.agent/knowledge/INDEX.md` first.
 
 The INDEX.md file contains rows in this format:
+
 ```
 | Date | Type | Topic (linked) | One-line summary |
 ```
@@ -46,6 +48,7 @@ The INDEX.md file contains rows in this format:
 - Extract the slug from the link: `[topic](./auth/token-refresh.md)` → slug is `auth/token-refresh`
 
 **If INDEX.md does not exist**, output this exact warning and proceed:
+
 ```
 ⚠️ Knowledge base not initialized (.agent/knowledge/INDEX.md missing).
 This means no architectural decisions, conventions, or gotchas have been recorded yet.
@@ -57,6 +60,7 @@ Action: Use the `knowledge-base-update` skill at the end of this session to star
 Read `README.md` (or `docs/README.md` if present).
 
 Extract and internalize:
+
 - What the project does (one sentence)
 - Tech stack (language, framework, major libraries)
 - How to run it locally
@@ -98,6 +102,7 @@ Note any non-standard folders and check `.agent/knowledge/` for explanations.
 Read `.agent/rules/` if it exists. These are hard constraints — not suggestions.
 
 Common rule files to look for:
+
 - `code-style.md`
 - `commit-messages.md`
 - `test-coverage.md`
@@ -136,18 +141,23 @@ At the end of every session, update `.agent/CURRENT_TASK.md`:
 # Current Task
 
 ## What We're Building
+
 <description>
 
 ## Status
+
 <In Progress | Blocked | Review Needed | Done>
 
 ## Last Session Summary
+
 <date> — <what was done>
 
 ## Next Steps
+
 1. <next action>
 2. <next action>
 
 ## Blockers
+
 - <anything preventing progress>
 ```

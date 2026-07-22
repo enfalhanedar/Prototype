@@ -5,17 +5,11 @@ import {
   setSeciliCizgiIdleri,
 } from "../core/state.js";
 
-import {
-  stage,
-  viewport,
-} from "../core/stage.js";
+import { stage, viewport } from "../core/stage.js";
 
 import { sahnedenDunyaya } from "../camera/camera.js";
 
-import {
-  tiklananCizgiyiBul,
-  tiklananOdayiBul,
-} from "./interaction-select.js";
+import { tiklananCizgiyiBul, tiklananOdayiBul } from "./interaction-select.js";
 
 import {
   cizgileriSuruklemeyeHazirla,
@@ -32,20 +26,14 @@ import {
   kutuSecimBitir,
 } from "./interaction-box-select.js";
 
-import {
-  odaCizgiIdleriniBul,
-} from "./interaction-selection-helpers.js";
+import { odaCizgiIdleriniBul } from "./interaction-selection-helpers.js";
 
-import {
-  hoverGuncelle,
-  hoverTemizle,
-} from "./interaction-hover.js";
+import { hoverGuncelle, hoverTemizle } from "./interaction-hover.js";
 
 import "./interaction-delete-button.js";
 
 function tiklananKoseyiBul(dunyaNoktasi) {
-  const tiklamaToleransi =
-    10 / viewport.scaleX;
+  const tiklamaToleransi = 10 / viewport.scaleX;
 
   for (const cizgi of cizgiler) {
     const birinciUcMesafesi = Math.hypot(
@@ -82,62 +70,40 @@ stage.on("stagemousedown", (event) => {
 
   hoverTemizle();
 
-  const dunyaNoktasi = sahnedenDunyaya(
-    event.stageX,
-    event.stageY,
-  );
+  const dunyaNoktasi = sahnedenDunyaya(event.stageX, event.stageY);
 
-  const tiklananKose =
-    tiklananKoseyiBul(dunyaNoktasi);
+  const tiklananKose = tiklananKoseyiBul(dunyaNoktasi);
 
   if (tiklananKose) {
     koseSuruklemeyeHazirla(tiklananKose);
     return;
   }
 
-  const tiklananCizgi = tiklananCizgiyiBul(
-    dunyaNoktasi.x,
-    dunyaNoktasi.y,
-  );
+  const tiklananCizgi = tiklananCizgiyiBul(dunyaNoktasi.x, dunyaNoktasi.y);
 
   if (tiklananCizgi) {
-    const zatenSecili =
-      seciliCizgiIdleri.includes(
-        tiklananCizgi.id,
-      );
+    const zatenSecili = seciliCizgiIdleri.includes(tiklananCizgi.id);
 
-    const tasinacakIdler = zatenSecili
-      ? seciliCizgiIdleri
-      : [tiklananCizgi.id];
+    const tasinacakIdler = zatenSecili ? seciliCizgiIdleri : [tiklananCizgi.id];
 
     if (!zatenSecili) {
       setSeciliCizgiIdleri(tasinacakIdler);
     }
 
-    cizgileriSuruklemeyeHazirla(
-      tasinacakIdler,
-      dunyaNoktasi,
-    );
+    cizgileriSuruklemeyeHazirla(tasinacakIdler, dunyaNoktasi);
 
     return;
   }
 
-  const tiklananOda = tiklananOdayiBul(
-    dunyaNoktasi.x,
-    dunyaNoktasi.y,
-  );
+  const tiklananOda = tiklananOdayiBul(dunyaNoktasi.x, dunyaNoktasi.y);
 
   if (tiklananOda) {
-    const odaCizgiIdleri =
-      odaCizgiIdleriniBul(tiklananOda);
+    const odaCizgiIdleri = odaCizgiIdleriniBul(tiklananOda);
 
     if (odaCizgiIdleri.length > 0) {
       setSeciliCizgiIdleri(odaCizgiIdleri);
 
-      cizgileriSuruklemeyeHazirla(
-        odaCizgiIdleri,
-        dunyaNoktasi,
-      );
+      cizgileriSuruklemeyeHazirla(odaCizgiIdleri, dunyaNoktasi);
 
       return;
     }
@@ -149,10 +115,7 @@ stage.on("stagemousedown", (event) => {
 stage.on("stagemousemove", (event) => {
   if (aktifMod !== "SELECT") return;
 
-  const dunyaNoktasi = sahnedenDunyaya(
-    event.stageX,
-    event.stageY,
-  );
+  const dunyaNoktasi = sahnedenDunyaya(event.stageX, event.stageY);
 
   if (kutuSecimiAktif) {
     kutuSecimGuncelle(dunyaNoktasi);
@@ -169,12 +132,7 @@ stage.on("stagemousemove", (event) => {
 
 stage.on("stagemouseup", (event) => {
   if (kutuSecimiAktif) {
-    kutuSecimBitir(
-      sahnedenDunyaya(
-        event.stageX,
-        event.stageY,
-      ),
-    );
+    kutuSecimBitir(sahnedenDunyaya(event.stageX, event.stageY));
     return;
   }
 
