@@ -13,7 +13,7 @@ import { odalariYenidenHesapla } from "../drawing/rooms.js";
 import { ekraniGuncelle } from "../drawing/render.js";
 import { silButonunuKonumlandir } from "./interaction-delete-button.js";
 
-import { kesisimleriKoseyeDonustur } from "../io/intersections.js";
+import { kesisimleriKoseyeDonustur } from "../geometry/intersections.js";
 
 const BAGLANTI_TOLERANSI = 0.01;
 const KOSE_TOLERANSI = 0.001;

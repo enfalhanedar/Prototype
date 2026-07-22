@@ -17,7 +17,7 @@ import {
 
 import { hesaplaSnap, aciyaKilitle, hizalamaBul } from "../geometry/snap.js";
 
-import { kesisimleriKoseyeDonustur } from "../io/intersections.js";
+import { kesisimleriKoseyeDonustur } from "../geometry/intersections.js";
 import { sahnedenDunyaya } from "../camera/camera.js";
 import { odalariYenidenHesapla } from "./rooms.js";
 import { ekraniGuncelle } from "./render.js";
