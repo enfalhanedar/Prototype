@@ -34,41 +34,50 @@ export function cizgiUzerindeEnYakinNokta(x, y, x1, y1, x2, y2) {
     mesafe: Math.hypot(x - enYakinX, y - enYakinY),
   };
 }
+
+
 export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
-  const haricSet = new Set(haricTutulacakIdler);
+  const haricTutulanlar = new Set(haricTutulacakIdler);
 
-  let snapX = mouseX;
-  let snapY = mouseY;
-
-  let enKisaMesafe = SNAP_MESAFESI / viewport.scaleX;
+  let enYakinKose = null;
+  let enYakinKoseMesafesi = Infinity;
 
   for (const cizgi of cizgiler) {
-    if (haricSet.has(cizgi.id)) {
-      continue;
-    }
+    if (haricTutulanlar.has(cizgi.id)) continue;
 
-    const adayNoktalar = [
-      {
-        x: cizgi.x1,
-        y: cizgi.y1,
-      },
-      {
-        x: cizgi.x2,
-        y: cizgi.y2,
-      },
+    const uclar = [
+      { x: cizgi.x1, y: cizgi.y1 },
+      { x: cizgi.x2, y: cizgi.y2 },
     ];
 
-    for (const aday of adayNoktalar) {
-      const mesafe = mesafeBul(mouseX, mouseY, aday.x, aday.y);
+    for (const uc of uclar) {
+      const mesafe = Math.hypot(mouseX - uc.x, mouseY - uc.y);
 
-      if (mesafe < enKisaMesafe) {
-        enKisaMesafe = mesafe;
-        snapX = aday.x;
-        snapY = aday.y;
+      if (
+        mesafe <= SNAP_MESAFESI &&
+        mesafe < enYakinKoseMesafesi
+      ) {
+        enYakinKose = uc;
+        enYakinKoseMesafesi = mesafe;
       }
     }
+  }
 
-    const kenarSonucu = cizgiUzerindeEnYakinNokta(
+  if (enYakinKose) {
+    return {
+      x: enYakinKose.x,
+      y: enYakinKose.y,
+      snapTuru: "CORNER",
+    };
+  }
+
+  let enYakinKenar = null;
+  let enYakinKenarMesafesi = Infinity;
+
+  for (const cizgi of cizgiler) {
+    if (haricTutulanlar.has(cizgi.id)) continue;
+
+    const sonuc = cizgiUzerindeEnYakinNokta(
       mouseX,
       mouseY,
       cizgi.x1,
@@ -77,23 +86,37 @@ export function hesaplaSnap(mouseX, mouseY, haricTutulacakIdler = []) {
       cizgi.y2,
     );
 
-    if (kenarSonucu.mesafe < enKisaMesafe) {
-      enKisaMesafe = kenarSonucu.mesafe;
-      snapX = kenarSonucu.x;
-      snapY = kenarSonucu.y;
+    if (
+      sonuc.mesafe <= SNAP_MESAFESI &&
+      sonuc.mesafe < enYakinKenarMesafesi
+    ) {
+      enYakinKenar = sonuc;
+      enYakinKenarMesafesi = sonuc.mesafe;
     }
   }
 
-  if (snapX === mouseX && snapY === mouseY) {
-    const gridSnap = gridNoktasinaSnap(mouseX, mouseY);
+  if (enYakinKenar) {
+    return {
+      x: enYakinKenar.x,
+      y: enYakinKenar.y,
+      snapTuru: "EDGE",
+    };
+  }
 
-    snapX = gridSnap.x;
-    snapY = gridSnap.y;
+  const gridSonucu = gridNoktasinaSnap(mouseX, mouseY);
+
+  if (gridSonucu.miknatislandiMi) {
+    return {
+      x: gridSonucu.x,
+      y: gridSonucu.y,
+      snapTuru: "GRID",
+    };
   }
 
   return {
-    x: snapX,
-    y: snapY,
+    x: mouseX,
+    y: mouseY,
+    snapTuru: null,
   };
 }
 // Çizim sırasında, üzerinde çalışılan nokta mevcut çizgilerin

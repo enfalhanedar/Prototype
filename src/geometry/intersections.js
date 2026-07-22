@@ -135,7 +135,6 @@ export function cizgiyiParcala(cizgi, tDegerleri) {
       x2: bitis.x,
       y2: bitis.y,
 
-      kaynakCizgiId: cizgi.kaynakCizgiId ?? cizgi.id ?? null,
     });
   }
 
